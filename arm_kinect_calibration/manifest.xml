@@ -1,0 +1,19 @@
+<package>
+  <description brief="arm_kinect_calibration">
+
+     arm_kinect_calibration
+
+  </description>
+  <author>Sachin Chitta</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/arm_kinect_calibration</url>
+
+  <depend package="tf"/>
+  <depend package="roscpp"/>
+  <depend package="angles"/>
+  <depend package="geometry_msgs"/>
+
+</package>
+
+
