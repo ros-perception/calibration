@@ -1,0 +1,11 @@
+<stack>
+  <description brief="Tools for calibrating a robot">
+     Provides a toolchain running through the robot calibration process. This
+     involves capturing calibration data, estimating parameters, and
+     then updating the URDF.
+  </description>
+  <author>Maintained by Michael Ferguson</author>
+  <license>BSD</license>  
+  <review status="API and Doc Reviewed" notes=""/>
+  <url>http://ros.org/wiki/calibration</url>
+</stack>

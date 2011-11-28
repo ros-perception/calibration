@@ -1,0 +1,35 @@
+<package>
+  <description brief="calibration_launch">
+
+     calibration_launch
+
+  </description>
+  <author>Michael Ferguson</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/calibration_launch</url>
+
+  <!-- capture data -->
+  <depend package="topic_tools"/>
+  <depend package="image_cb_detector"/>
+  <depend package="image_view" />
+  <depend package="message_filters"/>
+  <depend package="sensor_msgs"/>
+
+  <depend package="monocam_settler"/>
+  <depend package="joint_states_settler"/>
+  <depend package="interval_intersection"/>
+
+
+  <!-- messages -->
+  <depend package="calibration_msgs"/>
+  <depend package="sensor_msgs"/>
+  <depend package="geometry_msgs"/>
+  <depend package="trajectory_msgs"/>
+
+
+  <!-- urdf_pub -->
+  <depend package="rospy"/>
+  <depend package="std_msgs"/>
+
+</package>

@@ -1,0 +1,6 @@
+float64 tolerance      # Tolerance on each of the features
+uint8 ignore_failures  # True if we discard
+duration max_step      # The maximum timestep between two elements in an interval
+uint32 cache_size      # The size of our cache when searching for an interval
+---
+---

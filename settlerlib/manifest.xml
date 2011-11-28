@@ -1,0 +1,21 @@
+<package>
+  <description brief="A set of routines to help with creating a settler">
+    Defines helper functions and routines that greatly help when trying to create a settler
+    for a specific sensor channel. This package is experimental and unstable.
+    Expect its APIs to change.
+  </description>
+  <author>Vijay Pradeep</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://www.ros.org/wiki/settlerlib</url>
+
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lsettlerlib"/>
+  </export> 
+
+  <!-- ros -->
+  <depend package="roscpp"/>
+
+  <!-- calibration -->
+  <depend package="calibration_msgs"/>
+</package>
