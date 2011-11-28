@@ -1,0 +1,7 @@
+build
+/msg_gen/
+/srv_gen/
+/bin
+/msg/.*\.py$
+/lib/.*\.so$
+.*\.pyc$
