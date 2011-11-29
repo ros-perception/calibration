@@ -9,10 +9,7 @@
   <url>http://ros.org/wiki/pr2_calibration_propagation</url>
 
   <depend package="tf"/>
-
-  <platform os="ubuntu" version="9.04"/>
-  <platform os="ubuntu" version="9.10"/>
-  <platform os="ubuntu" version="10.04"/>
+  <depend package="calibration_propagation"/>
 </package>
 
 

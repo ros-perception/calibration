@@ -31,12 +31,12 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import roslib; roslib.load_manifest('pr2_calibration_propagation')
+import roslib; roslib.load_manifest('calibration_propagation')
 
 import sys
 import unittest
 
-import pr2_calibration_propagation.process_changelist as process_changelist
+import calibration_propagation.process_changelist as process_changelist
 
 class TestProcessChangelist(unittest.TestCase):
     # Remove characters
@@ -77,6 +77,6 @@ class TestProcessChangelist(unittest.TestCase):
 
 if __name__ == '__main__':
     import rostest
-    rostest.unitrun('pr2_calibration_propagation', 'test_process_changelist',   TestProcessChangelist,   coverage_packages=['pr2_calibration_propagation.process_changelist'])
+    rostest.unitrun('calibration_propagation', 'test_process_changelist',   TestProcessChangelist,   coverage_packages=['calibration_propagation.process_changelist'])
 
 

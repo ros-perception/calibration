@@ -31,12 +31,12 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import roslib; roslib.load_manifest('pr2_calibration_propagation')
+import roslib; roslib.load_manifest('calibration_propagation')
 
 import sys
 import unittest
 
-import pr2_calibration_propagation.update_joint as update_joint
+import calibration_propagation.update_joint as update_joint
 
 class TestUpdateJoint(unittest.TestCase):
     def test_easy1(self):
@@ -122,9 +122,9 @@ class TestSplitInternals(unittest.TestCase):
 
 if __name__ == '__main__':
     import rostest
-    rostest.unitrun('pr2_calibration_propagation', 'test_split_elem',   TestSplitElem,   coverage_packages=['pr2_calibration_propagation.update_joint'])
-    rostest.unitrun('pr2_calibration_propagation', 'test_atomic_elem',  TestAtomicElem,  coverage_packages=['pr2_calibration_propagation.update_joint'])
-    rostest.unitrun('pr2_calibration_propagation', 'test_attr',         TestAttr,        coverage_packages=['pr2_calibration_propagation.update_joint'])
-    rostest.unitrun('pr2_calibration_propagation', 'test_update_joint', TestUpdateJoint, coverage_packages=['pr2_calibration_propagation.update_joint'])
-    rostest.unitrun('pr2_calibration_propagation', 'test_split_internals', TestSplitInternals, coverage_packages=['pr2_calibration_propagation.update_joint'])
-    rostest.unitrun('pr2_calibration_propagation', 'test_update_transmission', TestUpdateTransmission, coverage_packages=['pr2_calibration_propagation.update_joint'])
+    rostest.unitrun('calibration_propagation', 'test_split_elem',   TestSplitElem,   coverage_packages=['calibration_propagation.update_joint'])
+    rostest.unitrun('calibration_propagation', 'test_atomic_elem',  TestAtomicElem,  coverage_packages=['calibration_propagation.update_joint'])
+    rostest.unitrun('calibration_propagation', 'test_attr',         TestAttr,        coverage_packages=['calibration_propagation.update_joint'])
+    rostest.unitrun('calibration_propagation', 'test_update_joint', TestUpdateJoint, coverage_packages=['calibration_propagation.update_joint'])
+    rostest.unitrun('calibration_propagation', 'test_split_internals', TestSplitInternals, coverage_packages=['calibration_propagation.update_joint'])
+    rostest.unitrun('calibration_propagation', 'test_update_transmission', TestUpdateTransmission, coverage_packages=['calibration_propagation.update_joint'])
