@@ -1,0 +1,18 @@
+<package>
+  <description brief="Tools for pushing a new calibration into the URDF and wge100 cameras">
+     Tools for pushing a new calibration into the URDF and wge100 cameras.  This package is
+     still experimental.  Expect usage and APIs to change.
+  </description>
+  <author>Vijay Pradeep</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_calibration_propagation</url>
+
+  <depend package="tf"/>
+
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
+</package>
+
+
