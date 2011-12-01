@@ -1,0 +1,25 @@
+<package>
+  <description brief="Runs an optimization to estimate the PR2's kinematic parameters">
+     Runs an optimization to estimate the PR2's kinematic parameters. This package is
+     still experimental. Expect APIs to change.
+  </description>
+  <author>Vijay Pradeep</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/pr2_calibration_estimation</url>
+
+  <depend package="rospy"/>
+  <depend package="rostest"/>
+
+  <depend package="sensor_msgs"/>
+  <depend package="calibration_msgs"/>
+
+  <depend package="visualization_msgs"/>
+
+  <depend package="urdf_python" />
+
+  <rosdep name="python-scipy" />
+  <!--<rosdep name="ipython" />
+  <rosdep name="python-tk" />-->
+</package>
+
