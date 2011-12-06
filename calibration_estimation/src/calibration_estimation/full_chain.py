@@ -1,6 +1,6 @@
 # Software License Agreement (BSD License)
 #
-# Copyright (c) 2008, Willow Garage, Inc.
+# Copyright (c) 2008-2011, Willow Garage, Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,14 +30,12 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# author: Vijay Pradeep
-
 # A convenience object that wraps a joint_chain, along with transforms
 # before and after the chain.
 #
 # The transforms can be thought of as follows:
 #
-#       before_chain_T[0] ... before_chain_T[N] -- chain -- after_chain_T[0] ... after_chain_T[N]
+#       fixed links before -- chain -- fixed links after
 #      /
 #   root
 
@@ -47,25 +45,27 @@ import numpy
 
 class FullChainRobotParams:
 
-    # Initialize with dictionary of the current configuration.
-    # Dictionary should have the following:
-    #   - before_chain: List of transform ids to apply before the chain
-    #   - chain_id: Chain ID for the joint_chain
-    #   - link_num: Specifies which joint elem should be the last one to apply.
-    #   - after_chain: List of transform ids to apply after the chain
-    def __init__(self, config_dict):
-        self._config_dict = config_dict
+    def __init__(self, chain, tip, root=None):
+        self.chain = chain
+        self.root = root
+        self.tip = tip
         self.calc_block = FullChainCalcBlock()
 
     def update_config(self, robot_params):
-        before_chain_Ts = [robot_params.transforms[transform_name] for transform_name in self._config_dict["before_chain"]]
-        if self._config_dict["chain_id"] == None:
+        if self.root == None: 
+            self.root = robot_params.base_link
+        if self.chain == None:
             chain = None
+            before_chain = robot_params.urdf.get_chain(self.root, self.tip, links=False)
+            after_chain = []
             link_num = None
         else:
-            chain       = robot_params.chains[ self._config_dict["chain_id"] ]
-            link_num    = self._config_dict["link_num"]
-        after_chain_Ts  = [robot_params.transforms[transform_name] for transform_name in self._config_dict["after_chain"]]
+            chain = robot_params.chains[self.chain]
+            before_chain = robot_params.urdf.get_chain(self.root, chain.root, links=False)
+            after_chain = robot_params.urdf.get_chain(chain.tip, self.tip, links=False) # TODO: partial link
+            link_num = -1
+        before_chain_Ts = [robot_params.transforms[transform_name] for transform_name in before_chain]
+        after_chain_Ts  = [robot_params.transforms[transform_name] for transform_name in after_chain]
         self.calc_block.update_config(before_chain_Ts, chain, link_num, after_chain_Ts)
 
 class FullChainCalcBlock:
@@ -82,10 +82,10 @@ class FullChainCalcBlock:
         for before_chain_T in self._before_chain_Ts:
             pose = pose * before_chain_T.transform
 
-        # Apply the DH Chain
+        # Apply the Chain
         if self._chain is not None:
-            dh_T = self._chain.fk(chain_state, self._link_num)
-            pose = pose * dh_T
+            chain_T = self._chain.fk(chain_state, self._link_num)
+            pose = pose * chain_T
 
         # Apply the 'after chain' transforms
         for after_chain_T in self._after_chain_Ts:
