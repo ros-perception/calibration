@@ -34,7 +34,7 @@
 
 import roslib; roslib.load_manifest('calibration_estimation')
 
-from calibration_estimation.robot_params import RobotParams
+from calibration_estimation.urdf_params import UrdfParams
 from calibration_estimation.single_transform import SingleTransform
 import numpy
 from numpy import array, matrix, zeros, cumsum, concatenate, reshape
@@ -324,7 +324,7 @@ def compute_errors_breakdown(error_calc, multisensors, opt_pose_arr):
             errors_dict[sensor.sensor_id].append(r_sensor)
     return errors_dict
 
-def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors, use_cov):
+def opt_runner(robot_params, pose_guess_arr, free_dict, multisensors, use_cov):
     """
     Runs a single optimization step for the calibration optimization.
       robot_params_dict - Dictionary storing all of the system primitives' parameters (lasers, cameras, chains, transforms, etc)
@@ -334,8 +334,8 @@ def opt_runner(robot_params_dict, pose_guess_arr, free_dict, multisensors, use_c
     """
 
     # Load the robot params
-    robot_params = RobotParams()
-    robot_params.configure(robot_params_dict)
+    #robot_params = RobotParams()
+    #robot_params.configure(robot_params_dict)
 
     error_calc = ErrorCalc(robot_params, free_dict, multisensors, use_cov)
 

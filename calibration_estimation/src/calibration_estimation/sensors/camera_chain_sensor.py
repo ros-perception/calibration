@@ -81,15 +81,15 @@ class CameraChainBundler:
         """
         sensors = []
         for cur_config in self._valid_configs:
-            if cur_config["camera_id"] in [ x.camera_id for x in M_robot.M_cam ]:
-                if cur_config["chain"]["chain_id"] in [ x.chain_id  for x in M_robot.M_chain ] :
-                    M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["camera_id"])]
-                    M_chain = M_robot.M_chain[ [ x.chain_id  for x in M_robot.M_chain ].index(cur_config["chain"]["chain_id"]) ]
-                elif cur_config["chain"]["chain_id"] == None:
-                    M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["camera_id"])]
+            if cur_config["sensor_id"] in [ x.camera_id for x in M_robot.M_cam ]:
+                if cur_config["chain_id"] in [ x.chain_id  for x in M_robot.M_chain ] :
+                    M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
+                    M_chain = M_robot.M_chain[ [ x.chain_id  for x in M_robot.M_chain ].index(cur_config["chain_id"]) ]
+                elif cur_config["chain_id"] == None:
+                    M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
                     M_chain = None
                 else:
-                    print "else cur_config[chain][chain_id]: ", cur_config["chain"]["chain_id"]
+                    print "else cur_config[chain_id]: ", cur_config["chain_id"]
                     continue
                 cur_sensor = CameraChainSensor(cur_config, M_cam, M_chain)
                 sensors.append(cur_sensor)
@@ -109,13 +109,14 @@ class CameraChainSensor:
         """
 
         self.sensor_type = "camera"
-        self.sensor_id = config_dict["camera_id"]
+        self.sensor_id = config_dict["sensor_id"]
 
         self._config_dict = config_dict
         self._M_cam = M_cam
         self._M_chain = M_chain
 
-        self._chain = FullChainRobotParams(config_dict["chain"])
+        #self._chain = FullChainRobotParams(config_dict["chain"])
+        self._chain = FullChainRobotParams(config_dict["chain_id"], config_dict["frame_id"])
 
         self.terms_per_sample = 2
 
@@ -125,7 +126,7 @@ class CameraChainSensor:
         after each change in parameters we must call update_config to ensure that our calculated residual reflects
         the newest set of system parameters.
         """
-        self._camera = robot_params.rectified_cams[ self._config_dict["camera_id"] ]
+        self._camera = robot_params.rectified_cams[ self._config_dict["sensor_id"] ]
 
         if self._chain is not None:
             self._chain.update_config(robot_params)
@@ -312,16 +313,17 @@ class CameraChainSensor:
         """
         sparsity = dict()
         sparsity['transforms'] = {}
-        for cur_transform_name in ( self._config_dict['chain']['before_chain'] + self._config_dict['chain']['after_chain'] ):
-            sparsity['transforms'][cur_transform_name] = [1, 1, 1, 1, 1, 1]
+        #for cur_transform_name in ( self._config_dict['chain']['before_chain'] + self._config_dict['chain']['after_chain'] ):
+        for cur_transform in ( self._chain.calc_block._before_chain_Ts + self._chain.calc_block._after_chain_Ts ):
+            sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
 
         sparsity['chains'] = {}
         if self._M_chain is not None:
-            chain_id = self._config_dict['chain']['chain_id']
+            chain_id = self._config_dict['chain_id'] #['chain_id']
             num_links = self._chain.calc_block._chain._M
             assert(num_links == len(self._M_chain.chain_state.position))
             sparsity['chains'][chain_id] = {}
-            sparsity['chains'][chain_id]['transforms'] = [ [1,1,1,1,1,1] ] * num_links
+            #sparsity['chains'][chain_id]['transforms'] = [ [1,1,1,1,1,1] ] * num_links
             sparsity['chains'][chain_id]['gearing'] = [1] * num_links
 
         sparsity['rectified_cams'] = {}

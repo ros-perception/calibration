@@ -43,7 +43,7 @@ import yaml, math
 param_names = ['x','y','z','a','b','c']
 
 class SingleTransform:
-    def __init__(self, name, config = [0, 0, 0, 0, 0, 0]):
+    def __init__(self, config = [0, 0, 0, 0, 0, 0], name=""):
         self._name = name
         eval_config = [eval(str(x)) for x in config]
         self._config = reshape(matrix(eval_config, float), (-1,1))

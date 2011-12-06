@@ -81,7 +81,8 @@ class MultiSensor:
         else:
             print "[%s] section doesn't exist. Skipping" % sensor_type
 
-        sensor_type = 'camera_chains'
+        #sensor_type = 'camera_chains'
+        sensor_type = 'rectified_cams'
         if sensor_type in self._sensor_configs.keys():
             cur_bundler = camera_chain_sensor.CameraChainBundler( self._sensor_configs[sensor_type] )
             cur_sensors = cur_bundler.build_blocks(msg)

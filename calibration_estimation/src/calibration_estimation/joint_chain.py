@@ -72,7 +72,7 @@ class JointChain:
 
     # Return column vector of config
     def deflate(self):
-        return matrix(self._gearing)
+        return matrix(self._gearing).T
 
     # Returns # of params needed for inflation & deflation
     def get_length(self):
@@ -89,8 +89,7 @@ class JointChain:
         gearing_trimmed = self._gearing[0:(link_num+1)]
 
         pos_scaled = [cur_pos * cur_gearing for cur_pos, cur_gearing in zip(pos_trimmed, gearing_trimmed)]
-        print pos_scaled
-
+        
         T = matrix([ [ 1, 0, 0, 0 ],
                      [ 0, 1, 0, 0 ],
                      [ 0, 0, 1, 0 ],

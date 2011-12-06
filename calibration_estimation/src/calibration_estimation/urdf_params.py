@@ -39,6 +39,7 @@ import rospy
 
 from urdf_python.urdf import *
 import yaml
+import numpy
 
 from calibration_estimation.joint_chain import JointChain
 from calibration_estimation.tilting_laser import TiltingLaser
@@ -107,10 +108,19 @@ class UrdfParams:
             self.base_link = config_dict['base_link']
         except:
             self.base_link = 'base_link'
+        transforms = config_dict['transforms']
         config_dict = config_dict['sensors']
 
         # length of parameter vector
         cur_index = 0
+
+        # clean up joints
+        for joint_name in urdf.joints.keys():
+            j = urdf.joints[joint_name]
+            if j.origin.rotation == None:
+                j.origin.rotation = [0.0, 0.0, 0.0]
+            if j.origin.position == None:
+                j.origin.position = [0.0, 0.0, 0.0]
 
         # build our transforms
         self.transforms = dict()
@@ -119,10 +129,15 @@ class UrdfParams:
             rot = j.origin.rotation
             rot = RPY_to_angle_axis(rot)
             p = j.origin.position + rot
-            self.transforms[joint_name] = SingleTransform(joint_name, p)
+            self.transforms[joint_name] = SingleTransform(p, joint_name)
             self.transforms[joint_name].start = cur_index
             self.transforms[joint_name].end = cur_index + self.transforms[joint_name].get_length()
             cur_index = self.transforms[joint_name].end
+        for name, transform in transforms.items():
+            self.transforms[name] = SingleTransform(transform, name)
+            self.transforms[name].start = cur_index
+            self.transforms[name].end = cur_index + self.transforms[name].get_length()
+            cur_index = self.transforms[name].end
 
         # build our chains
         self.chains = dict()
@@ -148,13 +163,15 @@ class UrdfParams:
                     this_config["axis"].append( sum( [i[0]*int(i[1]) for i in zip([1,2,3], axis)] ) )
                 elif urdf.joints[joint_name].joint_type != 'fixed':
                     print 'Unknown joint type:', urdf.joints[joint_name].joint_type
-
+            # put a checkerboard in it's hand
+            self.urdf.add_link(Link(chain_name+"_cb_link"))
+            self.urdf.add_joint(Joint(chain_name+"_cb",this_config['tip'],chain_name+"_cb_link","fixed",origin=Pose([0.0,0.0,0.0],[0.0,0.0,0.0])))
             self.chains[chain_name] = JointChain(this_config)
             self.chains[chain_name].start = cur_index
             self.chains[chain_name].end = cur_index + self.chains[chain_name].get_length()
             cur_index = self.chains[chain_name].end
 
-        self.tilting_lasers, cur_index = init_primitive_dict(cur_index, config_dict["tilting_lasers"], TiltingLaser)
+        #self.tilting_lasers, cur_index = init_primitive_dict(cur_index, config_dict["tilting_lasers"], TiltingLaser)
         self.rectified_cams, cur_index = init_primitive_dict(cur_index, config_dict["rectified_cams"], RectifiedCamera)
         self.checkerboards,  cur_index = init_primitive_dict(cur_index, config_dict["checkerboards"],   Checkerboard)
 
@@ -165,7 +182,7 @@ class UrdfParams:
         free_list = [0] * self.length
         update_primitive_free(free_list, self.transforms, free_dict["transforms"])
         update_primitive_free(free_list, self.chains, free_dict["chains"])
-        update_primitive_free(free_list, self.tilting_lasers, free_dict["tilting_lasers"])
+        #update_primitive_free(free_list, self.tilting_lasers, free_dict["tilting_lasers"])
         update_primitive_free(free_list, self.rectified_cams, free_dict["rectified_cams"])
         update_primitive_free(free_list, self.checkerboards, free_dict["checkerboards"])
         return free_list
@@ -175,7 +192,7 @@ class UrdfParams:
         config_dict = dict()
         config_dict["transforms"]     = primitive_params_to_config(param_vec, self.transforms)
         config_dict["chains"]         = primitive_params_to_config(param_vec, self.chains)
-        config_dict["tilting_lasers"] = primitive_params_to_config(param_vec, self.tilting_lasers)
+        #config_dict["tilting_lasers"] = primitive_params_to_config(param_vec, self.tilting_lasers)
         config_dict["rectified_cams"] = primitive_params_to_config(param_vec, self.rectified_cams)
         config_dict["checkerboards"]  = primitive_params_to_config(param_vec, self.checkerboards)
         return config_dict
@@ -183,11 +200,11 @@ class UrdfParams:
     def inflate(self, param_vec):
         assert(self.length == param_vec.size)
         inflate_primitive_dict(param_vec, self.transforms)
-        for key, elem in self.chain.items():
+        for key, elem in self.chains.items():
             elem.inflate(param_vec[elem.start:elem.end,0])
-            for joint_name in elem.joints:
+            for joint_name in elem._joints:
                 elem._transforms[joint_name] = self.transforms[joint_name]
-        inflate_primitive_dict(param_vec, self.tilting_lasers)
+        #inflate_primitive_dict(param_vec, self.tilting_lasers)
         inflate_primitive_dict(param_vec, self.rectified_cams)
         inflate_primitive_dict(param_vec, self.checkerboards)
 
@@ -195,17 +212,8 @@ class UrdfParams:
         param_vec = numpy.matrix( numpy.zeros((self.length,1), float))
         deflate_primitive_dict(param_vec, self.transforms)
         deflate_primitive_dict(param_vec, self.chains)
-        deflate_primitive_dict(param_vec, self.tilting_lasers)
+        #deflate_primitive_dict(param_vec, self.tilting_lasers)
         deflate_primitive_dict(param_vec, self.rectified_cams)
         deflate_primitive_dict(param_vec, self.checkerboards)
         return param_vec
-
-
-if __name__ == '__main__':
-    rospy.init_node('urdf_params')
-
-    params = UrdfParams()
-    urdf = URDF().load(rospy.get_param('~urdf_file'))
-    config = yaml.load(open(rospy.get_param('~config_file')))
-    params.configure(urdf, config)
 

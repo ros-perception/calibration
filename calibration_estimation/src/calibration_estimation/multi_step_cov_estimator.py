@@ -49,7 +49,7 @@ import os
 
 from numpy import matrix
 
-from calibration_estimation.robot_params import RobotParams
+from calibration_estimation.urdf_params import UrdfParams
 from calibration_estimation.sensors.multi_sensor import MultiSensor
 from calibration_estimation.opt_runner import opt_runner
 
@@ -60,22 +60,22 @@ def usage():
     sys.exit(0)
 
 
-def build_sensor_defs(sensors_dump):
+def build_sensor_defs(sensors):
     '''
     Given a list of sensor definition dictionaries, merge them into a single dictionary
     '''
-    # There could be multiple defitions of sensors in the sensors namespace. We
-    # need to merge all of these into a single consistent dictionary
     all_sensors_dict = dict()
 
-    for cur_sensors_file in sensors_dump:
-        for cur_sensor_type, cur_sensor_list in cur_sensors_file.items():
-            for cur_sensor in cur_sensor_list:
-                # We want sensor_ids to be unique. Thus, we should warn the user if there are duplicate block IDs being loaded
-                if cur_sensor['sensor_id'] in all_sensors_dict.keys():
-                    rospy.logwarn("Loading a duplicate [%s]. Overwriting previous" % cur_sensor['sensor_id'])
-                all_sensors_dict[cur_sensor['sensor_id']] = cur_sensor
-                all_sensors_dict[cur_sensor['sensor_id']]['sensor_type'] = cur_sensor_type
+    #for cur_sensors_file in sensors_dump:
+    for cur_sensor_type, cur_sensor_list in sensors.items():
+        if cur_sensor_type in ['checkerboards']:
+            continue
+        for cur_sensor_name, cur_sensor in cur_sensor_list.items():
+            # We want sensor_ids to be unique. Thus, we should warn the user if there are duplicate block IDs being loaded
+            if cur_sensor['sensor_id'] in all_sensors_dict.keys():  # TODO: can we get rid of this?
+                rospy.logwarn("Loading a duplicate [%s]. Overwriting previous" % cur_sensor['sensor_id'])
+            all_sensors_dict[cur_sensor['sensor_id']] = cur_sensor
+            all_sensors_dict[cur_sensor['sensor_id']]['sensor_type'] = cur_sensor_type
 
     print "The following error sensors have been loaded:\n"
     # We want to sort by the types of blocks
@@ -171,8 +171,8 @@ if __name__ == '__main__':
     if sensors_name not in config.keys():
         rospy.logerr("Could not find namespace [%s/%s]. Please populate this namespace with sensors.", (config_param_name, sensors_name))
         sys.exit(1)
-    sensors_dump = [yaml.load(x) for x in config[sensors_name].values()]
-    all_sensors_dict = build_sensor_defs(sensors_dump)
+    #sensors_dump = [yaml.load(x) for x in config[sensors_name].values()]
+    all_sensors_dict = build_sensor_defs(config[sensors_name])
     all_sensor_types = list(set([x['sensor_type'] for x in all_sensors_dict.values()]))
 
     # Load all the calibration steps.
@@ -182,9 +182,12 @@ if __name__ == '__main__':
     msg_count = 0
     bag = rosbag.Bag(bag_filename)
     multisensors = []
-    for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
-        if topic == "robot_measurement":
+    robot_description = ''
+    for topic, msg, t in bag.read_messages(topics=['robot_measurement','robot_description']):
+        if topic == 'robot_measurement':
             msg_count+=1
+        elif topic == 'robot_description':
+            robot_description = msg.data
     bag.close()
 
     if 'initial_poses' in config.keys():
@@ -198,18 +201,15 @@ if __name__ == '__main__':
         output_filenames += [output_dir + "/" + cur_step["output_filename"] + suffix for cur_step in step_list]
 
     valid_list = [check_file_permissions(curfile) for curfile in output_filenames];
-
     permissions_valid = all(valid_list)
-
     if not permissions_valid:
         print "Invalid file permissions. You need to be able to write to the following files:"
         print "\n".join([" - " + cur_file for cur_file,cur_valid in zip(output_filenames, valid_list) if not cur_valid])
         sys.exit(-1)
 
-    # Specify which system the first calibration step should use.
-    # Normally this would be set at the end of the calibration loop, but for the first step,
-    # this is grabbed from the param server
-    previous_system = yaml.load(config["initial_system"])
+    # Generate robot parameters
+    robot_params = UrdfParams(robot_description, config)
+    previous_system = robot_params.params_to_config(robot_params.deflate())
 
     # Load all the sensors from the bagfile and config file
     for cur_step in step_list:
@@ -219,6 +219,7 @@ if __name__ == '__main__':
 
         # Need to load only the sensors that we're interested in
         cur_sensors = load_requested_sensors(all_sensors_dict, cur_step['sensors'])
+        print cur_sensors
 
         # Load all the sensors from bag
         bag = rosbag.Bag(bag_filename)
@@ -264,7 +265,8 @@ if __name__ == '__main__':
                 print "Executing step with covariance calculations"
             else:
                 print "Executing step without covariance calculations"
-            output_dict, output_poses, J = opt_runner(previous_system, previous_pose_guesses, free_dict, multisensors, use_cov)
+            #output_dict, output_poses, J = opt_runner(previous_system, previous_pose_guesses, free_dict, multisensors, use_cov)
+            output_dict, output_poses, J = opt_runner(robot_params, previous_pose_guesses, free_dict, multisensors, use_cov)
 
         # Dump results to file
         out_f = open(output_dir + "/" + cur_step["output_filename"] + ".yaml", 'w')

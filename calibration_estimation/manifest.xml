@@ -16,7 +16,8 @@
 
   <depend package="visualization_msgs"/>
 
-  <depend package="urdf_python" />
+  <depend package="urdf_python" />  <!-- for parsing URDF -->
+  <depend package="tf" />           <!-- tf.transformations for angle-axis/RPY conversions -->
 
   <rosdep name="python-scipy" />
   <!--<rosdep name="ipython" />

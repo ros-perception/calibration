@@ -57,7 +57,7 @@ class ChainBundler:
     def build_blocks(self, M_robot):
         sensors = []
         for cur_config in self._valid_configs:
-            cur_chain_id = cur_config["chain_id"]
+            cur_chain_id = cur_config["sensor_id"]
             if cur_chain_id == M_robot.chain_id and \
                cur_chain_id in [ x.chain_id  for x in M_robot.M_chain ] :
                 rospy.logdebug("  Found block")
@@ -72,13 +72,13 @@ class ChainSensor:
     def __init__(self, config_dict, M_chain, target_id):
 
         self.sensor_type = "chain"
-        self.sensor_id   = config_dict["chain_id"]
+        self.sensor_id   = config_dict["sensor_id"]
 
         self._config_dict = config_dict
         self._M_chain = M_chain
         self._target_id = target_id
 
-        self._full_chain = FullChainRobotParams(self._config_dict)
+        self._full_chain = FullChainRobotParams(self.sensor_id, self.sensor_id+"_cb_link") #self._config_dict)
 
         self.terms_per_sample = 3
 
@@ -135,7 +135,6 @@ class ChainSensor:
             fTest = reshape(array(self._calc_fk_target_pts(x)[0:3,:].T), [-1])
             Jt[i] = (fTest - f0)/epsilon
         cov_angles = [x*x for x in self._full_chain.calc_block._chain._cov_dict['joint_angles']]
-        #import code; code.interact(local=locals())
         cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
         return cov
 
@@ -170,15 +169,16 @@ class ChainSensor:
     def build_sparsity_dict(self):
         sparsity = dict()
         sparsity['transforms'] = {}
-        for cur_transform_name in ( self._config_dict['before_chain'] + self._config_dict['after_chain'] ):
-            sparsity['transforms'][cur_transform_name] = [1, 1, 1, 1, 1, 1]
+        #for cur_transform_name in ( self._config_dict['before_chain'] + self._config_dict['after_chain'] ):
+        for cur_transform in ( self._full_chain.calc_block._before_chain_Ts + self._full_chain.calc_block._after_chain_Ts ):
+            sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
 
         sparsity['chains'] = {}
-        chain_id = self._config_dict['chain_id']
+        chain_id = self.sensor_id
         num_links = self._full_chain.calc_block._chain._M
         assert(num_links == len(self._M_chain.chain_state.position))
         sparsity['chains'][chain_id] = {}
-        sparsity['chains'][chain_id]['transforms'] = [ [1,1,1,1,1,1] ] * num_links
+        #sparsity['chains'][chain_id]['transforms'] = [ [1,1,1,1,1,1] ] * num_links
         sparsity['chains'][chain_id]['gearing'] = [1] * num_links
 
         sparsity['checkerboards'] = {}
