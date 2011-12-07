@@ -52,6 +52,7 @@ from numpy import matrix
 from calibration_estimation.urdf_params import UrdfParams
 from calibration_estimation.sensors.multi_sensor import MultiSensor
 from calibration_estimation.opt_runner import opt_runner
+#from calibration_estimation.single_transform import angle_axis_to_RPY
 
 def usage():
     rospy.logerr("Not enough arguments")
@@ -265,7 +266,6 @@ if __name__ == '__main__':
                 print "Executing step with covariance calculations"
             else:
                 print "Executing step without covariance calculations"
-            #output_dict, output_poses, J = opt_runner(previous_system, previous_pose_guesses, free_dict, multisensors, use_cov)
             output_dict, output_poses, J = opt_runner(robot_params, previous_pose_guesses, free_dict, multisensors, use_cov)
 
         # Dump results to file

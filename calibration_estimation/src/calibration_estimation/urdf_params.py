@@ -45,7 +45,7 @@ from calibration_estimation.joint_chain import JointChain
 from calibration_estimation.tilting_laser import TiltingLaser
 from calibration_estimation.camera import RectifiedCamera
 from calibration_estimation.checkerboard import Checkerboard
-from calibration_estimation.single_transform import SingleTransform, RPY_to_angle_axis
+from calibration_estimation.single_transform import SingleTransform, RPY_to_angle_axis, angle_axis_to_RPY
 
 # Construct a dictionary of all the primitives of the specified type
 def init_primitive_dict(start_index, config_dict, PrimitiveType):
@@ -125,6 +125,7 @@ class UrdfParams:
         # build our transforms
         self.transforms = dict()
         for joint_name in urdf.joints.keys():
+            joint_name = str(joint_name)
             j = urdf.joints[joint_name]
             rot = j.origin.rotation
             rot = RPY_to_angle_axis(rot)
@@ -171,9 +172,12 @@ class UrdfParams:
             self.chains[chain_name].end = cur_index + self.chains[chain_name].get_length()
             cur_index = self.chains[chain_name].end
 
-        #self.tilting_lasers, cur_index = init_primitive_dict(cur_index, config_dict["tilting_lasers"], TiltingLaser)
-        self.rectified_cams, cur_index = init_primitive_dict(cur_index, config_dict["rectified_cams"], RectifiedCamera)
-        self.checkerboards,  cur_index = init_primitive_dict(cur_index, config_dict["checkerboards"],   Checkerboard)
+        try:
+            self.tilting_lasers, cur_index = init_primitive_dict(cur_index, config_dict["tilting_lasers"], TiltingLaser)
+        except:
+            self.tilting_lasers = dict()
+        self.rectified_cams,     cur_index = init_primitive_dict(cur_index, config_dict["rectified_cams"], RectifiedCamera)
+        self.checkerboards,      cur_index = init_primitive_dict(cur_index, config_dict["checkerboards"],   Checkerboard)
 
         self.length = cur_index
 
@@ -182,7 +186,7 @@ class UrdfParams:
         free_list = [0] * self.length
         update_primitive_free(free_list, self.transforms, free_dict["transforms"])
         update_primitive_free(free_list, self.chains, free_dict["chains"])
-        #update_primitive_free(free_list, self.tilting_lasers, free_dict["tilting_lasers"])
+        update_primitive_free(free_list, self.tilting_lasers, free_dict["tilting_lasers"])
         update_primitive_free(free_list, self.rectified_cams, free_dict["rectified_cams"])
         update_primitive_free(free_list, self.checkerboards, free_dict["checkerboards"])
         return free_list
@@ -190,9 +194,12 @@ class UrdfParams:
     def params_to_config(self, param_vec):
         assert(self.length == param_vec.size)
         config_dict = dict()
-        config_dict["transforms"]     = primitive_params_to_config(param_vec, self.transforms)
+        config_dict["transforms"] = dict()
+        for key, elem in self.transforms.items():
+            config_dict["transforms"][key] = elem.params_to_config(param_vec[elem.start:elem.end,0])
+            config_dict["transforms"][key][3:6] = angle_axis_to_RPY(config_dict["transforms"][key][3:6])
         config_dict["chains"]         = primitive_params_to_config(param_vec, self.chains)
-        #config_dict["tilting_lasers"] = primitive_params_to_config(param_vec, self.tilting_lasers)
+        config_dict["tilting_lasers"] = primitive_params_to_config(param_vec, self.tilting_lasers)
         config_dict["rectified_cams"] = primitive_params_to_config(param_vec, self.rectified_cams)
         config_dict["checkerboards"]  = primitive_params_to_config(param_vec, self.checkerboards)
         return config_dict
@@ -204,7 +211,7 @@ class UrdfParams:
             elem.inflate(param_vec[elem.start:elem.end,0])
             for joint_name in elem._joints:
                 elem._transforms[joint_name] = self.transforms[joint_name]
-        #inflate_primitive_dict(param_vec, self.tilting_lasers)
+        inflate_primitive_dict(param_vec, self.tilting_lasers)
         inflate_primitive_dict(param_vec, self.rectified_cams)
         inflate_primitive_dict(param_vec, self.checkerboards)
 
@@ -212,7 +219,7 @@ class UrdfParams:
         param_vec = numpy.matrix( numpy.zeros((self.length,1), float))
         deflate_primitive_dict(param_vec, self.transforms)
         deflate_primitive_dict(param_vec, self.chains)
-        #deflate_primitive_dict(param_vec, self.tilting_lasers)
+        deflate_primitive_dict(param_vec, self.tilting_lasers)
         deflate_primitive_dict(param_vec, self.rectified_cams)
         deflate_primitive_dict(param_vec, self.checkerboards)
         return param_vec

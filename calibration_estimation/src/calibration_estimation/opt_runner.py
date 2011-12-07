@@ -305,10 +305,7 @@ def build_opt_vector(robot_params, free_dict, pose_guess_arr):
     assert(pose_guess_arr.shape[1] == 6)
     opt_pose_vec = reshape(pose_guess_arr, [-1])
 
-    opt_all = numpy.concatenate([opt_param_vec, opt_pose_vec])
-
-    return opt_all
-
+    return numpy.concatenate([opt_param_vec, opt_pose_vec])
 
 def compute_errors_breakdown(error_calc, multisensors, opt_pose_arr):
     errors_dict = {}
@@ -327,16 +324,11 @@ def compute_errors_breakdown(error_calc, multisensors, opt_pose_arr):
 def opt_runner(robot_params, pose_guess_arr, free_dict, multisensors, use_cov):
     """
     Runs a single optimization step for the calibration optimization.
-      robot_params_dict - Dictionary storing all of the system primitives' parameters (lasers, cameras, chains, transforms, etc)
+      robot_params - Instance of UrdfParams
       free_dict - Dictionary storing which parameters are free
       multisensor - list of list of measurements. Each multisensor corresponds to a single checkerboard pose
       pose_guesses - List of guesses as to where all the checkerboard are. This is used to initialze the optimization
     """
-
-    # Load the robot params
-    #robot_params = RobotParams()
-    #robot_params.configure(robot_params_dict)
-
     error_calc = ErrorCalc(robot_params, free_dict, multisensors, use_cov)
 
     # Construct the initial guess
