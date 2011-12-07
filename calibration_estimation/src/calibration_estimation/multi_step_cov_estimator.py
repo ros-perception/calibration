@@ -43,6 +43,7 @@ import rosbag
 import yaml
 import os.path
 import numpy
+import math
 
 import stat
 import os
@@ -52,7 +53,8 @@ from numpy import matrix
 from calibration_estimation.urdf_params import UrdfParams
 from calibration_estimation.sensors.multi_sensor import MultiSensor
 from calibration_estimation.opt_runner import opt_runner
-#from calibration_estimation.single_transform import angle_axis_to_RPY
+
+from calibration_estimation.single_transform import angle_axis_to_RPY, RPY_to_angle_axis
 
 def usage():
     rospy.logerr("Not enough arguments")
@@ -72,6 +74,7 @@ def build_sensor_defs(sensors):
         if cur_sensor_type in ['checkerboards']:
             continue
         for cur_sensor_name, cur_sensor in cur_sensor_list.items():
+            cur_sensor['sensor_id'] = cur_sensor_name  # legacy support...
             # We want sensor_ids to be unique. Thus, we should warn the user if there are duplicate block IDs being loaded
             if cur_sensor['sensor_id'] in all_sensors_dict.keys():  # TODO: can we get rid of this?
                 rospy.logwarn("Loading a duplicate [%s]. Overwriting previous" % cur_sensor['sensor_id'])
@@ -142,6 +145,38 @@ def load_requested_sensors(all_sensors_dict, requested_sensors):
             rospy.logerr("Could not find [%s] in block library. Skipping this block")
     return cur_sensors
 
+
+def diff(v1, v2, eps = 1e-10):
+    ''' Determine the difference in two vectors. '''
+    if sum( [ math.fabs(x-y) for x,y in zip(v1, v2) ] ) <= eps:
+        return 0
+    return 1
+
+#def update_urdf(initial_system, calibrated_system, xml_in):
+def update_urdf(urdf, calibrated_params):
+    ''' Given urdf and calibrated robot_params, updates the URDF. '''
+    
+    # update each transform
+    for joint_name in calibrated_params.transforms.keys():
+        try:
+            updated = calibrated_params.transforms[joint_name]._config.T.tolist()[0]
+            if diff(updated[0:3],  urdf.joints[joint_name].origin.position):
+                print 'Updating xyz for', joint_name, 'old:', urdf.joints[joint_name].origin.position, 'new:', updated[0:3]
+                urdf.joints[joint_name].origin.position = updated[0:3]
+            r1 = RPY_to_angle_axis(urdf.joints[joint_name].origin.rotation)
+            if diff(r1, updated[3:6]):
+                # TODO: if active joint and using reference shifts
+                rot = angle_axis_to_RPY(updated[3:6])
+                print 'Updating rpy for', joint_name, 'old:', urdf.joints[joint_name].origin.rotation, 'new:', rot
+                urdf.joints[joint_name].origin.rotation = rot                
+        except:
+            pass #print "Joint removed:", joint_name
+
+    # TODO: Transmissions
+
+    return urdf
+
+
 if __name__ == '__main__':
     rospy.init_node("multi_step_cov_estimator", anonymous=True)
 
@@ -210,7 +245,6 @@ if __name__ == '__main__':
 
     # Generate robot parameters
     robot_params = UrdfParams(robot_description, config)
-    previous_system = robot_params.params_to_config(robot_params.deflate())
 
     # Load all the sensors from the bagfile and config file
     for cur_step in step_list:
@@ -257,7 +291,7 @@ if __name__ == '__main__':
 
         if len(multisensors) == 0:
             rospy.logwarn("No error blocks were generated for this optimization step. Skipping this step.  This will result in a miscalibrated sensor")
-            output_dict = previous_system
+            output_dict = robot_params.params_to_config(robot_params.deflate())
             output_poses = previous_pose_guesses
         else:
             free_dict = yaml.load(cur_step["free_params"])
@@ -280,6 +314,12 @@ if __name__ == '__main__':
         cov_x = matrix(J).T * matrix(J)
         numpy.savetxt(output_dir + "/" + cur_step["output_filename"] + "_cov.txt", cov_x, fmt="% 9.3f")
 
-        previous_system = output_dict
         previous_pose_guesses = output_poses
+
+    # write out to URDF
+    outfile = open('robot_calibrated.xml', 'w')
+    urdf = update_urdf(robot_params.get_clean_urdf(), robot_params)
+    outfile.write( urdf.to_xml() )
+    outfile.close()
+
 

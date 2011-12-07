@@ -52,16 +52,13 @@ class SingleTransform:
         self.inflate(self._config)
 
     def calc_free(self, free_config):
-        assert( len(free_config) == len(param_names) )
         return [x == 1 for x in free_config]
 
     def params_to_config(self, param_vec):
-        assert(param_vec.shape == (6,1))
         return param_vec.T.tolist()[0]
 
     # Convert column vector of params into config
     def inflate(self, p):
-        assert(p.size == 6)
         self._config = p.copy()  # Once we can back compute p from T, we don't need _config
 
         # Init output matrix

@@ -18,7 +18,7 @@
 #    from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
 # FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
 # COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
@@ -37,33 +37,34 @@ import rospy
 param_names = ['spacing_x', 'spacing_y']
 
 class Checkerboard:
+    '''
+    Primitive for generating 3D points of a checkerboard.
+    '''
 
     # Dictionary with four elems
     #  num_x:   number of internal corners along x axis (Not configurable)
     #  num_y:   number of internal corners along y axis (Not configurable)
     #  width_x: spacing between corners along x direction
     #  width_y: spacing between corners along y direction
-    def __init__(self, config = {"corners_x": 2,
-                                 "corners_y": 2,
-                                 "spacing_x": .10,
-                                 "spacing_y": .10} ):
-        rospy.logdebug("Initializing Checkerboard")
-        self._corners_x = config["corners_x"]
-        self._corners_y = config["corners_y"]
+    def __init__(self, config = {'corners_x': 2,
+                                 'corners_y': 2,
+                                 'spacing_x': .10,
+                                 'spacing_y': .10} ):
+        rospy.logdebug('Initializing Checkerboard')
+        self._corners_x = config['corners_x']
+        self._corners_y = config['corners_y']
 
-        param_vec = reshape( matrix([ config["spacing_x"], config["spacing_y"] ], float), (-1,1))
-        assert(param_vec.size == 2)
+        param_vec = reshape( matrix([ config['spacing_x'], config['spacing_y'] ], float), (-1,1))
         self.inflate(param_vec)
 
     def calc_free(self, free_config):
         return [free_config[x] == 1 for x in param_names]
 
     def params_to_config(self, param_vec):
-        assert(param_vec.shape == (2,1))
-        return { "corners_x" : self._corners_x,
-                 "corners_y" : self._corners_y,
-                 "spacing_x" : float(param_vec[0,0]),
-                 "spacing_y" : float(param_vec[1,0]) }
+        return { 'corners_x' : self._corners_x,
+                 'corners_y' : self._corners_y,
+                 'spacing_x' : float(param_vec[0,0]),
+                 'spacing_y' : float(param_vec[1,0]) }
 
     # Convert column vector of params into config
     def inflate(self, param_vec):
@@ -77,7 +78,7 @@ class Checkerboard:
 
     # Returns # of params needed for inflation & deflation
     def get_length(self):
-        return 2
+        return len(param_names)
 
     # Generate the 3D points associated with all the corners of the checkerboard
     # returns - 4xN numpy matrix with all the points (in homogenous coords)

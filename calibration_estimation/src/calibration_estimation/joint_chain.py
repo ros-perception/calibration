@@ -34,29 +34,27 @@ import numpy
 from numpy import matrix, vsplit, sin, cos, reshape, pi, array
 import rospy
 
-# This represents a chain of actuated joints
-# parameters are gearing
 
 class JointChain:
+    '''
+    This represents a chain of actuated joints
+    parameters = [gearing*num_of_joints]
+    '''
     def __init__(self, config):
         self.root = config['root']
         self.tip = config['tip']
         self._joints = config['joints']
         self._active = config['active_joints']
-        # Determine number of links
         self._M = len(config['active_joints'])
+
         rospy.logdebug("Initializing joint chain with [%u] links", self._M)
 
         self._transforms = config['transforms']
         self._axis = numpy.matrix([ eval(str(x)) for x in config['axis']], float)
         self._cov_dict = config['cov']
         self._gearing = config['gearing']
-        assert( len(self._cov_dict['joint_angles']) == self._M)
 
     def calc_free(self, free_config):
-        assert( len(free_config['gearing']) == self._M )
-
-        # Convert int list into bool list
         return [x == 1 for x in free_config['gearing']]
 
     def params_to_config(self, param_vec):
@@ -64,6 +62,8 @@ class JointChain:
         config_dict['axis'] = self._axis.tolist()
         config_dict['gearing'] = (array(param_vec)[:,0]).tolist()
         config_dict['cov'] = self._cov_dict
+        config_dict['root'] = self.root
+        config_dict['tip'] = self.tip
         return config_dict
 
     # Convert column vector of params into config

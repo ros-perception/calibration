@@ -30,21 +30,18 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# A convenience object that wraps a joint_chain, along with transforms
-# before and after the chain.
-#
-# The transforms can be thought of as follows:
-#
-#       fixed links before -- chain -- fixed links after
-#      /
-#   root
-
 from sensor_msgs.msg import JointState
 from numpy import matrix
 import numpy
 
 class FullChainRobotParams:
+    '''
+    Wraps a full set of transforms, including a joint_chain
 
+      root
+          \    
+           fixed links before -- chain -- fixed links after
+    '''
     def __init__(self, chain, tip, root=None):
         self.chain = chain
         self.root = root

@@ -57,10 +57,10 @@ class TiltingLaserBundler:
     def build_blocks(self, M_robot):
         sensors = []
         for cur_config in self._valid_configs:
-            rospy.logdebug("On Config Block [%s]" % cur_config["laser_id"])
+            rospy.logdebug("On Config Block [%s]" % cur_config["sensor_id"])
             if cur_config["laser_id"]  in [ x.laser_id  for x in M_robot.M_laser ] :
                 rospy.logdebug("  Found block!")
-                cur_M_laser = M_robot.M_laser[ [ x.laser_id  for x in M_robot.M_laser ].index(cur_config["laser_id"]) ]
+                cur_M_laser = M_robot.M_laser[ [ x.laser_id  for x in M_robot.M_laser ].index(cur_config["sensor_id"]) ]
                 cur_sensor = TiltingLaserSensor(cur_config, cur_M_laser)
                 sensors.append(cur_sensor)
             else:
@@ -71,12 +71,12 @@ class TiltingLaserSensor:
     def __init__(self, config_dict, M_laser):
         self._config_dict = config_dict
         self.sensor_type = "laser"
-        self.sensor_id = config_dict["laser_id"]
+        self.sensor_id = config_dict["sensor_id"]
         self._M_laser = M_laser
         self.terms_per_sample = 3
 
     def update_config(self, robot_params):
-        self._tilting_laser = robot_params.tilting_lasers[ self._config_dict["laser_id"] ]
+        self._tilting_laser = robot_params.tilting_lasers[ self.sensor_id ]
 
     def compute_residual(self, target_pts):
         z_mat = self.get_measurement()

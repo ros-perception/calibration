@@ -45,7 +45,8 @@ from calibration_estimation.joint_chain import JointChain
 from calibration_estimation.tilting_laser import TiltingLaser
 from calibration_estimation.camera import RectifiedCamera
 from calibration_estimation.checkerboard import Checkerboard
-from calibration_estimation.single_transform import SingleTransform, RPY_to_angle_axis, angle_axis_to_RPY
+from calibration_estimation.single_transform import SingleTransform
+from calibration_estimation.single_transform import RPY_to_angle_axis, angle_axis_to_RPY
 
 # Construct a dictionary of all the primitives of the specified type
 def init_primitive_dict(start_index, config_dict, PrimitiveType):
@@ -102,6 +103,7 @@ class UrdfParams:
 
     def configure(self, urdf, config_dict):
         self.urdf = urdf
+        self.fakes = list() # list of fake joints which must be later removed.
 
         # set base_link to which all measurements are based
         try:
@@ -109,6 +111,7 @@ class UrdfParams:
         except:
             self.base_link = 'base_link'
         transforms = config_dict['transforms']
+        checkerboards = config_dict["checkerboards"]
         config_dict = config_dict['sensors']
 
         # length of parameter vector
@@ -167,6 +170,7 @@ class UrdfParams:
             # put a checkerboard in it's hand
             self.urdf.add_link(Link(chain_name+"_cb_link"))
             self.urdf.add_joint(Joint(chain_name+"_cb",this_config['tip'],chain_name+"_cb_link","fixed",origin=Pose([0.0,0.0,0.0],[0.0,0.0,0.0])))
+            self.fakes += [chain_name+"_cb_link", chain_name+"_cb"]
             self.chains[chain_name] = JointChain(this_config)
             self.chains[chain_name].start = cur_index
             self.chains[chain_name].end = cur_index + self.chains[chain_name].get_length()
@@ -177,7 +181,7 @@ class UrdfParams:
         except:
             self.tilting_lasers = dict()
         self.rectified_cams,     cur_index = init_primitive_dict(cur_index, config_dict["rectified_cams"], RectifiedCamera)
-        self.checkerboards,      cur_index = init_primitive_dict(cur_index, config_dict["checkerboards"],   Checkerboard)
+        self.checkerboards,      cur_index = init_primitive_dict(cur_index, checkerboards,   Checkerboard)
 
         self.length = cur_index
 
@@ -192,20 +196,20 @@ class UrdfParams:
         return free_list
 
     def params_to_config(self, param_vec):
-        assert(self.length == param_vec.size)
         config_dict = dict()
+        config_dict["base_link"] = self.base_link
         config_dict["transforms"] = dict()
         for key, elem in self.transforms.items():
             config_dict["transforms"][key] = elem.params_to_config(param_vec[elem.start:elem.end,0])
             config_dict["transforms"][key][3:6] = angle_axis_to_RPY(config_dict["transforms"][key][3:6])
-        config_dict["chains"]         = primitive_params_to_config(param_vec, self.chains)
-        config_dict["tilting_lasers"] = primitive_params_to_config(param_vec, self.tilting_lasers)
-        config_dict["rectified_cams"] = primitive_params_to_config(param_vec, self.rectified_cams)
+        config_dict["sensors"] = {}
+        config_dict["sensors"]["chains"]         = primitive_params_to_config(param_vec, self.chains)
+        config_dict["sensors"]["tilting_lasers"] = primitive_params_to_config(param_vec, self.tilting_lasers)
+        config_dict["sensors"]["rectified_cams"] = primitive_params_to_config(param_vec, self.rectified_cams)
         config_dict["checkerboards"]  = primitive_params_to_config(param_vec, self.checkerboards)
         return config_dict
 
     def inflate(self, param_vec):
-        assert(self.length == param_vec.size)
         inflate_primitive_dict(param_vec, self.transforms)
         for key, elem in self.chains.items():
             elem.inflate(param_vec[elem.start:elem.end,0])
@@ -223,4 +227,16 @@ class UrdfParams:
         deflate_primitive_dict(param_vec, self.rectified_cams)
         deflate_primitive_dict(param_vec, self.checkerboards)
         return param_vec
+
+    def get_clean_urdf(self):
+        ''' Remove checkerboard links/joints. '''
+        for joint in self.urdf.joints.keys():
+            if joint in self.fakes:
+                self.urdf.elements.remove(self.urdf.joints[joint])
+                del self.urdf.joints[joint]
+        for link in self.urdf.links.keys():
+            if link in self.fakes:
+                self.urdf.elements.remove(self.urdf.links[link])
+                del self.urdf.links[link]
+        return self.urdf
 

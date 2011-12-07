@@ -78,7 +78,7 @@ class ChainSensor:
         self._M_chain = M_chain
         self._target_id = target_id
 
-        self._full_chain = FullChainRobotParams(self.sensor_id, self.sensor_id+"_cb_link") #self._config_dict)
+        self._full_chain = FullChainRobotParams(self.sensor_id, self.sensor_id+"_cb_link")
 
         self.terms_per_sample = 3
 
@@ -169,7 +169,6 @@ class ChainSensor:
     def build_sparsity_dict(self):
         sparsity = dict()
         sparsity['transforms'] = {}
-        #for cur_transform_name in ( self._config_dict['before_chain'] + self._config_dict['after_chain'] ):
         for cur_transform in ( self._full_chain.calc_block._before_chain_Ts + self._full_chain.calc_block._after_chain_Ts ):
             sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
 
@@ -178,7 +177,6 @@ class ChainSensor:
         num_links = self._full_chain.calc_block._chain._M
         assert(num_links == len(self._M_chain.chain_state.position))
         sparsity['chains'][chain_id] = {}
-        #sparsity['chains'][chain_id]['transforms'] = [ [1,1,1,1,1,1] ] * num_links
         sparsity['chains'][chain_id]['gearing'] = [1] * num_links
 
         sparsity['checkerboards'] = {}

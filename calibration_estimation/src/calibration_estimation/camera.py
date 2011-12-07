@@ -44,7 +44,7 @@ class RectifiedCamera:
     Parameters are ordered as follows [baseline_shift, f_shift, cx_shift, cy_shift]
     '''
     def __init__(self, config):
-        rospy.logdebug("Initializng rectified camera")
+        rospy.logdebug('Initializng rectified camera')
         self._config = config
         self._cov_dict = config['cov']
 
@@ -52,10 +52,11 @@ class RectifiedCamera:
         return [free_config[x] == 1 for x in param_names]
 
     def params_to_config(self, param_vec):
-        assert(param_vec.shape == (self.get_length(),1))
         param_list = array(param_vec)[:,0].tolist()
         param_dict = dict(zip(param_names, param_list))
         param_dict['cov'] = self._cov_dict
+        param_dict['frame_id'] = self._config['frame_id']
+        param_dict['chain_id'] = self._config['chain_id']   # TODO: kill this
         return param_dict
 
     # Convert column vector of params into config, expects a 4x1 matrix
@@ -93,7 +94,7 @@ class RectifiedCamera:
         P[1,2] = P[1,2] + self._config['cy_shift']
 
         if (pts.shape[0] == 3):
-            rospy.logfatal("Got vector of points with only 3 rows. Was expecting at 4 rows (homogenous coordinates)")
+            rospy.logfatal('Got vector of points with only 3 rows. Was expecting at 4 rows (homogenous coordinates)')
 
         # Apply projection matrix
         pixel_pts_h = P * pts
