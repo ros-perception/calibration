@@ -9,7 +9,7 @@
   <url>http://ros.org/wiki/pr2_calibration_propagation</url>
 
   <depend package="tf"/>
-  <depend package="calibration_propagation"/>
+  <depend package="calibration_estimation"/>
 </package>
 
 

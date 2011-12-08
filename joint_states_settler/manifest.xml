@@ -23,4 +23,9 @@
   <!-- calibration -->
   <depend package="settlerlib"/>
   <depend package="calibration_msgs"/>
+
+  <export>
+    <cpp cflags="-I${prefix}/msg/cpp -I${prefix}/include" lflags="-L${prefix}/lib -ljoint_states_settler"/>
+  </export>
+
 </package>
