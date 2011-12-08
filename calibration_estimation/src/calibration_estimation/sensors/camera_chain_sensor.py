@@ -54,20 +54,6 @@ class CameraChainBundler:
     Tool used to generate a list of CameraChain sensors from a single calibration sample message
     """
     def __init__(self, valid_configs):
-        """
-        Inputs:
-        - valid_configs: A list of dictionaries, where each list elem stores the configuration of a potential
-                         camera chain that we might encounter.
-          Example (in yaml format):
-            - camera_id: forearm_right_rect
-              sensor_id: forearm_right_rect
-              chain:
-                before_chain: [r_shoulder_pan_joint]
-                chain_id:     right_arm_chain
-                after_chain:  [r_forearm_roll_adj, r_forearm_cam_frame_joint,
-                               r_forearm_cam_optical_frame_joint]
-                dh_link_num:  4
-        """
         self._valid_configs = valid_configs
 
     # Construct a CameraChainSensor for every camera chain sensor that exists in the given robot measurement
@@ -115,7 +101,6 @@ class CameraChainSensor:
         self._M_cam = M_cam
         self._M_chain = M_chain
 
-        #self._chain = FullChainRobotParams(config_dict["chain"])
         self._chain = FullChainRobotParams(config_dict["chain_id"], config_dict["frame_id"])
 
         self.terms_per_sample = 2

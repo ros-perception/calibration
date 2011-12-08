@@ -38,34 +38,75 @@ import sys
 import unittest
 import rospy
 import numpy
+import yaml
 from sensor_msgs.msg import JointState
-from calibration_estimation.full_chain import FullChainCalcBlock
+from calibration_estimation.full_chain import FullChainRobotParams
 from calibration_estimation.single_transform import SingleTransform
 from calibration_estimation.joint_chain import JointChain
+from calibration_estimation.urdf_params import UrdfParams
 
 from numpy import *
 import numpy
 
 def loadSystem1():
-    calc_block = FullChainCalcBlock()
-    before_chain_Ts = [SingleTransform([10, 0, 0, 0, 0, 0])]
-    chain = JointChain( {'transforms':[ [1, 0, 0, 0, 0, 0] ],
-                         'gearing':[1],
-                         'axis':[6],
-                         'cov':{'joint_angles':[1]}} )
-    link_num = -1
-    after_chain_Ts = [SingleTransform([ 0, 0, 20, 0, 0, 0])]
-
-    calc_block.update_config(before_chain_Ts, chain, link_num, after_chain_Ts)
-    return calc_block
-
+    urdf = '''
+<robot>
+  <link name="base_link"/>
+  <joint name="j0" type="fixed">
+    <origin xyz="10 0 0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="j0_link"/>
+  </joint>
+  <link name="j0_link"/>
+  <joint name="j1" type="revolute">
+    <axis xyz="0 0 1"/>
+    <origin xyz="1 0 0" rpy="0 0 0"/>
+    <parent link="j0_link"/>
+    <child link="j1_link"/>
+  </joint>
+  <link name="j1_link"/>
+  <joint name="j2" type="revolute">
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="j1_link"/>
+    <child link="j2_link"/>
+  </joint>
+  <link name="j2_link"/>
+  <joint name="j3" type="fixed">
+    <origin xyz="0 0 20" rpy="0 0 0"/>
+    <parent link="j2_link"/>
+    <child link="j3_link"/>
+  </joint>
+  <link name="j3_link"/>
+</robot>
+'''
+    config = yaml.load('''
+sensors:
+  chains:
+    chain1:
+      root: j0_link
+      tip: j2_link
+      cov:
+        joint_angles: [0.001, 0.001]
+      gearing: [1.0, 1.0]
+  rectified_cams: {}
+  tilting_lasers: {}
+transforms: {}
+checkerboards: {}
+''')
+        
+    return UrdfParams(urdf, config)
 
 class TestFullChainCalcBlock(unittest.TestCase):
+
     def test_fk_1(self):
         print ""
-        calc_block = loadSystem1()
-        chain_state = JointState(position=[0])
-        result = calc_block.fk(chain_state)
+        params = loadSystem1()
+        chain = FullChainRobotParams('chain1', 'j3_link')
+        chain.update_config(params)
+
+        chain_state = JointState(position=[0, 0])
+        result = chain.calc_block.fk(chain_state)
         expected = numpy.matrix( [[ 1, 0, 0,11],
                                   [ 0, 1, 0, 0],
                                   [ 0, 0, 1,20],
@@ -75,9 +116,12 @@ class TestFullChainCalcBlock(unittest.TestCase):
 
     def test_fk_2(self):
         print ""
-        calc_block = loadSystem1()
-        chain_state = JointState(position=[pi/2])
-        result = calc_block.fk(chain_state)
+        params = loadSystem1()
+        chain = FullChainRobotParams('chain1', 'j3_link')
+        chain.update_config(params)
+
+        chain_state = JointState(position=[pi/2, 0])
+        result = chain.calc_block.fk(chain_state)
         expected = numpy.matrix( [[ 0,-1, 0,10],
                                   [ 1, 0, 0, 1],
                                   [ 0, 0, 1,20],
@@ -85,6 +129,22 @@ class TestFullChainCalcBlock(unittest.TestCase):
         print result
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
+    def test_fk_partial(self):
+        print ""
+        params = loadSystem1()
+        chain = FullChainRobotParams('chain1', 'j1_link')
+        chain.update_config(params)
+
+        chain_state = JointState(position=[0, 0])
+        result = chain.calc_block.fk(chain_state)
+        expected = numpy.matrix( [[ 1, 0, 0,11],
+                                  [ 0, 1, 0, 0],
+                                  [ 0, 0, 1, 0],
+                                  [ 0, 0, 0, 1]], float )
+        print result
+        self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
+
+
 if __name__ == '__main__':
     import rostest
-    rostest.unitrun('calibration_estimation', 'test_FullChainCalcBlock',   TestFullChainCalcBlock,   coverage_packages=['calibration_estimation.full_chain'])
+    rostest.unitrun('calibration_estimation', 'test_FullChainCalcBlock',   TestFullChainCalcBlock,   coverage_packages=['calibration_estimation.full_chain', 'calibration_estimation.urdf_params'])

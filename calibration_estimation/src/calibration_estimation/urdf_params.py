@@ -120,6 +120,8 @@ class UrdfParams:
         # clean up joints
         for joint_name in urdf.joints.keys():
             j = urdf.joints[joint_name]
+            if j.origin == None:
+                j.origin = Pose([0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
             if j.origin.rotation == None:
                 j.origin.rotation = [0.0, 0.0, 0.0]
             if j.origin.position == None:
@@ -157,7 +159,7 @@ class UrdfParams:
             this_config['cov'] = config_dict['chains'][chain_name]['cov']
             for joint_name in this_config["joints"]:
                 this_config['transforms'][joint_name] = self.transforms[joint_name]
-                if urdf.joints[joint_name].joint_type == 'revolute':
+                if urdf.joints[joint_name].joint_type in ['revolute','continuous'] :
                     this_config["active_joints"].append(joint_name)
                     axis = filter( lambda a: a!= " ", list(urdf.joints[joint_name].axis))
                     this_config["axis"].append( sum( [i[0]*int(i[1]) for i in zip([4,5,6], axis)] ) )
@@ -176,10 +178,10 @@ class UrdfParams:
             self.chains[chain_name].end = cur_index + self.chains[chain_name].get_length()
             cur_index = self.chains[chain_name].end
 
-        try:
+        # build our lasers:
+        self.tilting_lasers = dict()
+        if 'tilting_lasers' in config_dict.keys():
             self.tilting_lasers, cur_index = init_primitive_dict(cur_index, config_dict["tilting_lasers"], TiltingLaser)
-        except:
-            self.tilting_lasers = dict()
         self.rectified_cams,     cur_index = init_primitive_dict(cur_index, config_dict["rectified_cams"], RectifiedCamera)
         self.checkerboards,      cur_index = init_primitive_dict(cur_index, checkerboards,   Checkerboard)
 

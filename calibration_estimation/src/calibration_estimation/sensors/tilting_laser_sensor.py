@@ -48,20 +48,17 @@ import roslib; roslib.load_manifest('calibration_estimation')
 import rospy
 import numpy
 
-# Takes a measurment, plus a set of possible camera/laser pairs, and creates the necessary error blocks
 class TiltingLaserBundler:
     def __init__(self, valid_configs):
         self._valid_configs = valid_configs
 
-    # Construct a CameraLaserErrorBlock for each camera/laser pair that matches one of the configs
+    # Construct a tilitng laser for each laser pair that matches one of the configs
     def build_blocks(self, M_robot):
         sensors = []
         for cur_config in self._valid_configs:
-            rospy.logdebug("On Config Block [%s]" % cur_config["sensor_id"])
-            if cur_config["laser_id"]  in [ x.laser_id  for x in M_robot.M_laser ] :
-                rospy.logdebug("  Found block!")
-                cur_M_laser = M_robot.M_laser[ [ x.laser_id  for x in M_robot.M_laser ].index(cur_config["sensor_id"]) ]
-                cur_sensor = TiltingLaserSensor(cur_config, cur_M_laser)
+            if cur_config["sensor_id"] in [ x.laser_id  for x in M_robot.M_laser ] :
+                M_laser = [x for x in M_robot.M_laser if cur_config["sensor_id"] == x.laser_id][0]
+                cur_sensor = TiltingLaserSensor(cur_config, M_laser)
                 sensors.append(cur_sensor)
             else:
                 rospy.logdebug("  Didn't find block")
@@ -69,14 +66,16 @@ class TiltingLaserBundler:
 
 class TiltingLaserSensor:
     def __init__(self, config_dict, M_laser):
-        self._config_dict = config_dict
         self.sensor_type = "laser"
         self.sensor_id = config_dict["sensor_id"]
+
+        self._config_dict = config_dict
         self._M_laser = M_laser
         self.terms_per_sample = 3
 
     def update_config(self, robot_params):
         self._tilting_laser = robot_params.tilting_lasers[ self.sensor_id ]
+        self._tilting_laser.update_config(robot_params)
 
     def compute_residual(self, target_pts):
         z_mat = self.get_measurement()

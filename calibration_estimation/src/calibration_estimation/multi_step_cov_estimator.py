@@ -254,7 +254,6 @@ if __name__ == '__main__':
 
         # Need to load only the sensors that we're interested in
         cur_sensors = load_requested_sensors(all_sensors_dict, cur_step['sensors'])
-        print cur_sensors
 
         # Load all the sensors from bag
         bag = rosbag.Bag(bag_filename)

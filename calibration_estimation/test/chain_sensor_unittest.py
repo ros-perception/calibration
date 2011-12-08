@@ -59,6 +59,12 @@ from numpy import *
 def loadConfigList():
 
     config_yaml = '''
+chainA:
+  root: 
+  tip:
+chainB:
+  root:
+  tip:
   - chain_id: chainA
     before_chain: [transformA]
     link_num:  1
@@ -103,7 +109,7 @@ class TestChainBundler(unittest.TestCase):
 
         self.assertEqual( len(blocks), 0)
 
-from calibration_estimation.robot_params import RobotParams
+from calibration_estimation.urdf_params import UrdfParams
 
 class TestChainSensor(unittest.TestCase):
     def load(self):

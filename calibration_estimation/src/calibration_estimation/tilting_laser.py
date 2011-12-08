@@ -35,79 +35,64 @@ from numpy import matrix, vsplit, sin, cos, reshape
 import rospy
 from calibration_estimation.single_transform import SingleTransform
 
-# Primitive used to model PR2's tilting laser platform. Consists of 2 fixed transforms.
-# One before the joint, and one after. The joint axis is the x-axis after the first transform
+# Primitive used to model PR2's tilting laser platform.
+
+param_names = ['gearing']
 
 class TiltingLaser:
 
-    # Dictionary with two elems (Total of 13 elems)
-    #  before_joint: [px py pz rx ry rx]
-    #  after_joint:  [px py pz rx ry rx]
-    def __init__(self, config = {"before_joint": [  0, 0, 0, 0, 0, 0],
-                                 "after_joint" : [  0, 0, 0, 0, 0, 0],
-                                 'gearing':1 } ):
+    def __init__(self, config ):
         rospy.logdebug("Initializing tilting laser")
-
-        self._before_joint = SingleTransform()
-        self._after_joint  = SingleTransform()
-
-        if 'cov' in config.keys():
-            self._cov_dict = config['cov']
-        else:
-            self._cov_dict = {}
+        self._config = config
+        self._cov_dict = config['cov']
 
         param_vec = self.dict_to_params(config)
         self.inflate(param_vec)
 
+    def update_config(self, robot_params):
+        parent = robot_params.urdf.joints[self._config['joint']].parent
+        child = robot_params.urdf.joints[self._config['joint']].child
+        before_chain = robot_params.urdf.get_chain(robot_params.base_link, parent, links=False)
+        after_chain = robot_params.urdf.get_chain(child, self._config['frame_id'], links=False)
+        self._before_chain_Ts = [robot_params.transforms[transform_name] for transform_name in before_chain]
+        self._after_chain_Ts  = [robot_params.transforms[transform_name] for transform_name in after_chain]
+        
     def dict_to_params(self, config):
-        param_vec = reshape(matrix([ config["before_joint"], config["after_joint"] ], float), (-1,1))
-        param_vec = numpy.concatenate([param_vec, matrix([config["gearing"]])])
-        assert(param_vec.size == self.get_length())
+        param_vec = matrix(numpy.zeros((1,1), float))
+        param_vec[0,0] = config['gearing']
         return param_vec
 
     def params_to_config(self, param_vec):
-        assert(param_vec.shape == (13,1))
-        return {"before_joint" : self._before_joint.params_to_config(param_vec[0:6, 0]),
-                "after_joint"  : self._before_joint.params_to_config(param_vec[6:12,0]),
-                "gearing"      : float(param_vec[12,0]),
-                "cov"          : self._cov_dict}
+        return {'joint'     : self._config['joint'],
+                'frame_id'  : self._config['frame_id'],
+                "gearing"   : float(param_vec[0,0]),
+                "cov"       : self._cov_dict }
 
     def calc_free(self, free_config):
-        #import code; code.interact(local=locals())
-        assert( 'before_joint' in free_config )
-        assert( 'after_joint'  in free_config )
-        assert( 'gearing' in free_config )
-
-        # Flatten the config
-        flat_config = free_config['before_joint'] + free_config['after_joint'] + [free_config['gearing']]
-        assert( len(flat_config) == self.get_length())
-
-        # Convert int list into bool list
-        flat_free = [x == 1 for x in flat_config]
-
-        return flat_free
+        return [free_config['gearing'] == 1]
 
     # Convert column vector of params into config
     def inflate(self, param_vec):
-        self._before_joint.inflate(param_vec[0:6,:])
-        self._after_joint.inflate(param_vec[6:12,:])
-        self._gearing = param_vec[12,0]
+        self._gearing = param_vec[0,0]
 
     # Return column vector of config
     def deflate(self):
-        param_vec = matrix(numpy.zeros((13,1), float))
-        param_vec[0:6,0] = self._before_joint.deflate()
-        param_vec[6:12,0] = self._after_joint.deflate()
-        param_vec[12,0] = self._gearing
+        param_vec = matrix(numpy.zeros((1,1), float))
+        param_vec[0,0] = self._gearing
         return param_vec
 
     # Returns # of params needed for inflation & deflation
     def get_length(self):
-        return 13
+        return len(param_names)
 
     def compute_pose(self, joint_pos):
-        joint_T = SingleTransform([0, 0, 0, 0, joint_pos[0]*self._gearing, 0])
-        return self._before_joint.transform * joint_T.transform * self._after_joint.transform
+        pose = matrix(numpy.eye(4))
+        for before_chain_T in self._before_chain_Ts:
+            pose = pose * before_chain_T.transform
+        pose = pose * SingleTransform([0, 0, 0, 0, joint_pos[0]*self._gearing, 0]).transform # TODO: remove assumption of Y axis
+        for after_chain_T in self._after_chain_Ts:
+            pose = pose * after_chain_T.transform
+        return pose
 
     # Given a single set of joint positions, project into 3D
     # joint_pos - a single list that looks like [tilting_joint, pointing_angle, range]
@@ -130,3 +115,4 @@ class TiltingLaser:
     def project_to_3D(self, joint_pos):
         result = numpy.concatenate( [self.project_point_to_3D(x) for x in joint_pos], 1 )
         return result
+

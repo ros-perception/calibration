@@ -57,11 +57,9 @@ class ChainBundler:
     def build_blocks(self, M_robot):
         sensors = []
         for cur_config in self._valid_configs:
-            cur_chain_id = cur_config["sensor_id"]
-            if cur_chain_id == M_robot.chain_id and \
-               cur_chain_id in [ x.chain_id  for x in M_robot.M_chain ] :
-                rospy.logdebug("  Found block")
-                M_chain = [x for x in M_robot.M_chain if cur_chain_id == x.chain_id][0]
+            if cur_config["sensor_id"] == M_robot.chain_id and \
+                cur_config["sensor_id"] in [ x.chain_id  for x in M_robot.M_chain ]:
+                M_chain = [x for x in M_robot.M_chain if cur_config["sensor_id"] == x.chain_id][0]
                 cur_sensor = ChainSensor(cur_config, M_chain, M_robot.target_id)
                 sensors.append(cur_sensor)
             else:

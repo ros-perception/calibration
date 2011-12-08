@@ -45,6 +45,8 @@ from numpy import *
 
 def DefaultParams():
     return {'baseline_shift':0,
+            'frame_id': 'default_frame',
+            'chain_id': 'default_chain',
             'f_shift':0,
             'cx_shift':0,
             'cy_shift':0,

@@ -42,7 +42,7 @@ import yaml
 from calibration_estimation.sensors.tilting_laser_sensor import TiltingLaserBundler, TiltingLaserSensor
 from calibration_msgs.msg import *
 from sensor_msgs.msg import JointState, CameraInfo
-from calibration_estimation.robot_params import RobotParams
+from calibration_estimation.urdf_params import UrdfParams
 
 from calibration_estimation.tilting_laser import TiltingLaser
 

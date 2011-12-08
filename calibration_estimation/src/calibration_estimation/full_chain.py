@@ -59,8 +59,23 @@ class FullChainRobotParams:
         else:
             chain = robot_params.chains[self.chain]
             before_chain = robot_params.urdf.get_chain(self.root, chain.root, links=False)
-            after_chain = robot_params.urdf.get_chain(chain.tip, self.tip, links=False) # TODO: partial link
-            link_num = -1
+            full_chain = robot_params.urdf.get_chain(chain.root,chain.tip)
+            if self.tip in full_chain:
+                # using only part of the chain, have to calculate link_num
+                tip_chain = robot_params.urdf.get_chain(chain.root,self.tip)
+                new_root = full_chain[0]
+                i = 1
+                link_num = -1
+                while i < len(full_chain):
+                    if full_chain[i] in tip_chain:
+                        if full_chain[i] in chain._active:
+                            link_num += 1
+                            new_root = full_chain[i+1]
+                    i += 1
+                after_chain = robot_params.urdf.get_chain(new_root, self.tip, links=False)
+            else:
+                after_chain = robot_params.urdf.get_chain(chain.tip, self.tip, links=False)
+                link_num = -1
         before_chain_Ts = [robot_params.transforms[transform_name] for transform_name in before_chain]
         after_chain_Ts  = [robot_params.transforms[transform_name] for transform_name in after_chain]
         self.calc_block.update_config(before_chain_Ts, chain, link_num, after_chain_Ts)

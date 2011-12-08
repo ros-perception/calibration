@@ -34,7 +34,6 @@ import numpy
 from numpy import matrix, vsplit, sin, cos, reshape, pi, array
 import rospy
 
-
 class JointChain:
     '''
     This represents a chain of actuated joints
@@ -97,6 +96,8 @@ class JointChain:
 
         m = 0
         for joint_name in self._joints:
+            if m > link_num: 
+                break
             transform = self._transforms[joint_name]
             if joint_name in self._active:
                 k = int(self._axis[0,m])-1
