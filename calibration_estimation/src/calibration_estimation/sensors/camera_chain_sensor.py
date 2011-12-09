@@ -299,9 +299,9 @@ class CameraChainSensor:
         sparsity = dict()
         sparsity['transforms'] = {}
         #for cur_transform_name in ( self._config_dict['chain']['before_chain'] + self._config_dict['chain']['after_chain'] ):
-        for cur_transform in ( self._full_chain.calc_block._before_chain_Ts + \
-                               self._full_chain.calc_block._chain._transforms.values() + \
-                               self._full_chain.calc_block._after_chain_Ts ):
+        for cur_transform in ( self._chain.calc_block._before_chain_Ts + \
+                               self._chain.calc_block._chain._transforms.values() + \
+                               self._chain.calc_block._after_chain_Ts ):
             sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
 
         sparsity['chains'] = {}

@@ -159,9 +159,12 @@ class TiltingLaserSensor:
         sparsity = dict()
 
         sparsity['tilting_lasers'] = {}
-        sparsity['tilting_lasers'][self.sensor_id] = {'before_joint':[1,1,1,1,1,1],
-                                                      'after_joint':[1,1,1,1,1,1],
-                                                      'gearing':1}
+        sparsity['tilting_lasers'][self.sensor_id] = {'gearing':1}
+        sparsity['transforms'] = {}
+        for cur_transform in ( self._tilting_laser._before_chain_Ts + \
+                               self._tilting_laser._after_chain_Ts ): 
+            sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
+	sparsity['transforms'][self._tilting_laser._config['joint']] = [1, 1, 1, 1, 1, 1]
 
         return sparsity
 
