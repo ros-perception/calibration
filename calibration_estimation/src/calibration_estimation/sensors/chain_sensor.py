@@ -165,23 +165,8 @@ class ChainSensor:
 
     # Build a dictionary that defines which parameters will in fact affect this measurement
     def build_sparsity_dict(self):
-        sparsity = dict()
-        sparsity['transforms'] = {}
-        for cur_transform in ( self._full_chain.calc_block._before_chain_Ts + \
-                               self._full_chain.calc_block._chain._transforms.values() + \
-                               self._full_chain.calc_block._after_chain_Ts ):
-            sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
-
-        sparsity['chains'] = {}
-        chain_id = self.sensor_id
-        num_links = self._full_chain.calc_block._chain._M
-        assert(num_links == len(self._M_chain.chain_state.position))
-        sparsity['chains'][chain_id] = {}
-        sparsity['chains'][chain_id]['gearing'] = [1] * num_links
-
+        sparsity = self._full_chain.build_sparsity_dict()
         sparsity['checkerboards'] = {}
-        sparsity['checkerboards'][self._target_id] = { 'spacing_x': 1,
-                                                       'spacing_y': 1 }
-
+        sparsity['checkerboards'][self._target_id] = { 'spacing_x': 1, 'spacing_y': 1 }
         return sparsity
 

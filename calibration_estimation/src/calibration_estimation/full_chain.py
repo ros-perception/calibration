@@ -42,8 +42,8 @@ class FullChainRobotParams:
           \    
            fixed links before -- chain -- fixed links after
     '''
-    def __init__(self, chain, tip, root=None):
-        self.chain = chain
+    def __init__(self, chain_id, tip, root=None):
+        self.chain_id = chain_id
         self.root = root
         self.tip = tip
         self.calc_block = FullChainCalcBlock()
@@ -51,15 +51,15 @@ class FullChainRobotParams:
     def update_config(self, robot_params):
         if self.root == None: 
             self.root = robot_params.base_link
-        if self.chain == None:
+        if self.chain_id == None:
             chain = None
             before_chain = robot_params.urdf.get_chain(self.root, self.tip, links=False)
             after_chain = []
             link_num = None
         else:
-            chain = robot_params.chains[self.chain]
+            chain = robot_params.chains[self.chain_id]
             before_chain = robot_params.urdf.get_chain(self.root, chain.root, links=False)
-            full_chain = robot_params.urdf.get_chain(chain.root,chain.tip)
+            full_chain = robot_params.urdf.get_chain(chain.root, chain.tip)
             if self.tip in full_chain:
                 # using only part of the chain, have to calculate link_num
                 tip_chain = robot_params.urdf.get_chain(chain.root,self.tip)
@@ -79,6 +79,22 @@ class FullChainRobotParams:
         before_chain_Ts = [robot_params.transforms[transform_name] for transform_name in before_chain]
         after_chain_Ts  = [robot_params.transforms[transform_name] for transform_name in after_chain]
         self.calc_block.update_config(before_chain_Ts, chain, link_num, after_chain_Ts)
+
+    def build_sparsity_dict(self):
+        """
+        Build a dictionary that defines which parameters will in fact affect a measurement for a sensor using this chain.
+        """
+        sparsity = dict()
+        sparsity['transforms'] = {}
+        sparsity['chains'] = {}
+        for cur_transform in ( self.calc_block._before_chain_Ts + \
+                               self.calc_block._chain._transforms.values() + \
+                               self.calc_block._after_chain_Ts ):
+            sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
+        if self.chain_id is not None:
+            sparsity['chains'][self.chain_id] = {}
+            sparsity['chains'][self.chain_id]['gearing'] = [1] * self.calc_block._link_num
+        return sparsity
 
 class FullChainCalcBlock:
     def update_config(self, before_chain_Ts, chain, link_num, after_chain_Ts):
