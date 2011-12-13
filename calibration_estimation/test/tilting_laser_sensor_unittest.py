@@ -53,6 +53,7 @@ def loadConfigList():
 
     config_yaml = '''
 - laser_id:     laser1
+  sensor_id:    laser1
 '''
     config_dict = yaml.load(config_yaml)
     return config_dict
@@ -64,7 +65,7 @@ class TestTiltingLaserBundler(unittest.TestCase):
         bundler = TiltingLaserBundler(config_list)
 
         M_robot = RobotMeasurement()
-        M_robot.M_laser.append( LaserMeasurement(laser_id="laser1"))
+        M_robot.M_laser.append( LaserMeasurement(laser_id="laser1"))\
 
         blocks = bundler.build_blocks(M_robot)
 
@@ -72,29 +73,49 @@ class TestTiltingLaserBundler(unittest.TestCase):
         self.assertEqual( blocks[0]._M_laser.laser_id, "laser1")
 
 def loadSystem():
-
+    urdf = '''
+<robot>
+  <link name="base_link"/>
+  <joint name="j0" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="j0_link"/>
+  </joint>
+  <link name="j0_link"/>
+  <joint name="j1" type="revolute">
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="j0_link"/>
+    <child link="j1_link"/>
+  </joint>
+  <link name="j1_link"/>
+  <joint name="j2" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="j1_link"/>
+    <child link="j2_link"/>
+  </joint>
+  <link name="j2_link"/>
+</robot>
+'''
     config = yaml.load('''
-        laser_id: laserA
-        ''')
-
-    robot_params = RobotParams()
-    robot_params.configure( yaml.load('''
-        chains: {}
-        tilting_lasers:
-            laserA:
-                before_joint: [0, 0, 0, 0, 0, 0]
-                after_joint:  [0, 0, 0, 0, 0, 0]
-                gearing: 1
-                cov:
-                  bearing: 1
-                  range:   1
-                  tilt:    1
-        rectified_cams: {}
-        transforms: {}
-        checkerboards: {}
-        ''' ) )
-
-    return config, robot_params
+sensors:
+  chains: {}
+  rectified_cams: {}
+  tilting_lasers:
+    laserA:
+      sensor_id: laserA
+      joint: j1
+      frame_id: j2_link
+      gearing: 1
+      cov:
+        bearing: 1
+        range: 1
+        tilt: 1
+transforms: {}
+checkerboards: {}
+''')
+    
+    return config["sensors"], UrdfParams(urdf, config)
 
 
 class TestTiltingLaser(unittest.TestCase):
@@ -106,7 +127,7 @@ class TestTiltingLaser(unittest.TestCase):
         joint_points = [ JointState(position=[0,0,1]),
                          JointState(position=[pi/2,0,2]) ]
 
-        sensor = TiltingLaserSensor(config, LaserMeasurement(laser_id="laserA",
+        sensor = TiltingLaserSensor(config["tilting_lasers"]["laserA"], LaserMeasurement(laser_id="laserA",
                                                              joint_points=joint_points))
 
         sensor.update_config(robot_params)
@@ -130,7 +151,7 @@ class TestTiltingLaser(unittest.TestCase):
         joint_points = [ JointState(position=[0,0,1]),
                          JointState(position=[pi/2,0,2]) ]
 
-        sensor = TiltingLaserSensor(config, LaserMeasurement(laser_id="laserA",
+        sensor = TiltingLaserSensor(config["tilting_lasers"]["laserA"], LaserMeasurement(laser_id="laserA",
                                                              joint_points=joint_points))
 
         sensor.update_config(robot_params)
@@ -153,28 +174,30 @@ class TestTiltingLaser(unittest.TestCase):
                          JointState(position=[0,pi/2,1]),
                          JointState(position=[pi/2,0,1]) ]
 
-        block = TiltingLaserSensor(config, LaserMeasurement(laser_id="laserA",
+        sensor = TiltingLaserSensor(config["tilting_lasers"]["laserA"], LaserMeasurement(laser_id="laserA",
                                                             joint_points=joint_points))
 
-        block.update_config(robot_params)
+        sensor.update_config(robot_params)
 
         target_pts = matrix( [ [ 0,  0,  0 ],
                                [ 0,  1,  0 ],
                                [ 0,  0, -1 ],
                                [ 1,  1,  1 ] ] )
 
-        h = block.compute_expected(target_pts)
-        z = block.get_measurement()
-        r = block.compute_residual(target_pts)
+        h = sensor.compute_expected(target_pts)
+        z = sensor.get_measurement()
+        r = sensor.compute_residual(target_pts)
 
         self.assertAlmostEqual(numpy.linalg.norm(h-target_pts), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(z-target_pts), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r), 0.0, 6)
 
         # Test Sparsity
-        sparsity = block.build_sparsity_dict()
-        self.assertEqual(sparsity['tilting_lasers']['laserA']['before_joint'], [1,1,1,1,1,1])
-        self.assertEqual(sparsity['tilting_lasers']['laserA']['after_joint'],  [1,1,1,1,1,1])
+        sparsity = sensor.build_sparsity_dict()
+        self.assertEqual(sparsity['transforms']['j0'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['transforms']['j1'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['transforms']['j2'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['tilting_lasers']['laserA']['gearing'], 1)
 
 
 if __name__ == '__main__':

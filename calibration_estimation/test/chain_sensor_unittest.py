@@ -53,36 +53,80 @@ from calibration_estimation.camera import RectifiedCamera
 from calibration_estimation.tilting_laser import TiltingLaser
 from calibration_estimation.full_chain import FullChainCalcBlock
 from calibration_estimation.checkerboard import Checkerboard
+from calibration_estimation.urdf_params import UrdfParams
 
 from numpy import *
 
-def loadConfigList():
-
-    config_yaml = '''
-chainA:
-  root: 
-  tip:
-chainB:
-  root:
-  tip:
-  - chain_id: chainA
-    before_chain: [transformA]
-    link_num:  1
-    after_chain:  [transformB]
-  - chain_id: chainB
-    before_chain: [transformC]
-    after_chain:  [transformD]
-    link_num:  6
+def loadSystem():
+    urdf = '''
+<robot>
+  <link name="base_link"/>
+  <joint name="j0" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="j0_link"/>
+  </joint>
+  <link name="j0_link"/>
+  <joint name="j1" type="revolute">
+    <axis xyz="0 0 1"/>
+    <origin xyz="1 0 0" rpy="0 0 0"/>
+    <parent link="j0_link"/>
+    <child link="j1_link"/>
+  </joint>
+  <link name="j1_link"/>
+  <joint name="j2" type="revolute">
+    <axis xyz="0 0 1"/>
+    <origin xyz="1 0 0" rpy="0 0 0"/>
+    <parent link="j1_link"/>
+    <child link="j2_link"/>
+  </joint>
+  <link name="j2_link"/>
+  <joint name="j3" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="j2_link"/>
+    <child link="j3_link"/>
+  </joint>
+  <link name="j3_link"/>
+</robot>
 '''
-    config_dict = yaml.load(config_yaml)
+    config = yaml.load('''
+sensors:
+  chains:
+    chainA:
+      sensor_id: chainA
+      root: j0_link
+      tip: j1_link
+      cov:
+        joint_angles: [1]
+      gearing: [1.0]
+    chainB:
+      sensor_id: chainB
+      root: j0_link
+      tip: j2_link
+      cov:
+        joint_angles: [1, 1]
+      gearing: [1.0, 1.0]
+  rectified_cams: {}
+  tilting_lasers: {}
+transforms: 
+  chainA_cb: [0, 0, 0, 0, 0, 0]
+  chainB_cb: [0, 0, 0, 0, 0, 0]
+checkerboards:
+  boardA:
+    corners_x: 2
+    corners_y: 2
+    spacing_x: 1
+    spacing_y: 1
+''')
+        
+    return config["sensors"]["chains"], UrdfParams(urdf, config)
 
-    return config_dict
 
 class TestChainBundler(unittest.TestCase):
     def test_basic_match(self):
-        config_list = loadConfigList()
+        config, robot_params = loadSystem()
 
-        bundler = ChainBundler(config_list)
+        bundler = ChainBundler(config.values())
 
         M_robot = RobotMeasurement( target_id = "targetA",
                                     chain_id = "chainA",
@@ -97,9 +141,9 @@ class TestChainBundler(unittest.TestCase):
         self.assertEqual( block._target_id, "targetA")
 
     def test_basic_no_match(self):
-        config_list = loadConfigList()
+        config, robot_params = loadSystem()
 
-        bundler = ChainBundler(config_list)
+        bundler = ChainBundler(config.values())
 
         M_robot = RobotMeasurement( target_id = "targetA",
                                     chain_id = "chainA",
@@ -109,44 +153,10 @@ class TestChainBundler(unittest.TestCase):
 
         self.assertEqual( len(blocks), 0)
 
-from calibration_estimation.urdf_params import UrdfParams
-
 class TestChainSensor(unittest.TestCase):
-    def load(self):
-        config = yaml.load('''
-                chain_id: chainA
-                before_chain: [transformA]
-                link_num:  1
-                after_chain:  [transformB]
-            ''')
-
-        robot_params = RobotParams()
-        robot_params.configure( yaml.load('''
-            chains:
-              chainA:
-                transforms:
-                - [ 1, 0, 0, 0, 0, 0]
-                axis: [6]
-                gearing: [1]
-                cov:
-                  joint_angles: [1]
-            tilting_lasers: {}
-            rectified_cams: {}
-            transforms:
-                transformA: [0, 0, 0, 0, 0, 0]
-                transformB: [0, 0, 0, 0, 0, 0]
-            checkerboards:
-              boardA:
-                corners_x: 2
-                corners_y: 2
-                spacing_x: 1
-                spacing_y: 1
-            ''' ) )
-        return config, robot_params
-
     def test_cov(self):
-        config, robot_params = self.load()
-        block = ChainSensor(config,
+        config, robot_params = loadSystem()
+        block = ChainSensor(config["chainA"],
                             ChainMeasurement(chain_id="chainA",
                                              chain_state=JointState(position=[0]) ),
                             "boardA")
@@ -160,8 +170,8 @@ class TestChainSensor(unittest.TestCase):
         self.assertAlmostEqual(cov[4,4], 4.0, 6)
 
     def test_update1(self):
-        config, robot_params = self.load()
-        block = ChainSensor(config,
+        config, robot_params = loadSystem()
+        block = ChainSensor(config["chainA"],
                             ChainMeasurement(chain_id="chainA",
                                              chain_state=JointState(position=[0]) ),
                             "boardA")
@@ -185,8 +195,8 @@ class TestChainSensor(unittest.TestCase):
         self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)
 
     def test_update2(self):
-        config, robot_params = self.load()
-        block = ChainSensor(config,
+        config, robot_params = loadSystem()
+        block = ChainSensor(config["chainA"],
                             ChainMeasurement(chain_id="chainA",
                                              chain_state=JointState(position=[numpy.pi / 2.0]) ),
                             "boardA")
@@ -209,17 +219,42 @@ class TestChainSensor(unittest.TestCase):
         self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)
 
+    def test_update3(self):
+        config, robot_params = loadSystem()
+        block = ChainSensor(config["chainB"],
+                            ChainMeasurement(chain_id="chainB",
+                                             chain_state=JointState(position=[0.0, 0.0]) ),
+                            "boardA")
+        block.update_config(robot_params)
+
+        target = matrix([[2, 3, 2, 3],
+                         [0, 0, 1, 1],
+                         [0, 0, 0, 0],
+                         [1, 1, 1, 1]])
+
+        h = block.compute_expected(target)
+        z = block.get_measurement()
+        r = block.compute_residual(target)
+
+        self.assertAlmostEqual(numpy.linalg.norm(target-h), 0.0, 6)
+
+        print "z=\n",z
+        print "target=\n",target
+
+        self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
+        self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)
+
     def test_sparsity(self):
-        config, robot_params = self.load()
-        block = ChainSensor(config,
+        config, robot_params = loadSystem()
+        block = ChainSensor(config["chainA"],
                             ChainMeasurement(chain_id="chainA",
                                              chain_state=JointState(position=[numpy.pi / 2.0]) ),
                             "boardA")
         block.update_config(robot_params)
         sparsity = block.build_sparsity_dict()
-        self.assertEqual(sparsity['transforms']['transformA'], [1,1,1,1,1,1])
-        self.assertEqual(sparsity['transforms']['transformB'], [1,1,1,1,1,1])
-        self.assertEqual(sparsity['chains']['chainA'], {'transforms':[[1,1,1,1,1,1]], 'gearing':[1]})
+        self.assertEqual(sparsity['transforms']['j0'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['transforms']['j1'], [1,1,1,1,1,1])
+        self.assertEqual(sparsity['chains']['chainA'], {'gearing':[1]})
 
 if __name__ == '__main__':
     import rostest

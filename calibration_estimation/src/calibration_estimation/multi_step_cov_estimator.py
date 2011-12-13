@@ -142,7 +142,7 @@ def load_requested_sensors(all_sensors_dict, requested_sensors):
             cur_sensor_type = all_sensors_dict[requested_sensor_id]['sensor_type']
             cur_sensors[cur_sensor_type].append(all_sensors_dict[requested_sensor_id])
         else:
-            rospy.logerr("Could not find [%s] in block library. Skipping this block")
+            rospy.logerr("Could not find [%s] in block library. Skipping this block", requested_sensor_id)
     return cur_sensors
 
 

@@ -35,7 +35,7 @@ from numpy import matrix, vsplit, sin, cos, reshape
 import rospy
 from calibration_estimation.single_transform import SingleTransform
 
-# Primitive used to model PR2's tilting laser platform.
+# Primitive used to model a tilting laser platform.
 
 param_names = ['gearing']
 
@@ -53,10 +53,11 @@ class TiltingLaser:
         parent = robot_params.urdf.joints[self._config['joint']].parent
         child = robot_params.urdf.joints[self._config['joint']].child
         before_chain = robot_params.urdf.get_chain(robot_params.base_link, parent, links=False)
+        before_chain.append(self._config['joint'])
         after_chain = robot_params.urdf.get_chain(child, self._config['frame_id'], links=False)
         self._before_chain_Ts = [robot_params.transforms[transform_name] for transform_name in before_chain]
         self._after_chain_Ts  = [robot_params.transforms[transform_name] for transform_name in after_chain]
-        
+
     def dict_to_params(self, config):
         param_vec = matrix(numpy.zeros((1,1), float))
         param_vec[0,0] = config['gearing']
