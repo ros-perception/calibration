@@ -96,14 +96,14 @@ class JointChain:
 
         m = 0
         for joint_name in self._joints:
-            if m > link_num: 
+            if m > link_num:
                 break
             transform = self._transforms[joint_name]
             if joint_name in self._active:
                 k = int(self._axis[0,m])-1
                 p = transform.deflate()
                 p = p.T.tolist()[0]
-                p[k] = p[k] + pos_scaled[m] 
+                p[k] = p[k] + pos_scaled[m]
                 T = T * link_T( p )
                 m += 1
             else:
@@ -137,5 +137,5 @@ def link_T(link_params):
                        [ 0, 0, 1, link_params[2] ],
                        [ 0, 0, 0, 1 ] ])
 
-    return T_roll * T_pitch * T_yaw * T_trans
+    return T_trans * T_roll * T_pitch * T_yaw
 
