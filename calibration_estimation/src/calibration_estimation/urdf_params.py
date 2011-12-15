@@ -140,10 +140,17 @@ class UrdfParams:
             self.transforms[joint_name].end = cur_index + self.transforms[joint_name].get_length()
             cur_index = self.transforms[joint_name].end
         for name, transform in transforms.items():
-            self.transforms[name] = SingleTransform(transform, name)
-            self.transforms[name].start = cur_index
-            self.transforms[name].end = cur_index + self.transforms[name].get_length()
-            cur_index = self.transforms[name].end
+            transform[3:6] = RPY_to_angle_axis(transform[3:6])
+            try:
+                import numpy
+                eval_config = [eval(str(x)) for x in transform]
+                self.transforms[name].inflate(numpy.reshape(numpy.matrix(eval_config, float), (-1,1)))
+            except:
+                rospy.logwarn("Transform not found in URDF %s", name)
+                self.transforms[name] = SingleTransform(transform, name)
+                self.transforms[name].start = cur_index
+                self.transforms[name].end = cur_index + self.transforms[name].get_length()
+                cur_index = self.transforms[name].end
 
         # build our chains
         self.chains = dict()

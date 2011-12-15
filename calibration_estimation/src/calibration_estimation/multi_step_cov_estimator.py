@@ -50,6 +50,7 @@ import os
 
 from numpy import matrix
 
+from calibration_estimation.cal_bag_helpers import *
 from calibration_estimation.urdf_params import UrdfParams
 from calibration_estimation.sensors.multi_sensor import MultiSensor
 from calibration_estimation.opt_runner import opt_runner
@@ -178,8 +179,9 @@ def update_urdf(urdf, calibrated_params):
 
 
 if __name__ == '__main__':
-    rospy.init_node("multi_step_cov_estimator", anonymous=True)
+    calibrated_xml = 'robot_calibrated.xml'
 
+    rospy.init_node("multi_step_cov_estimator", anonymous=True)
     print "Starting The Multi Step [Covariance] Estimator Node\n"
 
     if (len(rospy.myargv()) < 2):
@@ -215,16 +217,7 @@ if __name__ == '__main__':
     step_list = load_calibration_steps(config["cal_steps"])
 
     # Count how many checkerboard poses we need to track
-    msg_count = 0
-    bag = rosbag.Bag(bag_filename)
-    multisensors = []
-    robot_description = ''
-    for topic, msg, t in bag.read_messages(topics=['robot_measurement','robot_description']):
-        if topic == 'robot_measurement':
-            msg_count+=1
-        elif topic == 'robot_description':
-            robot_description = msg.data
-    bag.close()
+    msg_count = get_robot_measurement_count(bag_filename)
 
     if 'initial_poses' in config.keys():
         previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
@@ -232,7 +225,7 @@ if __name__ == '__main__':
         previous_pose_guesses = numpy.zeros([msg_count,6])
 
     # Check if we can write to all of our output files
-    output_filenames = []
+    output_filenames = [calibrated_xml]
     for suffix in [".yaml", "_poses.yaml", "_cov.txt"]:
         output_filenames += [output_dir + "/" + cur_step["output_filename"] + suffix for cur_step in step_list]
 
@@ -244,6 +237,7 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     # Generate robot parameters
+    robot_description = get_robot_description(bag_filename)
     robot_params = UrdfParams(robot_description, config)
 
     # Load all the sensors from the bagfile and config file
@@ -316,9 +310,9 @@ if __name__ == '__main__':
         previous_pose_guesses = output_poses
 
     # write out to URDF
-    outfile = open('robot_calibrated.xml', 'w')
+    rospy.loginfo('Writing updates to %s', calibrated_xml)
+    outfile = open(calibrated_xml, 'w')
     urdf = update_urdf(robot_params.get_clean_urdf(), robot_params)
     outfile.write( urdf.to_xml() )
     outfile.close()
-
 
