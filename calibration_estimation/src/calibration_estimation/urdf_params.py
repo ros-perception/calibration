@@ -40,6 +40,7 @@ import rospy
 from urdf_python.urdf import *
 import yaml
 import numpy
+from numpy import matrix, vsplit, sin, cos, reshape, zeros, pi
 
 from calibration_estimation.joint_chain import JointChain
 from calibration_estimation.tilting_laser import TiltingLaser
@@ -140,11 +141,10 @@ class UrdfParams:
             self.transforms[joint_name].end = cur_index + self.transforms[joint_name].get_length()
             cur_index = self.transforms[joint_name].end
         for name, transform in transforms.items():
+            transform = [eval(str(x)) for x in transform]
             transform[3:6] = RPY_to_angle_axis(transform[3:6])
             try:
-                import numpy
-                eval_config = [eval(str(x)) for x in transform]
-                self.transforms[name].inflate(numpy.reshape(numpy.matrix(eval_config, float), (-1,1)))
+                self.transforms[name].inflate(reshape(matrix(transform, float), (-1,1)))
             except:
                 rospy.logwarn("Transform not found in URDF %s", name)
                 self.transforms[name] = SingleTransform(transform, name)
