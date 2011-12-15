@@ -33,7 +33,7 @@
 
 # author: Vijay Pradeep
 
-import roslib; roslib.load_manifest('pr2_calibration_estimation')
+import roslib; roslib.load_manifest('calibration_estimation')
 
 import sys
 import rospy
