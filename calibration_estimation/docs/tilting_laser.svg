@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="581.84784"
+   height="576.79712"
+   id="svg3179"
+   version="1.1"
+   inkscape:version="0.47pre4 r22446"
+   sodipodi:docname="tilting_laser.svg"
+   inkscape:export-filename="/u/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs3181">
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send"
+       style="overflow:visible">
+      <path
+         id="path4843"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Sstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Sstart"
+       style="overflow:visible">
+      <path
+         id="path4840"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.2,0,0,0.2,1.2,0)" />
+    </marker>
+    <linearGradient
+       id="linearGradient6091">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop6093" />
+      <stop
+         id="stop6099"
+         offset="0.51923078"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop6095" />
+    </linearGradient>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path4831"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective3187" />
+    <inkscape:perspective
+       id="perspective3133"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-5"
+       style="overflow:visible">
+      <path
+         id="path5087-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-7"
+       style="overflow:visible">
+      <path
+         id="path5090-7"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3141"
+       style="overflow:visible">
+      <path
+         id="path3143"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker3145"
+       style="overflow:visible">
+      <path
+         id="path3147"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective3652"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart"
+       style="overflow:visible">
+      <path
+         id="path5251"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         id="path4078"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective3727"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective3767"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4599"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-5-6"
+       style="overflow:visible">
+      <path
+         id="path5087-6-5"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-7-1"
+       style="overflow:visible">
+      <path
+         id="path5090-7-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6091"
+       id="radialGradient6097"
+       cx="116.25"
+       cy="844.86218"
+       fx="116.25"
+       fy="844.86218"
+       r="9.1071424"
+       gradientTransform="matrix(1,0,0,0.58823533,0,347.8844)"
+       gradientUnits="userSpaceOnUse" />
+    <inkscape:perspective
+       id="perspective6109"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective6140"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-5-6-5"
+       style="overflow:visible">
+      <path
+         id="path5087-6-5-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-7-1-3"
+       style="overflow:visible">
+      <path
+         id="path5090-7-9-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective6582"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient6091-5"
+       id="radialGradient6097-3"
+       cx="116.25"
+       cy="844.86218"
+       fx="116.25"
+       fy="844.86218"
+       r="9.1071424"
+       gradientTransform="matrix(1,0,0,0.58823533,0,347.8844)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient6091-5">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop6093-9" />
+      <stop
+         id="stop6099-0"
+         offset="0.51923078"
+         style="stop-color:#ffffff;stop-opacity:1;" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="1"
+         id="stop6095-9" />
+    </linearGradient>
+    <inkscape:perspective
+       id="perspective6623"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective6860"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective6891"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-6"
+       style="overflow:visible">
+      <path
+         id="path5251-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-4"
+       style="overflow:visible">
+      <path
+         id="path4078-2"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective6943"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective6993"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-9"
+       style="overflow:visible">
+      <path
+         id="path5251-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-77"
+       style="overflow:visible">
+      <path
+         id="path4078-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective7051"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-3"
+       style="overflow:visible">
+      <path
+         id="path5251-47"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-6"
+       style="overflow:visible">
+      <path
+         id="path4078-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective9029"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-3-5"
+       style="overflow:visible">
+      <path
+         id="path5251-47-8"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective9057"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9082"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9578"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective9609"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="295.95915"
+     inkscape:cy="228.89305"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1339"
+     inkscape:window-height="945"
+     inkscape:window-x="855"
+     inkscape:window-y="121"
+     inkscape:window-maximized="0"
+     showguides="true"
+     inkscape:guide-bbox="true" />
+  <metadata
+     id="metadata3184">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(143.35699,-577.81835)">
+    <g
+       transform="matrix(2.7665484,0,0,2.7650013,-497.1548,-446.64485)"
+       id="g7797"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <rect
+         transform="matrix(0.96592583,-0.25881905,0.25881905,0.96592583,0,0)"
+         y="498.77618"
+         x="103.8804"
+         height="27.772528"
+         width="26.557379"
+         id="rect4857"
+         style="fill:#737373;fill-opacity:1;stroke:#000000;stroke-width:0.53662097;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <rect
+         transform="matrix(0.96592583,-0.25881905,0.25881905,0.96592583,0,0)"
+         ry="2.6837547"
+         rx="2.6824548"
+         y="526.64557"
+         x="98.470566"
+         height="9.5881338"
+         width="37.377052"
+         id="rect4859"
+         style="fill:#ed9b4d;fill-opacity:1;stroke:#000000;stroke-width:0.53662097;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <rect
+         transform="matrix(0.96592583,-0.25881905,0.25881905,0.96592583,0,0)"
+         ry="2.6837547"
+         rx="2.6824548"
+         y="491.29269"
+         x="98.470566"
+         height="9.5881338"
+         width="37.377052"
+         id="rect4859-1"
+         style="fill:#ed9b4d;fill-opacity:1;stroke:#000000;stroke-width:0.53662097;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+    </g>
+    <path
+       style="fill:#e2e2e2;fill-opacity:1;stroke:#000000;stroke-width:1.4841727;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 157.71601,948.50086 -0.30831,112.78414 75.52309,-0.1336 1.35943,-112.65096 c 0,0 -7.15742,-84.3564 -38.04004,-84.43127 -30.95057,-0.0749 -38.53407,84.43127 -38.53407,84.43127 l -10e-5,0 z"
+       id="path4867-4"
+       sodipodi:nodetypes="ccccscc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.53662097;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path4869-4"
+       sodipodi:cx="214.64285"
+       sodipodi:cy="570.57648"
+       sodipodi:rx="3.2142856"
+       sodipodi:ry="3.2142856"
+       d="m 217.85714,570.57648 c 0,1.7752 -1.43909,3.21428 -3.21429,3.21428 -1.7752,0 -3.21428,-1.43908 -3.21428,-3.21428 0,-1.7752 1.43908,-3.21429 3.21428,-3.21429 1.7752,0 3.21429,1.43909 3.21429,3.21429 z"
+       transform="matrix(2.6722805,0.71563501,-0.71603544,2.6707861,30.072734,-787.02735)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="opacity:0.95999995;fill:none;stroke:#000000;stroke-width:0.92542607;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-start:url(#Arrow1Sstart);marker-mid:none;marker-end:url(#Arrow1Send)"
+       id="path6686"
+       sodipodi:cx="258.47278"
+       sodipodi:cy="539.33093"
+       sodipodi:rx="18.309015"
+       sodipodi:ry="18.309015"
+       d="m 273.23893,528.50593 c 3.344,4.56147 4.39211,10.41237 2.83951,15.85101"
+       sodipodi:start="5.650591"
+       sodipodi:end="6.5612652"
+       transform="matrix(1.5247755,0,0,1.6868619,-115.23767,-29.718065)"
+       sodipodi:open="true"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <g
+       id="g5236-95"
+       transform="matrix(2.7665484,0,0,2.7650013,-655.3436,-772.17287)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <path
+         id="path5224-57"
+         d="m 367.01365,568.04642 5,-5"
+         style="fill:none;stroke:#000000;stroke-width:1.07324195;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <path
+         id="path5232-39"
+         d="m 367.01365,563.04642 4.99999,5"
+         style="fill:none;stroke:#000000;stroke-width:1.07324195;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+    </g>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6311-2-8"
+       style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="matrix(2.7665484,0,0,2.7650013,4.9143782,701.52159)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
+         id="flowRegion6313-3-6"><rect
+           id="rect6315-0-6"
+           width="55.154327"
+           height="59.750523"
+           x="111.36932"
+           y="59.095119"
+           style="font-size:9px" /></flowRegion><flowPara
+         id="flowPara6317-4-7"
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal">tilt</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6311-2-8-1"
+       style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="matrix(2.6722805,-0.71563501,0.71603544,2.6707861,-83.078036,716.68369)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
+         id="flowRegion6313-3-6-2"><rect
+           id="rect6315-0-6-5"
+           width="55.154327"
+           height="59.750523"
+           x="111.36932"
+           y="59.095119"
+           style="font-size:9px" /></flowRegion><flowPara
+         id="flowPara6317-4-7-4"
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal">range</flowPara></flowRoot>    <path
+       sodipodi:type="arc"
+       style="opacity:0.95999995;fill:none;stroke:#000000;stroke-width:0.33156681;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart-5);marker-mid:none;marker-end:url(#Arrow1Mend-7)"
+       id="path6686-5-0"
+       sodipodi:cx="258.47278"
+       sodipodi:cy="539.33093"
+       sodipodi:rx="18.309015"
+       sodipodi:ry="3.3093803"
+       d="m 262.61798,536.10748 c 9.84923,0.4138 15.97773,2.19244 13.6884,3.9727 -1.64873,1.28211 -7.34435,2.26571 -14.5053,2.50499"
+       sodipodi:start="4.9407715"
+       sodipodi:end="7.6711805"
+       transform="matrix(4.3242615,-1.1834965,1.1810053,4.3103336,-1627.0236,-1259.993)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       sodipodi:open="true" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.48417268, 2.96834536;stroke-dashoffset:0"
+       d="M 167.91043,776.19482 146.38232,695.89579"
+       id="path7104"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6311-2-8-4"
+       style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="matrix(2.7665484,0,0,2.7650013,-198.32984,504.68378)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
+         id="flowRegion6313-3-6-8"><rect
+           id="rect6315-0-6-8"
+           width="55.154327"
+           height="59.750523"
+           x="111.36932"
+           y="59.095119"
+           style="font-size:9px" /></flowRegion><flowPara
+         id="flowPara6317-4-7-6"
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal">bearing</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-mid:none;marker-end:url(#Arrow1Mend)"
+       d="m 128.22202,1060.8696 -55.330995,0 -1.4e-5,-55.3"
+       id="path4064-4-7-2-1"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:110.63098907px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="128.26869"
+       y="1055.8317"
+       id="text4892-0-4-9-9"
+       transform="scale(1.0002797,0.99972036)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-1-7"
+         x="128.26869"
+         y="1055.8317"
+         style="font-size:22.12619781px;font-style:italic">x</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:110.63098907px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="66.095001"
+       y="997.53076"
+       id="text4892-0-4-4-2-6"
+       transform="scale(1.0002797,0.99972036)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-2-5-8"
+         x="66.095001"
+         y="997.53076"
+         style="font-size:22.12619781px;font-style:italic">z</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:110.63098907px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="49.89101"
+       y="1068.4775"
+       id="text4892-0-4-3-9-2"
+       transform="scale(1.0002797,0.99972036)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-6-4-0"
+         x="49.89101"
+         y="1068.4775"
+         style="font-size:22.12619781px;font-style:italic">y</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 66.549719,1068.6853 13.832742,-13.8251"
+       id="path5224-6-6"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 66.549719,1054.8602 13.832713,13.8251"
+       id="path5232-37-4"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 143.83706,1062.336 -17.29094,17.2812"
+       id="path6416-5-3"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 166.28068,1062.336 -17.29093,17.2812"
+       id="path6416-0-5"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 188.72431,1062.336 -17.29093,17.2812"
+       id="path6416-07-7"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 211.16792,1062.336 193.877,1079.6172"
+       id="path6416-1-6"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 233.61155,1062.336 -17.29092,17.2812"
+       id="path6416-8-9"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 256.05521,1062.336 -17.29094,17.2812"
+       id="path6416-52-5"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 278.4988,1062.336 -17.29093,17.2812"
+       id="path6416-04-1"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 120.13646,1061.257 167.56664,0"
+       id="path2845"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#ff0000;stroke-width:2.9683454;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:11.87338147, 5.93669074;stroke-dashoffset:0"
+       d="M 361.82522,792.06889 188.94533,839.20378"
+       id="path5018"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1Mend-7-1)"
+       d="M 91.979802,1048.2542 C 171.44204,1003.3356 77.791586,950.11028 173.98818,898.15414"
+       id="path4625"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient6097);fill-opacity:1;stroke:none"
+       id="path6089"
+       sodipodi:cx="116.25"
+       sodipodi:cy="844.86218"
+       sodipodi:rx="9.1071424"
+       sodipodi:ry="5.3571429"
+       d="m 125.35714,844.86218 c 0,2.95867 -4.0774,5.35715 -9.10714,5.35715 -5.02974,0 -9.10714,-2.39848 -9.10714,-5.35715 0,-2.95867 4.0774,-5.35714 9.10714,-5.35714 5.02974,0 9.10714,2.39847 9.10714,5.35714"
+       transform="matrix(2.7665484,0,0,3.9631684,-197.51973,-2388.4583)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6311-2-8-7"
+       style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="matrix(2.7665484,0,0,2.7650013,-246.32616,786.07999)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
+         id="flowRegion6313-3-6-9"><rect
+           id="rect6315-0-6-6"
+           width="55.154327"
+           height="59.750523"
+           x="111.36932"
+           y="59.095119"
+           style="font-size:9px" /></flowRegion><flowPara
+         id="flowPara6317-4-7-3"
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal">before_joint</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1Mend-7-1)"
+       d="m 179.68509,891.73697 c -55.51265,13.97427 -70.91797,-35.57399 -7.02649,-47.08621"
+       id="path4625-5"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6311-2-8-7-7"
+       style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="matrix(2.7665484,0,0,2.7650013,-266.70274,702.0327)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
+         id="flowRegion6313-3-6-9-2"><rect
+           id="rect6315-0-6-6-8"
+           width="55.154327"
+           height="59.750523"
+           x="111.36932"
+           y="59.095119"
+           style="font-size:9px" /></flowRegion><flowPara
+         id="flowPara6317-4-7-3-6"
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal">after_joint</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-mid:none;marker-end:url(#Arrow1Mend)"
+       d="m 213.33315,832.24775 -29.02046,8.58445 -8.57247,-29.05627"
+       id="path4064-4-7-2-1-1"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:14.84172726px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="-33.932796"
+       y="855.1377"
+       id="text4892-0-4-9-9-4"
+       transform="matrix(0.95842919,-0.28353259,0.28311645,0.95961942,0,0)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-1-7-7"
+         x="-33.932796"
+         y="855.1377"
+         style="font-size:14.84172726px;font-style:italic;font-weight:bold">x</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:60.55795288px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="-64.05191"
+       y="820.45929"
+       id="text4892-0-4-4-2-6-6"
+       transform="matrix(0.95842919,-0.28353259,0.28311645,0.95961942,0,0)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-2-5-8-3"
+         x="-64.05191"
+         y="820.45929"
+         style="font-size:14.84172726px;font-style:italic;font-weight:bold">z</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 182.19853,845.92331 5.11194,-9.41036"
+       id="path5224-6-6-3"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 180.0554,838.65921 9.39817,5.11784"
+       id="path5232-37-4-8"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-mid:none;marker-end:url(#Arrow1Mend)"
+       d="m 223.76543,882.5014 -29.02046,8.58446 -8.57247,-29.05627"
+       id="path4064-4-7-2-1-1-4"
+       sodipodi:nodetypes="ccc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:60.55795288px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="-38.14941"
+       y="906.26013"
+       id="text4892-0-4-9-9-4-6"
+       transform="matrix(0.95842919,-0.28353259,0.28311645,0.95961942,0,0)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-1-7-7-3"
+         x="-38.14941"
+         y="906.26013"
+         style="font-size:14.84172726px;font-style:italic;font-weight:bold">x</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:60.55795288px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="-75.873856"
+       y="878.67297"
+       id="text4892-0-4-4-2-6-6-7"
+       transform="matrix(0.95842919,-0.28353259,0.28311645,0.95961942,0,0)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-2-5-8-3-6"
+         x="-75.873856"
+         y="878.67297"
+         style="font-size:14.84172726px;font-style:italic;font-weight:bold">z</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 191.50011,895.35511 7.37334,-7.76664"
+       id="path5224-6-6-3-9"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 191.31009,887.78384 7.75335,7.37589"
+       id="path5232-37-4-8-8"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart-3);marker-mid:none;marker-end:none"
+       d="m 225.46634,890.48855 -30.25344,0.7809"
+       id="path4064-4-7-2-1-1-4-2"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart-3);marker-mid:none;marker-end:none"
+       d="m 194.88938,861.38422 0.7809,30.25344"
+       id="path4064-4-7-2-1-1-4-2-4"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <text
+       xml:space="preserve"
+       style="font-size:60.55795288px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="190.58504"
+       y="907.71613"
+       id="text4892-0-4-9-9-4-6-7"
+       transform="matrix(0.99915514,-0.02581172,0.02510171,1.0001971,0,0)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-1-7-7-3-5"
+         x="190.58504"
+         y="907.71613"
+         style="font-size:14.84172726px;font-style:italic;font-weight:bold">x</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:60.55795288px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:arial;-inkscape-font-specification:arial"
+       x="173.83702"
+       y="862.22681"
+       id="text4892-0-4-4-2-6-6-7-8"
+       transform="matrix(0.99915514,-0.02581172,0.02510171,1.0001971,0,0)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan4894-0-0-2-5-8-3-6-2"
+         x="173.83702"
+         y="862.22681"
+         style="font-size:14.84172726px;font-style:italic;font-weight:bold">z</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       d="m 230.16392,890.19743 82.45825,0"
+       id="path9099"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.4841727;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       d="m 228.66469,881.20198 78.71014,-22.86341"
+       id="path9101"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6311-2-8-7-0"
+       style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="matrix(2.7665484,0,0,2.7650013,-292.73985,910.30306)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
+         id="flowRegion6313-3-6-9-9"><rect
+           id="rect6315-0-6-6-4"
+           width="55.154327"
+           height="59.750523"
+           x="111.36932"
+           y="59.095119"
+           style="font-size:9px" /></flowRegion><flowPara
+         id="flowPara6317-4-7-3-62"
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal">system_origin</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6311-2-8-7-0-7"
+       style="font-size:9px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       transform="matrix(2.7665484,0,0,2.7650013,-241.62198,603.89273)"
+       inkscape:export-filename="/wg/stor2/vpradeep/ros_overlays/calibration/pr2_calibration/pr2_calibration_estimation/docs/tilting_laser.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><flowRegion
+         id="flowRegion6313-3-6-9-9-1"><rect
+           id="rect6315-0-6-6-4-2"
+           width="55.154327"
+           height="59.750523"
+           x="111.36932"
+           y="59.095119"
+           style="font-size:9px" /></flowRegion><flowPara
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal"
+         id="flowPara9634">Hokuyo</flowPara><flowPara
+         style="font-size:5.36620951px;font-style:italic;font-weight:normal"
+         id="flowPara9641">Laser</flowPara></flowRoot>  </g>
+</svg>
