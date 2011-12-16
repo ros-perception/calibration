@@ -339,7 +339,7 @@ if __name__ == '__main__':
     # write out to URDF
     rospy.loginfo('Writing updates to %s', calibrated_xml)
     outfile = open(calibrated_xml, 'w')
-    urdf = update_urdf(robot_params.get_clean_urdf(), robot_params)
+    urdf = update_urdf(robot_params.get_clean_urdf(), robot_params, rospy.get_param("~use_ref_shifts",False))
     outfile.write( urdf.to_xml() )
     outfile.close()
 
