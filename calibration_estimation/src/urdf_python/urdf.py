@@ -6,7 +6,7 @@ def add(doc, base, element):
         base.appendChild( element.to_xml(doc) )
 
 def pfloat(x):
-    return ('%f'%x).rstrip('0').rstrip('.')
+    return ("%.12f"%x).rstrip('0').rstrip('.')
 
 def set_attribute(node, name, value):
     if value is None:
@@ -553,7 +553,7 @@ class Transmission:
             xml.appendChild(joint)
         if self.reduction is not None:
             reduction = doc.createElement("mechanicalReduction")
-            reduction.appendChild( doc.createTextNode(str(self.reduction)) )
+            reduction.appendChild( doc.createTextNode(pfloat(self.reduction)) )
             xml.appendChild(reduction)
         for child in self.children:
             xml.appendChild(child)

@@ -153,11 +153,32 @@ def diff(v1, v2, eps = 1e-10):
         return 0
     return 1
 
-#def update_urdf(initial_system, calibrated_system, xml_in):
-def update_urdf(urdf, calibrated_params):
+# URDF updating -- this should probably go in a different file
+def update_transmission(urdf, joint, gearing):
+    for transmission in urdf.transmissions.values():
+        if transmission.joint == joint:
+            transmission.reduction = transmission.reduction * gearing
+            return
+    print "No transmission found for:", joint
+
+def update_urdf(urdf, calibrated_params, use_refs=False):
     ''' Given urdf and calibrated robot_params, updates the URDF. '''
-    
-    # update each transform
+    joints = list()
+    axis = list()
+    # update each transmission
+    for chain in calibrated_params.chains.values():
+        joints += chain._active
+        axis += numpy.array(chain._axis)[:,0].tolist()
+        for joint, gearing in zip(chain._active, chain._gearing):
+            if gearing != 1.0:
+                update_transmission(urdf, joint, gearing)
+    for laser in calibrated_params.tilting_lasers.values():
+        joints += laser._config['joint']
+        axis.append(5) # TODO: remove this assumption
+        if laser._gearing != 1.0:
+            update_transmission(urdf, laser._config['joint'], laser._gearing)
+
+    # update each transform (or joint calibration)
     for joint_name in calibrated_params.transforms.keys():
         try:
             updated = calibrated_params.transforms[joint_name]._config.T.tolist()[0]
@@ -166,17 +187,23 @@ def update_urdf(urdf, calibrated_params):
                 urdf.joints[joint_name].origin.position = updated[0:3]
             r1 = RPY_to_angle_axis(urdf.joints[joint_name].origin.rotation)
             if diff(r1, updated[3:6]):
-                # TODO: if active joint and using reference shifts
-                rot = angle_axis_to_RPY(updated[3:6])
-                print 'Updating rpy for', joint_name, 'old:', urdf.joints[joint_name].origin.rotation, 'new:', rot
-                urdf.joints[joint_name].origin.rotation = rot                
+                # TODO: remove assumption that joints are revolute
+                if use_refs and joint_name in joints:
+                    print 'Updating calibration for', joint_name
+                    cal = urdf.joints[joint_name].calibration 
+                    a = axis[joints.index(joint_name)]   
+                    if cal.rising != None:
+                        cal.rising += updated[axis]   
+                    if cal.falling != None:
+                        cal.falling += updated[axis]
+                else:
+                    rot = angle_axis_to_RPY(updated[3:6])
+                    print 'Updating rpy for', joint_name, 'old:', urdf.joints[joint_name].origin.rotation, 'new:', rot
+                    urdf.joints[joint_name].origin.rotation = rot                
         except:
             pass #print "Joint removed:", joint_name
 
-    # TODO: Transmissions
-
     return urdf
-
 
 if __name__ == '__main__':
     calibrated_xml = 'robot_calibrated.xml'
