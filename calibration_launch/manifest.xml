@@ -1,8 +1,7 @@
 <package>
-  <description brief="calibration_launch">
-
-     calibration_launch
-
+  <description brief="Launch files for data collection.">
+    This package contains a collection of launch files that can be helpful in configuring
+    the calibration stack to run on your robot.
   </description>
   <author>Michael Ferguson</author>
   <license>BSD</license>
@@ -20,16 +19,13 @@
   <depend package="joint_states_settler"/>
   <depend package="interval_intersection"/>
 
-
   <!-- messages -->
   <depend package="calibration_msgs"/>
   <depend package="sensor_msgs"/>
   <depend package="geometry_msgs"/>
   <depend package="trajectory_msgs"/>
 
-
   <!-- urdf_pub -->
   <depend package="rospy"/>
   <depend package="std_msgs"/>
-
 </package>
