@@ -168,11 +168,11 @@ class UrdfParams:
                 this_config['transforms'][joint_name] = self.transforms[joint_name]
                 if urdf.joints[joint_name].joint_type in ['revolute','continuous'] :
                     this_config["active_joints"].append(joint_name)
-                    axis = filter( lambda a: a!= " ", list(urdf.joints[joint_name].axis))
+                    axis = list(urdf.joints[joint_name].axis.split())
                     this_config["axis"].append( sum( [i[0]*int(i[1]) for i in zip([4,5,6], axis)] ) )
                 elif urdf.joints[joint_name].joint_type == 'prismatic':
                     this_config["active_joints"].append(joint_name)
-                    axis = filter( lambda a: a!= " ", list(urdf.joints[joint_name].axis))
+                    axis = list(urdf.joints[joint_name].axis.split())
                     this_config["axis"].append( sum( [i[0]*int(i[1]) for i in zip([1,2,3], axis)] ) )
                 elif urdf.joints[joint_name].joint_type != 'fixed':
                     print 'Unknown joint type:', urdf.joints[joint_name].joint_type
