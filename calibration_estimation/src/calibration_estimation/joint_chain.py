@@ -100,10 +100,13 @@ class JointChain:
                 break
             transform = self._transforms[joint_name]
             if joint_name in self._active:
-                k = int(self._axis[0,m])-1
+                k = int(self._axis[0,m])
                 p = transform.deflate()
                 p = p.T.tolist()[0]
-                p[k] = p[k] + pos_scaled[m]
+                if k > 0:
+                    p[k-1] = p[k-1] + pos_scaled[m]
+                else:
+                    p[abs(k)-1] = p[abs(k)-1] - pos_scaled[m]
                 T = T * link_T( p )
                 m += 1
             else:
