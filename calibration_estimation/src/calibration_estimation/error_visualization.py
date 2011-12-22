@@ -1,7 +1,7 @@
-#! /usr/bin/env ipython
+#! /usr/bin/env python
 # Software License Agreement (BSD License)
 #
-# Copyright (c) 2008, Willow Garage, Inc.
+# Copyright (c) 2008-2011, Willow Garage, Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# author: Vijay Pradeep
+# author: Vijay Pradeep, Michael Ferguson
 
 import roslib; roslib.load_manifest('calibration_estimation')
 
@@ -56,16 +56,14 @@ import geometry_msgs.msg
 def usage():
     rospy.logerr("Not enough arguments")
     print "Usage:"
-    print " ./proto1.py [bagfile] [output_dir] [loop_list.yaml]"
+    print " ./error_visualization.py [bagfile] [output_dir] [loop_list.yaml]"
     sys.exit(0)
 
 if __name__ == '__main__':
-    rospy.init_node("scatterplot_viewer")
+    rospy.init_node("error_visualization")
+    marker_pub = rospy.Publisher("calibration_error", Marker)
 
-    marker_guess_pub = rospy.Publisher("cb_guess", Marker)
-    marker_fk_pub = rospy.Publisher("cal_markers", Marker)
-
-    print "Starting The Post Processing App\n"
+    print "Starting The Error Visualization App\n"
 
     if (len(rospy.myargv()) < 3):
         usage()
@@ -133,7 +131,6 @@ if __name__ == '__main__':
         error_calc = opt_runner.ErrorCalc(system_def, free_dict, multisensors_pruned, False)
         opt_all_vec = opt_runner.build_opt_vector(system_def, free_dict, numpy.array(cb_poses_pruned))
         e = error_calc.calculate_error(opt_all_vec)
-        #J = error_calc.calculate_jacobian(opt_all_vec)
 
         # Display error breakdown
         errors_dict = opt_runner.compute_errors_breakdown(error_calc, multisensors_pruned, numpy.array(cb_poses_pruned))
@@ -156,7 +153,7 @@ if __name__ == '__main__':
 
         m = Marker()
         m.header.frame_id = system_def.base_link
-        m.ns = "uncal_sensor"
+        m.ns = "points_3d"
         m.id = marker_count
         m.type = Marker.SPHERE_LIST
         m.action = Marker.MODIFY
@@ -168,17 +165,14 @@ if __name__ == '__main__':
         m.scale.x = 0.01
         m.scale.y = 0.01
         m.scale.z = 0.01
-
-        marker_fk_pub.publish(m)
+        marker_pub.publish(m)
 
         m.points = points_list_guess
-        m.ns = "estimated"
+        m.ns = "points_cam"
         m.color.r = 1.0
         m.color.g = 0.0
         m.color.b = 0.0
-        marker_fk_pub.publish(m)
-
-        #fk_points = cb_points
+        marker_pub.publish(m)
 
         cam_Js   = [s.compute_expected_J(fk) for s,fk in zip(cam_sensors, fk_points)]
         cam_covs = [matrix(array(s.compute_cov(fk)) * kron(eye(s.get_residual_length()/2),ones([2,2]))) for s,fk in zip(cam_sensors, fk_points)]
@@ -191,30 +185,11 @@ if __name__ == '__main__':
 
         sample_ind = sum([ [sample_ind[k]]*meas_points[k].shape[0] for k in range(len(proj_points))], [])
 
-
         r = numpy.concatenate(proj_points) - numpy.concatenate(meas_points)
 
-        bearing_list = []
-        #for ms in multisensors_pruned:
-        #    laser_sensor = [s for s in ms.sensors if s.sensor_id == "tilt_laser"][0]
-        #    cur_bearings = [js.position[1] for js in laser_sensor._M_laser.joint_points]
-        #    bearing_list.append(numpy.array(cur_bearings))
-        #y_coord_list = [ numpy.array(SingleTransform(pose).transform * system_def.checkerboards[ms.checkerboard].generate_points())[1,:] for pose, ms in zip(cb_poses_pruned,multisensors_pruned)]
-        #y_coords = numpy.concatenate(y_coord_list)
-
-        #bearings = numpy.concatenate(bearing_list)
-
         import matplotlib.pyplot as plt
-        #print "Plot ops:"
-        #print cur_loop['plot_ops']
         cur_scatter = plt.scatter(array(r)[:,0], array(r)[:,1], **cur_loop['plot_ops'])
         scatter_list.append(cur_scatter)
-        #plt.scatter(r[:,0], bearings, **plot_opts)
-
-        for k in range(len(sample_ind)):
-            #plt.text(r[k,0], r[k,1], "%u" % sample_ind[k])
-            #plt.text(r[k,0], bearings[k], "%u" % sample_ind[k])
-            pass
 
         for cur_cov in full_covs[0:1]:
             circ_angles = numpy.linspace(0,2*numpy.pi, 360, endpoint=True)
@@ -224,12 +199,12 @@ if __name__ == '__main__':
                 l,v = numpy.linalg.eig(cur_cov[(2*k):(2*k+2),(2*k):(2*k+2)])
                 ellip = numpy.sqrt(4.6052) * matrix(v) * matrix(diag(numpy.sqrt(l))) * matrix(circ_pos)
                 ellip_shifted = array(ellip + r[k,:].T)
-                #import code; code.interact(local=locals())
-                #plt.plot(ellip_shifted[0,:], ellip_shifted[1,:], 'b')
 
     plt.axis('equal')
     plt.grid(True)
-    #plt.legend(scatter_list, [x['name'] for x in loop_list], prop={'size':'x-small'})
+    plt.legend(scatter_list, [x['name'] for x in loop_list], prop={'size':'x-small'})
     plt.show()
 
+    rospy.spin()
     sys.exit(0)
+
