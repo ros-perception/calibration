@@ -107,29 +107,14 @@ if __name__ == '__main__':
     cb_poses = yaml.load(open(output_dir + "/" + cur_step["output_filename"] + "_poses.yaml"))
     free_dict = yaml.load(cur_step["free_params"])
 
+    sample_skip_list = rospy.get_param('calibration_skip_list', [])
     scatter_list = []
     marker_count = 0
     for cur_loop in loop_list:
         marker_count += 1
-        sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, [cur_loop['cam'], cur_loop['3d']])
 
-        # Generate the multisensor samples from the bag
-        # f = open(bag_filename)
-        multisensors = []
-        bag = rosbag.Bag(bag_filename)
-        for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
-            if topic == "robot_measurement":
-                # Hack to rename laser id
-                for cur_laser in msg.M_laser:
-                    #pass
-                    if cur_laser.laser_id in ["tilt_laser_6x8", "tilt_laser_8x6", "tilt_laser_7x6", "tilt_laser_6x7"]:
-                        cur_laser.laser_id = "tilt_laser"
-                    #else:
-                    #    cur_laser.laser_id = "tilt_laser_blah"
-                ms = MultiSensor(sensor_defs)
-                ms.sensors_from_message(msg)
-                multisensors.append(ms)
-        bag.close()
+        sensor_defs = est_helpers.load_requested_sensors(all_sensors_dict, [cur_loop['cam'], cur_loop['3d']])
+        multisensors = get_multisensors(bag_filename, sensor_defs, sample_skip_list)
 
         if (len([ms for ms in multisensors if len(ms.sensors) == 2]) == 0):
             print "********** No Data for [%s] + [%s] pair **********" % (cur_loop['cam'], cur_loop['3d'])

@@ -51,12 +51,7 @@ class FullChainRobotParams:
     def update_config(self, robot_params):
         if self.root == None: 
             self.root = robot_params.base_link
-        if self.chain_id == None:
-            chain = None
-            before_chain = robot_params.urdf.get_chain(self.root, self.tip, links=False)
-            after_chain = []
-            link_num = None
-        else:
+        try:
             chain = robot_params.chains[self.chain_id]
             before_chain = robot_params.urdf.get_chain(self.root, chain.root, links=False)
             full_chain = robot_params.urdf.get_chain(chain.root, chain.tip)
@@ -76,6 +71,11 @@ class FullChainRobotParams:
                             new_root = full_chain[i+1]
                     i += 1
                 after_chain = robot_params.urdf.get_chain(new_root, self.tip, links=False)
+        except KeyError:
+            chain = None
+            before_chain = robot_params.urdf.get_chain(self.root, self.tip, links=False)
+            after_chain = []
+            link_num = None
         before_chain_Ts = [robot_params.transforms[transform_name] for transform_name in before_chain]
         after_chain_Ts  = [robot_params.transforms[transform_name] for transform_name in after_chain]
         self.calc_block.update_config(before_chain_Ts, chain, link_num, after_chain_Ts)
@@ -87,16 +87,20 @@ class FullChainRobotParams:
         sparsity = dict()
         sparsity['transforms'] = {}
         sparsity['chains'] = {}
-        for cur_transform in ( self.calc_block._before_chain_Ts + \
-                               self.calc_block._chain._transforms.values() + \
-                               self.calc_block._after_chain_Ts ):
-            sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
         if self.chain_id is not None:
+            for cur_transform in ( self.calc_block._before_chain_Ts + \
+                                   self.calc_block._chain._transforms.values() + \
+                                   self.calc_block._after_chain_Ts ):
+                sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
             sparsity['chains'][self.chain_id] = {}
             link_num = self.calc_block._link_num
             if link_num < 0:
                 link_num = self.calc_block._chain._M
             sparsity['chains'][self.chain_id]['gearing'] = [1 for i in range(link_num)]
+        else:
+            for cur_transform in ( self.calc_block._before_chain_Ts + \
+                                   self.calc_block._after_chain_Ts ):
+                sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
         return sparsity
 
 class FullChainCalcBlock:

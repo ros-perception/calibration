@@ -34,6 +34,7 @@
 import roslib; roslib.load_manifest('calibration_estimation')
 import rosbag
 
+from calibration_estimation.sensors.multi_sensor import MultiSensor
 
 def get_cam_info(bag_filename, cam_name):
     """ Look for cam info in the calibration bagfile """
@@ -51,8 +52,11 @@ def get_cam_info(bag_filename, cam_name):
     return cam_info
 
 
-def get_robot_description(bag_filename):
+def get_robot_description(bag_filename, use_topic=False):
     """ Get the robot description out of a bagfile """
+    if use_topic:
+        import rospy
+        return rospy.get_param("robot_description")
     bag = rosbag.Bag(bag_filename)
     for topic, msg, t in bag.read_messages(topics=['robot_description']):
         if topic == 'robot_description':
@@ -62,13 +66,40 @@ def get_robot_description(bag_filename):
     return ""
 
 
-def get_robot_measurement_count(bag_filename):
+def get_robot_measurement_count(bag_filename, sample_skip_list=[]):
     """ Get the number of measurements in our bagfile """
     msg_count = 0
     bag = rosbag.Bag(bag_filename)
+    index = 0
     for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
         if topic == 'robot_measurement':
-            msg_count+=1
+            if index in sample_skip_list:
+                print "Skipping sample:", index
+            else:
+                msg_count+=1
+            index += 1
     bag.close()
     return msg_count
+
+
+def get_multisensors(bag_filename, cur_sensors, sample_skip_list=[]):
+    """ Get all sensors from bagfile. """
+    bag = rosbag.Bag(bag_filename)
+    multisensors = []
+    index = 0
+    for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
+        if topic == "robot_measurement":
+            if index in sample_skip_list:
+                print "Skipping sample:", index
+            else:
+                # Hack to rename laser id
+                for cur_laser in msg.M_laser:
+                    if cur_laser.laser_id in ["tilt_laser_6x8", "tilt_laser_8x6", "tilt_laser_7x6", "tilt_laser_6x7"]:
+                        cur_laser.laser_id = "tilt_laser"
+                ms = MultiSensor(cur_sensors)
+                ms.sensors_from_message(msg)
+                multisensors.append(ms)
+            index += 1
+    bag.close()
+    return multisensors
 

@@ -68,15 +68,16 @@ class CameraChainBundler:
         sensors = []
         for cur_config in self._valid_configs:
             if cur_config["sensor_id"] in [ x.camera_id for x in M_robot.M_cam ]:
-                if cur_config["chain_id"] in [ x.chain_id  for x in M_robot.M_chain ] :
-                    M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
-                    M_chain = M_robot.M_chain[ [ x.chain_id  for x in M_robot.M_chain ].index(cur_config["chain_id"]) ]
-                elif cur_config["chain_id"] == None:
+                if "chain_id" in cur_config.keys() and cur_config["chain_id"] != None:
+                    if cur_config["chain_id"] in [ x.chain_id  for x in M_robot.M_chain ] :
+                        M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
+                        M_chain = M_robot.M_chain[ [ x.chain_id  for x in M_robot.M_chain ].index(cur_config["chain_id"]) ]
+                    else:
+                        continue
+                else:
                     M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
                     M_chain = None
-                else:
-                    print "else cur_config[chain_id]: ", cur_config["chain_id"]
-                    continue
+                    cur_config["chain_id"] = None
                 cur_sensor = CameraChainSensor(cur_config, M_cam, M_chain)
                 sensors.append(cur_sensor)
             else:
@@ -126,9 +127,6 @@ class CameraChainSensor:
         """
         z_mat = self.get_measurement()
         h_mat = self.compute_expected(target_pts)
-        assert(z_mat.shape[1] == 2)
-        assert(h_mat.shape[1] == 2)
-        assert(z_mat.shape[0] == z_mat.shape[0])
         r = array(reshape(h_mat - z_mat, [-1,1]))[:,0]
         return r
 
@@ -154,7 +152,6 @@ class CameraChainSensor:
         num_pts = self.get_residual_length()/2
 
         for k in range(num_pts):
-            #print "k=%u" % k
             first = 2*k
             last = 2*k+2
             sub_cov = matrix(cov[first:last, first:last])
