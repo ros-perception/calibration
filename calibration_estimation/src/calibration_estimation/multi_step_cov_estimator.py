@@ -206,7 +206,9 @@ def update_urdf(urdf, calibrated_params, use_refs=False):
     return urdf
 
 if __name__ == '__main__':
-    calibrated_xml = 'robot_calibrated.xml'
+    import time
+    xml_time = time.strftime('%Y_%m_%d_%H_%M', time.localtime())
+    calibrated_xml = 'robot_calibrated_'+xml_time+'.xml'
 
     rospy.init_node("multi_step_cov_estimator", anonymous=True)
     print "Starting The Multi Step [Covariance] Estimator Node\n"

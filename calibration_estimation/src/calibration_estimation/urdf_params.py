@@ -162,7 +162,7 @@ class UrdfParams:
             this_config['active_joints'] = list()
             this_config['axis'] = list()
             this_config['transforms'] = dict()
-            this_config['gearing'] = config_dict['chains'][chain_name]['gearing']   # TODO: extract from URDF
+            this_config['gearing'] = config_dict['chains'][chain_name]['gearing']   # TODO: This always defaults to 1.0?
             this_config['cov'] = config_dict['chains'][chain_name]['cov']
             for joint_name in this_config["joints"]:
                 this_config['transforms'][joint_name] = self.transforms[joint_name]
@@ -170,6 +170,10 @@ class UrdfParams:
                     this_config["active_joints"].append(joint_name)
                     axis = list(urdf.joints[joint_name].axis.split())
                     this_config["axis"].append( sum( [i[0]*int(i[1]) for i in zip([4,5,6], axis)] ) )
+                    # we can handle limited rotations here
+                    rot = urdf.joints[joint_name].origin.rotation
+                    if rot != None and (sum([abs(x) for x in rot]) - rot[this_config["axis"][-1]-4]) > 0.001:   
+                        print 'Joint origin is rotated, calibration will fail: ', joint_name
                 elif urdf.joints[joint_name].joint_type == 'prismatic':
                     this_config["active_joints"].append(joint_name)
                     axis = list(urdf.joints[joint_name].axis.split())
