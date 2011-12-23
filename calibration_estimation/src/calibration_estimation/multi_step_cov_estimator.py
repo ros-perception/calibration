@@ -161,7 +161,7 @@ def update_transmission(urdf, joint, gearing):
             return
     print "No transmission found for:", joint
 
-def update_urdf(urdf, calibrated_params, use_refs=False):
+def update_urdf(urdf, calibrated_params):
     ''' Given urdf and calibrated robot_params, updates the URDF. '''
     joints = list()
     axis = list()
@@ -188,7 +188,7 @@ def update_urdf(urdf, calibrated_params, use_refs=False):
             r1 = RPY_to_angle_axis(urdf.joints[joint_name].origin.rotation)
             if diff(r1, updated[3:6]):
                 # TODO: remove assumption that joints are revolute
-                if use_refs and joint_name in joints:
+                if joint_name in joints and urdf.joints[joint_name].calibration != None:
                     print 'Updating calibration for', joint_name
                     cal = urdf.joints[joint_name].calibration 
                     a = axis[joints.index(joint_name)]   
@@ -331,7 +331,7 @@ if __name__ == '__main__':
     # write out to URDF
     rospy.loginfo('Writing updates to %s', calibrated_xml)
     outfile = open(calibrated_xml, 'w')
-    urdf = update_urdf(robot_params.get_clean_urdf(), robot_params, rospy.get_param("~use_ref_shifts",False))
+    urdf = update_urdf(robot_params.get_clean_urdf(), robot_params)
     outfile.write( urdf.to_xml() )
     outfile.close()
 
