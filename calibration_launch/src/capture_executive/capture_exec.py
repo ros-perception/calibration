@@ -39,6 +39,8 @@ import actionlib
 import joint_states_settler.msg
 import time
 import threading
+import os
+import string
 
 import capture_executive
 from capture_executive.config_manager import ConfigManager
@@ -47,16 +49,49 @@ from capture_executive.robot_measurement_cache import RobotMeasurementCache
 
 from calibration_msgs.msg import RobotMeasurement
 
+# TODO temporary hack until urdf_python is released
+roslib.load_manifest('calibration_estimation')
+from urdf_python.urdf import *
+
+
 class CaptureExecutive:
-    def __init__(self, config_dir):
+    def __init__(self, config_dir, system, robot_desc):
+        # Load configs
         self.cam_config        = yaml.load(open(config_dir + "/cam_config.yaml"))
         self.chain_config      = yaml.load(open(config_dir + "/chain_config.yaml"))
         self.laser_config      = yaml.load(open(config_dir + "/laser_config.yaml"))
         self.controller_config = yaml.load(open(config_dir + "/controller_config.yaml"))
-        
         # Not all robots have lasers.... :(
         if self.laser_config == None:
             self.laser_config = dict()
+
+        # parse urdf and get list of links
+        links = URDF().parse(robot_desc).links.keys()
+
+        # load system config
+        system = yaml.load(open(system))
+        
+        # remove cams that are not on urdf
+        for cam in self.cam_config.keys():
+            try:
+                link = system['sensors']['rectified_cams'][cam]['frame_id']
+                if not link in links:
+                    print 'URDF does not contain link [%s]. Removing camera [%s]' % (link, cam)
+                    del self.cam_config[cam]
+            except:
+                print 'System description does not contain camera [%s]' % cam
+                del self.cam_config[cam]
+
+        # remove arms that are not on urdf
+        for chain in self.chain_config.keys():
+            try:
+                link = system['sensors']['chains'][chain]['tip']
+                if not link in links:
+                    print 'URDF does not contain link [%s]. Removing chain [%s]' % (link, chain)
+                    del self.chain_config[chain]
+            except:
+                print 'System description does not contain chain [%s]' % chain
+                del self.chain_config[chain]
 
         self.cache = RobotMeasurementCache()
         self.lock = threading.Lock()
@@ -80,7 +115,6 @@ class CaptureExecutive:
 
         # Hardcoded cache sizes. Not sure where these params should live
         # ...
-
 
     def capture(self, next_configuration, timeout):
         done = False
@@ -182,7 +216,6 @@ class CaptureExecutive:
 
 
     def request_callback(self, msg):
-
         # See if the interval is big enough to care
         if (msg.end - msg.start) < rospy.Duration(1,0):
             return
@@ -213,4 +246,91 @@ class CaptureExecutive:
         print "Adding laser measurement"
         self.cache.add_laser_measurement(laser_id, msg, interval_start, interval_end)
         self.lock.release()
+
+if __name__=='__main__':
+    print "Starting executive..."
+    time.sleep(5.0)
+
+    rospy.init_node("capture_executive_node")
+
+    samples_dir = rospy.myargv()[1]
+    config_dir = rospy.myargv()[2]
+    system = rospy.myargv()[3]
+
+    try:
+        robot_description = rospy.get_param('robot_description')
+    except:
+        print 'robot_description not set, exiting'
+        sys.exit(-1)
+
+    executive = CaptureExecutive(config_dir, system, robot_description)
+    time.sleep(1.0)
+
+    # setup our samples
+    sample_steps = list()
+    sample_names = dict()
+    sample_options = dict()
+    sample_success = dict()
+    sample_failure = dict()
+    for directory in os.listdir(samples_dir):
+        try:
+            sample_options[directory] = yaml.load(open(samples_dir + '/' + directory + '/config.yaml'))
+            sample_steps.append(directory)
+        except IOError:
+            continue
+        sample_names[directory] = [x for x in os.listdir(samples_dir + '/' + directory + '/') if '.yaml' in x and x != 'config.yaml']
+        sample_names[directory].sort()
+        sample_success[directory] = 0
+        sample_failure[directory] = 0
+    sample_steps.sort()
+    for step in sample_steps:
+        print "%s Samples: \n - %s" % (sample_options[step]['group'], "\n - ".join(sample_names[step]))
+
+
+    pub = rospy.Publisher("robot_measurement", RobotMeasurement)
+
+    try:
+        for step in sample_steps:
+            keep_collecting = True
+            full_paths = [samples_dir + '/' + step + '/' + x for x in sample_names[step] ]
+            cur_config = yaml.load(open(full_paths[0]))
+            m_robot = executive.capture(cur_config, rospy.Duration(0.01))
+            while not rospy.is_shutdown() and keep_collecting:
+                print sample_options[step]["prompt"]
+                print "Press <enter> to continue, type N to exit this step"
+                resp = raw_input(">>>")
+                if string.upper(resp) == "N":
+                    print sample_options[step]["finish"]
+                    keep_collecting = False
+                else:
+                    for cur_sample_path in full_paths:
+                        print "On %s sample [%s]" % (sample_options[step]["group"], cur_sample_path)
+                        cur_config = yaml.load(open(cur_sample_path))
+                        m_robot = executive.capture(cur_config, rospy.Duration(40))
+                        if m_robot is None:
+                            print "--------------- Failed To Capture a %s Sample -----------------" % sample_options[step]["group"]
+                            if not sample_options[step]["repeat"]:
+                                sample_failure[step] += 1
+                        else:
+                            print "++++++++++++++ Successfully Captured a %s Sample ++++++++++++++" % sample_options[step]["group"]
+                            sample_success[step] += 1
+                            pub.publish(m_robot)
+                        print "Succeeded on %u %s samples" % (sample_success[step], sample_options[step]["group"])
+                        if rospy.is_shutdown():
+                            break
+                    keep_collecting = sample_options[step]["repeat"]
+    except EOFError:
+        print "Exiting"    
+
+    time.sleep(1)
+
+    print "Calibration data collection has completed!"
+    for step in sample_steps:
+        if sample_options[step]["repeat"]:
+            print "%s Samples: %u" % (sample_options[step]["group"], sample_success[step])
+        else:
+            print "%s Samples: %u/%u" % (sample_options[step]["group"], sample_success[step], sample_success[step] + sample_failure[step])
+    print ""
+    print "You can now kill this node, along with any other calibration nodes that are running."
+
 

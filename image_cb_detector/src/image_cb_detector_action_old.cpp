@@ -121,7 +121,7 @@ private:
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "joint_states_settler_action");
+  ros::init(argc, argv, "image_cb_detector_action");
 
   ros::NodeHandle n;
 
