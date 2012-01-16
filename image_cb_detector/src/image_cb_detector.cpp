@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2008, Willow Garage, Inc.
+ *  Copyright (c) 2008-2012, Willow Garage, Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -36,21 +36,18 @@
 
 #include <ros/console.h>
 #include <ros/ros.h>
-#include <image_cb_detector/image_cb_detector_old.h>
+#include <image_cb_detector/image_cb_detector.h>
 
 using namespace image_cb_detector;
 using namespace std;
 
-bool ImageCbDetectorOld::configure(const ConfigGoal& config)
+bool ImageCbDetector::configure(const ConfigGoal& config)
 {
   config_ = config;
-
   return true;
 }
 
-
-
-bool ImageCbDetectorOld::detect(const sensor_msgs::ImageConstPtr& ros_image,
+bool ImageCbDetector::detect(const sensor_msgs::ImageConstPtr& ros_image,
                              calibration_msgs::CalibrationPattern& result)
 {
   IplImage *image = NULL;

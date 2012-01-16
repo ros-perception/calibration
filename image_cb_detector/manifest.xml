@@ -13,11 +13,13 @@
   <depend package="roscpp"/>
   <depend package="opencv2"/>
   <depend package="cv_bridge"/>
+  <depend package="actionlib" />
   <depend package="actionlib_msgs" />
   <depend package="image_transport" />
   <depend package="sensor_msgs" />
   <depend package="geometry_msgs" />
 
-  <depend package="actionlib" />
-  <depend package="actionlib_msgs"/>
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -limage_cb_detector"/>
+  </export> 
 </package>

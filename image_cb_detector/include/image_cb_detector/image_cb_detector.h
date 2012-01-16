@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2008, Willow Garage, Inc.
+ *  Copyright (c) 2008-2011, Willow Garage, Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -48,7 +48,7 @@
 namespace image_cb_detector
 {
 
-class ImageCbDetectorOld
+class ImageCbDetector
 {
 public:
   bool configure(const ConfigGoal& config);
@@ -63,4 +63,4 @@ private:
 
 }
 
-#endif // IMAGE_CB_DETECTOR_IMAGE_CB_DETECTOR_H_
+#endif

@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2009, Willow Garage, Inc.
+*  Copyright (c) 2009-2012, Willow Garage, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
 #include <ros/console.h>
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
-#include <image_cb_detector/image_cb_detector_old.h>
+#include <image_cb_detector/image_cb_detector.h>
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/Image.h>
 #include <image_cb_detector/ConfigAction.h>
@@ -46,16 +46,16 @@
 
 using namespace image_cb_detector;
 
-class ImageCbDetectorOldAction
+class ImageCbDetectorAction
 {
 public:
-  ImageCbDetectorOldAction() : as_("cb_detector_config", false), it_(nh_)
+  ImageCbDetectorAction() : as_("cb_detector_config", false), it_(nh_)
   {
-    as_.registerGoalCallback( boost::bind(&ImageCbDetectorOldAction::goalCallback, this) );
-    as_.registerPreemptCallback( boost::bind(&ImageCbDetectorOldAction::preemptCallback, this) );
+    as_.registerGoalCallback( boost::bind(&ImageCbDetectorAction::goalCallback, this) );
+    as_.registerPreemptCallback( boost::bind(&ImageCbDetectorAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
-    sub_ = it_.subscribe("image", 2, boost::bind(&ImageCbDetectorOldAction::imageCallback, this, _1));
+    sub_ = it_.subscribe("image", 2, boost::bind(&ImageCbDetectorAction::imageCallback, this, _1));
     as_.start();
   }
 
@@ -111,7 +111,7 @@ private:
   boost::mutex run_mutex_;
   ros::NodeHandle nh_;
   actionlib::SimpleActionServer<image_cb_detector::ConfigAction> as_;
-  ImageCbDetectorOld detector_;
+  ImageCbDetector detector_;
 
   ros::Publisher pub_;
   image_transport::ImageTransport it_;
@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle n;
 
-  ImageCbDetectorOldAction detector_action;
+  ImageCbDetectorAction detector_action;
 
   ros::spin();
 

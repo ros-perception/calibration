@@ -21,13 +21,13 @@ rosbuild_genmsg()
 #uncomment if you have defined services
 #rosbuild_gensrv()
 
-rosbuild_add_library(image_cb_detector_old src/image_cb_detector_old.cpp)
+rosbuild_add_library(image_cb_detector src/image_cb_detector.cpp)
 
-rosbuild_add_executable(image_cb_detector_node_old src/image_cb_detector_node_old.cpp)
-target_link_libraries(image_cb_detector_node_old image_cb_detector_old)
+#rosbuild_add_executable(image_cb_detector_node_old src/image_cb_detector_node_old.cpp)
+#target_link_libraries(image_cb_detector_node_old image_cb_detector_old)
 
-rosbuild_add_executable(image_cb_detector_action_old src/image_cb_detector_action_old.cpp)
-target_link_libraries(image_cb_detector_action_old image_cb_detector_old)
+rosbuild_add_executable(image_cb_detector_action src/image_cb_detector_action.cpp)
+target_link_libraries(image_cb_detector_action image_cb_detector)
 
 rosbuild_add_executable(image_annotator src/image_annotator.cpp)
-target_link_libraries(image_annotator image_cb_detector_old)
+target_link_libraries(image_annotator image_cb_detector)

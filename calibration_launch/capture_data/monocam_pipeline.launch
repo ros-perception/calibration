@@ -8,7 +8,7 @@
         name="throttle"
         args="messages $(arg image_topic) $(arg frequency) image_rect_throttle" />
 
-  <node type="image_cb_detector_action_old"
+  <node type="image_cb_detector_action"
         pkg="image_cb_detector"
         name="cb_detector">
     <remap from="image" to="image_rect_throttle" />
