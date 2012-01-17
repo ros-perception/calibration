@@ -1,9 +1,0 @@
-sensors:
-  - external_kinect
-
-external_kinect:
-  parent_frame: world
-  frame_id: kinect
-  fov_degrees: 90
-  min_range: 0.5
-  max_range: 2.0
