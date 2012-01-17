@@ -1,6 +1,6 @@
 Header header
 string camera_id
-ImagePoint[] image_points
+geometry_msgs/Point image_points
 sensor_msgs/CameraInfo cam_info
 
 # True -> The extra debugging fields are populated

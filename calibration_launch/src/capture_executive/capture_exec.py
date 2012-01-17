@@ -111,7 +111,7 @@ class CaptureExecutive:
         self.laser_managers = [ (laser_id, LaserManager(laser_id, self.add_laser_measurement) ) for laser_id in self.laser_config.keys() ]
 
         # Subscribe to topic containing stable intervals
-        self.request_interval_sub = rospy.Subscriber("request_interval", calibration_msgs.msg.Interval, self.request_callback)
+        self.request_interval_sub = rospy.Subscriber("intersected_interval", calibration_msgs.msg.Interval, self.request_callback)
 
         # Hardcoded cache sizes. Not sure where these params should live
         # ...
@@ -243,7 +243,6 @@ class CaptureExecutive:
 
     def add_laser_measurement(self, laser_id, msg, interval_start, interval_end):
         self.lock.acquire()
-        print "Adding laser measurement"
         self.cache.add_laser_measurement(laser_id, msg, interval_start, interval_end)
         self.lock.release()
 

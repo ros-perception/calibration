@@ -99,8 +99,9 @@ void MonocamSettler::deflate(const calibration_msgs::CalibrationPatternConstPtr&
   deflated.channels_.resize( 2 * N );
   for (unsigned int i=0; i<N; i++)
   {
-    deflated.channels_[2*i+0] = msg->image_points[i].x;
-    deflated.channels_[2*i+1] = msg->image_points[i].y;
+    deflated.channels_[3*i+0] = msg->image_points[i].x;
+    deflated.channels_[3*i+1] = msg->image_points[i].y;
+    deflated.channels_[3*i+2] = msg->image_points[i].z;  
   }
   deflated.msg_ = msg;
 }

@@ -23,9 +23,6 @@ rosbuild_genmsg()
 
 rosbuild_add_library(image_cb_detector src/image_cb_detector.cpp)
 
-#rosbuild_add_executable(image_cb_detector_node_old src/image_cb_detector_node_old.cpp)
-#target_link_libraries(image_cb_detector_node_old image_cb_detector_old)
-
 rosbuild_add_executable(image_cb_detector_action src/image_cb_detector_action.cpp)
 target_link_libraries(image_cb_detector_action image_cb_detector)
 

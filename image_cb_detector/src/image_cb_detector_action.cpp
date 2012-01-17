@@ -122,12 +122,8 @@ private:
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "image_cb_detector_action");
-
   ros::NodeHandle n;
-
   ImageCbDetectorAction detector_action;
-
   ros::spin();
-
   return 0;
 }

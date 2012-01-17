@@ -53,7 +53,7 @@ public:
   {
     as_.registerGoalCallback(    boost::bind(&IntervalIntersectionAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&IntervalIntersectionAction::preemptCallback, this) );
-    pub_ = nh_.advertise<calibration_msgs::Interval>("interval", 1);
+    pub_ = nh_.advertise<calibration_msgs::Interval>("intersected_interval", 1);
 
     ROS_DEBUG("Start interval intersection with no input topics");
     as_.start();
@@ -128,12 +128,8 @@ private:
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "intersection_action_node");
-
   ros::NodeHandle n;
-
   IntervalIntersectionAction intersect_action;
-
   ros::spin();
-
   return 0;
 }

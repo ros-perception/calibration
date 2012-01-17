@@ -84,7 +84,6 @@ class RobotMeasurementCache:
         cur_cache = self._chain_caches[chain_id]
         cur_cache.append( m )
         cur_cache.sort(stamped_cmp)
-
         while len(cur_cache) > self._chain_sizes[chain_id]:
             cur_cache.pop(0)
 
@@ -93,7 +92,6 @@ class RobotMeasurementCache:
         cur_cache = self._laser_caches[laser_id]
         cur_cache.append( [m, interval_start, interval_end] )
         cur_cache.sort(laser_cmp)
-
         while len(cur_cache) > self._laser_sizes[laser_id]:
             cur_cache.pop(0)
 

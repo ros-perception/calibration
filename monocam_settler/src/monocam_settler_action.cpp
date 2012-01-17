@@ -97,7 +97,6 @@ public:
       calibration_msgs::Interval interval;
       success = settler_.add(msg, interval);
 
-
       if (success)
         pub_.publish(interval);
       else
@@ -125,13 +124,9 @@ private:
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "joint_states_settler_action");
-
   ros::NodeHandle n;
-
   MonocamSettlerAction settler_action;
-
   ros::spin();
-
   return 0;
 }
 

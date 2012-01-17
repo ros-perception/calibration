@@ -19,9 +19,6 @@ rosbuild_genmsg()
 
 rosbuild_add_library(${PROJECT_NAME} src/monocam_settler.cpp)
 
-rosbuild_add_executable(monocam_settler_node src/monocam_settler_node.cpp)
-target_link_libraries(monocam_settler_node ${PROJECT_NAME})
-
 rosbuild_add_executable(monocam_settler_action src/monocam_settler_action.cpp)
 target_link_libraries(monocam_settler_action ${PROJECT_NAME})
 

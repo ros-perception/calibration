@@ -53,7 +53,7 @@ public:
     as_.registerGoalCallback( boost::bind(&JointStatesSettlerAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&JointStatesSettlerAction::preemptCallback, this) );
     interval_pub_ = nh_.advertise<calibration_msgs::Interval>("settled_interval", 1);
-    pruned_pub_ = nh_.advertise<sensor_msgs::JointState>("pruned_joint_states", 1);
+    pruned_pub_ = nh_.advertise<sensor_msgs::JointState>("chain_state", 1);
     sub_ = nh_.subscribe("joint_states", 1, &JointStatesSettlerAction::jointStatesCallback, this);
     as_.start();
   }
@@ -116,12 +116,8 @@ private:
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "joint_states_settler_action");
-
   ros::NodeHandle n;
-
   JointStatesSettlerAction settler_action;
-
   ros::spin();
-
   return 0;
 }
