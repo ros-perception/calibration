@@ -106,7 +106,16 @@ class CaptureExecutive:
                                             self.controller_config)
 
         # Construct a manager for each sensor stream (Don't enable any of them)
-        self.cam_managers   = [ (cam_id,   CamManager(  cam_id,   self.add_cam_measurement) )   for cam_id   in self.cam_config.keys() ]
+        self.cam_managers = list()
+        for cam_id in self.cam_config.keys():
+            #try:
+            #    print self.cam_config[cam_id]
+            self.cam_managers.append( (cam_id, CamManager( cam_id, self.add_cam_measurement, self.cam_config[cam_id]["rgbd"] ) ) )
+            #    print "Added RGBD"
+            #except:
+            #    self.cam_managers.append( (cam_id, CamManager( cam_id, self.add_cam_measurement ) ) )
+            #   print "Added Camera"
+        #self.cam_managers  = [ (cam_id,   CamManager(  cam_id,   self.add_cam_measurement) )   for cam_id   in self.cam_config.keys() ]
         self.chain_managers = [ (chain_id, ChainManager(chain_id, self.add_chain_measurement) ) for chain_id in self.chain_config.keys() ]
         self.laser_managers = [ (laser_id, LaserManager(laser_id, self.add_laser_measurement) ) for laser_id in self.laser_config.keys() ]
 
@@ -141,7 +150,6 @@ class CaptureExecutive:
         except:
             laser_ids = list()
         self.cache.reconfigure(cam_ids, chain_ids, laser_ids)
-
 
         print "Setting up sensor managers"
         enable_list = []
@@ -214,7 +222,6 @@ class CaptureExecutive:
 
         return self.m_robot
 
-
     def request_callback(self, msg):
         # See if the interval is big enough to care
         if (msg.end - msg.start) < rospy.Duration(1,0):
@@ -284,7 +291,6 @@ if __name__=='__main__':
     sample_steps.sort()
     for step in sample_steps:
         print "%s Samples: \n - %s" % (sample_options[step]['group'], "\n - ".join(sample_names[step]))
-
 
     pub = rospy.Publisher("robot_measurement", RobotMeasurement)
 

@@ -1,4 +1,5 @@
 Header header
 geometry_msgs/Point[] object_points
 geometry_msgs/Point[] image_points
+geometry_msgs/Point[] cloud_points
 uint8 success

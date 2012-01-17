@@ -75,25 +75,36 @@ class ChainManager:
         self._lock.release()
 
 class CamManager:
-    def __init__(self, cam_id, callback, *cb_args):
+    def __init__(self, cam_id, callback, rgbd=False, *cb_args):
         self._cam_id = cam_id
         self._callback = callback
         self._cb_args = cb_args
         self._mode = "off"
+        self._cam_info = None
 
         self._lock = threading.Lock()
 
         # How do I specify a queue size of 1?
-        self._cam_info_sub = message_filters.Subscriber(cam_id + "/camera_info", sensor_msgs.msg.CameraInfo)
-        self._features_sub = message_filters.Subscriber(cam_id + "/features", calibration_msgs.msg.CalibrationPattern)
-        self._image_sub    = message_filters.Subscriber(cam_id + "/image",    sensor_msgs.msg.Image)
-        self._image_rect_sub=message_filters.Subscriber(cam_id + "/image_rect", sensor_msgs.msg.Image)
-
-        self._verbose_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub, self._image_sub, self._image_rect_sub], 10)
-        self._minimal_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub], 10)
-
-        self._verbose_sync.registerCallback(self.verbose_callback)
-        self._minimal_sync.registerCallback(self.minimal_callback)
+        if rgbd:
+            # camera_info is not synced to cloud!
+            #self._cam_info_sub   = message_filters.Subscriber(cam_id + "/camera_info", sensor_msgs.msg.CameraInfo)
+            self._features_sub   = message_filters.Subscriber(cam_id + "/features",    calibration_msgs.msg.CalibrationPattern)
+            self._cloud_sub    = message_filters.Subscriber(cam_id + "/points",        sensor_msgs.msg.PointCloud2)
+            self._verbose_sync = message_filters.TimeSynchronizer([self._features_sub, self._cloud_sub], 10)
+            self._verbose_sync.registerCallback(self.verbose_rgbd_callback)
+            self._minimal_sync = rospy.Subscriber(cam_id + "/features", calibration_msgs.msg.CalibrationPattern, self.minimal_rgbd_callback)
+            #self._minimal_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub], 10)
+            #self._minimal_sync.registerCallback(self.minimal_callback)
+            self._info_sub = rospy.Subscriber(cam_id + "/camera_info", sensor_msgs.msg.CameraInfo, self.info_callback)
+        else:
+            self._cam_info_sub   = message_filters.Subscriber(cam_id + "/camera_info", sensor_msgs.msg.CameraInfo)
+            self._features_sub   = message_filters.Subscriber(cam_id + "/features",    calibration_msgs.msg.CalibrationPattern)
+            self._image_sub      = message_filters.Subscriber(cam_id + "/image",       sensor_msgs.msg.Image)
+            self._image_rect_sub = message_filters.Subscriber(cam_id + "/image_rect",  sensor_msgs.msg.Image)
+            self._verbose_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub, self._image_sub, self._image_rect_sub], 10)
+            self._verbose_sync.registerCallback(self.verbose_callback)
+            self._minimal_sync = message_filters.TimeSynchronizer([self._cam_info_sub, self._features_sub], 10)
+            self._minimal_sync.registerCallback(self.minimal_callback)
 
     def verbose_callback(self, cam_info, features, image, image_rect):
         self._lock.acquire()
@@ -124,6 +135,46 @@ class CamManager:
             self._callback(self._cam_id, msg, *self._cb_args)
         self._lock.release()
 
+    def info_callback(self, cam_info):
+        self._lock.acquire()
+        if self._mode is not "off":
+            self._cam_info = cam_info
+        self._lock.release()
+
+    def verbose_rgbd_callback(self, features, cloud):
+        self._lock.acquire()
+        if self._cam_info == None:
+            self._lock.release()
+            return
+        if self._mode is "verbose":
+            # Populate measurement message
+            msg = CameraMeasurement()
+            msg.header.stamp = self._cam_info.header.stamp
+            msg.camera_id = self._cam_id
+            msg.image_points = features.cloud_points
+            msg.cam_info = self._cam_info
+            msg.verbose = True
+            msg.cloud = cloud
+            msg.features = features
+            self._callback(self._cam_id, msg, *self._cb_args)
+        self._lock.release()
+
+    def minimal_rgbd_callback(self, features):
+        self._lock.acquire()
+        if self._cam_info == None:
+            self._lock.release()
+            return
+        if self._mode is "minimal":
+            # Populate measurement message
+            msg = CameraMeasurement()
+            msg.header.stamp = self._cam_info.header.stamp
+            msg.camera_id = self._cam_id
+            msg.image_points = features.cloud_points
+            msg.cam_info = self._cam_info
+            msg.verbose = False
+            self._callback(self._cam_id, msg, *self._cb_args)
+        self._lock.release()
+
     def enable(self, verbose=False):
         self._lock.acquire()
         if verbose:
@@ -136,7 +187,6 @@ class CamManager:
         self._lock.acquire()
         self._mode = "off"
         self._lock.release()
-
 
 class LaserManager:
     def __init__(self, laser_id, callback, *cb_args):

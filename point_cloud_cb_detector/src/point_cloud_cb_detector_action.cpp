@@ -50,14 +50,15 @@
 class PointCloudCbDetectorAction
 {
 public:
-  PointCloudCbDetectorAction() : as_("cb_detector_config", false) /*, it_(nh_)*/
+  PointCloudCbDetectorAction() : as_("cb_detector_config", false), it_(nh_)
   {
     as_.registerGoalCallback( boost::bind(&PointCloudCbDetectorAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&PointCloudCbDetectorAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
     sub_ = nh_.subscribe("points", 2, &PointCloudCbDetectorAction::cloudCallback, this);
-    //sub_ = it_.subscribe("image", 2, boost::bind(&PointCloudCbDetectorAction::imageCallback, this, _1));
+
+    image_pub_ = it_.advertise("image", 1);
     as_.start();
   }
 
@@ -105,7 +106,8 @@ public:
       pcl::fromROSMsg(*msg, cloud);
       // get an OpenCV image from the cloud
       pcl::toROSMsg(cloud, *image);
-
+      image->header = cloud.header;
+      image_pub_.publish(image);
       success = detector_.detect(image, features);
       if (!success)
       {
@@ -114,16 +116,18 @@ public:
       }
 
       // update x,y,z to point cloud data for all for points
+      features.cloud_points.resize(features.image_points.size());
       for(size_t i = 0; i< features.image_points.size(); i++){
-        geometry_msgs::Point32 *p = &features.image_points[i];
-        pcl::PointXYZRGB pt = cloud(p->x, p->y);
+        geometry_msgs::Point *cp = &(features.cloud_points[i]);
+        geometry_msgs::Point *ip = &(features.image_points[i]);
+        pcl::PointXYZRGB pt = cloud((int)(ip->x+0.5), (int)(ip->y+0.5));
         if( isnan(pt.x) || isnan(pt.y) || isnan(pt.z) ) {
           ROS_ERROR("Invalid point in checkerboard, not going to publish CalibrationPattern");
           return;
         }
-        p->x = pt.x;
-        p->y = pt.y;
-        p->z = pt.z;
+        cp->x = pt.x;
+        cp->y = pt.y;
+        cp->z = pt.z;
       }
 
       pub_.publish(features);
@@ -136,9 +140,11 @@ private:
   actionlib::SimpleActionServer<image_cb_detector::ConfigAction> as_;
   image_cb_detector::ImageCbDetector detector_;
 
+  image_transport::ImageTransport it_;
+  image_transport::Publisher image_pub_;
+
   ros::Publisher pub_;
   ros::Subscriber sub_;
-
 };
 
 int main(int argc, char** argv)
