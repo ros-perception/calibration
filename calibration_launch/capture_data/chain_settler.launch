@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="joint_states_settler" type="joint_states_settler_action"
+        name="settler" output="screen">
+    <remap from="joint_states" to="/joint_states" />
+  </node>
+</launch>
