@@ -1,0 +1,35 @@
+<launch>
+
+  <arg name="points_topic" default="points"/>
+  <arg name="frequency" default="2"/>
+
+  <node type="throttle"
+        pkg="topic_tools"
+        name="throttle"
+        args="messages $(arg points_topic) $(arg frequency) points_throttle" />
+
+  <node type="point_cloud_cb_detector_action"
+        pkg="point_cloud_cb_detector"
+        name="cb_detector"
+        output="screen">
+    <remap from="points" to="points_throttle" />
+    <remap from="image" to="image_throttle" />
+  </node>
+
+  <node type="image_annotator"
+        pkg="image_cb_detector"
+        name="cb_annotator"
+        output="screen">
+    <remap from="annotated" to="image_rect_annotated" />
+    <remap from="image" to="image_throttle" />
+    <param name="marker_size" type="int" value="3" />
+    <param name="scaling" type="double" value=".5" />
+  </node>
+
+  <node type="monocam_settler_action"
+        pkg="monocam_settler"
+        name="monocam_settler"
+        output="screen">
+  </node>
+
+</launch>
