@@ -97,6 +97,10 @@ class CameraChainSensor:
 
         self.sensor_type = "camera"
         self.sensor_id = config_dict["sensor_id"]
+        try:
+            self._rgbd = config_dict["rgbd"]
+        except:
+            self._rgbd = False
 
         self._config_dict = config_dict
         self._M_cam = M_cam
@@ -130,7 +134,6 @@ class CameraChainSensor:
         r = array(reshape(h_mat - z_mat, [-1,1]))[:,0]
         return r
 
-
     def compute_residual_scaled(self, target_pts):
         """
         Computes the residual, and then scales it by sqrt(Gamma), where Gamma
@@ -163,15 +166,20 @@ class CameraChainSensor:
 
     def get_residual_length(self):
         N = len(self._M_cam.image_points)
-        return N*2
+        if self._rgbd:
+            return N*3
+        else:
+            return N*2
 
-    # Get the observed measurement in a Nx2 Matrix
+    # Get the observed measurement in a Nx2/Nx3 Matrix
     def get_measurement(self):
         """
         Get the target's pixel coordinates as measured by the actual sensor
         """
-        camera_pix = numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])
-        return camera_pix
+        if self._rgbd:
+            return numpy.matrix([[pt.x, pt.y, pt.z] for pt in self._M_cam.image_points]) # points
+        else:
+            return numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])       # pixels
 
     def compute_expected(self, target_pts):
         """
@@ -199,7 +207,6 @@ class CameraChainSensor:
         cam_frame_pts = camera_pose_root.I * target_pts
         # Do the camera projection
         pixel_pts = self._camera.project(self._M_cam.cam_info.P, cam_frame_pts)
-
         return pixel_pts.T
 
     def compute_expected_J(self, target_pts):
@@ -209,6 +216,7 @@ class CameraChainSensor:
         For n points in target_pts, J is a 2nx3n matrix
         Note: This doesn't seem to be used anywhere, except maybe in some drawing code
         """
+        # TODO
         epsilon = 1e-8
         N = len(self._M_cam.image_points)
         Jt = zeros([N*3, N*2])
@@ -225,7 +233,6 @@ class CameraChainSensor:
             Jt[k*3:(k+1)*3, k*2:(k+1)*2] = sub_Jt
         return Jt.T
 
-
     def compute_cov(self, target_pts):
         '''
         Computes the measurement covariance in pixel coordinates for the given
@@ -234,7 +241,6 @@ class CameraChainSensor:
          - target_pts: 4xN matrix, storing N feature points of the target, in homogeneous coords
         '''
         epsilon = 1e-8
-
         if self._M_chain is not None:
             num_joints = len(self._M_chain.chain_state.position)
             Jt = zeros([num_joints, self.get_residual_length()])
@@ -257,11 +263,20 @@ class CameraChainSensor:
         cam_cov = matrix(zeros([self.get_residual_length(), self.get_residual_length()]))
 
         # Convert StdDev into variance
-        var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
-        var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
-        for k in range(cam_cov.shape[0]/2):
-            cam_cov[2*k  , 2*k]   = var_u
-            cam_cov[2*k+1, 2*k+1] = var_v
+        if self._rgbd:
+            var_x = self._camera._cov_dict['x'] * self._camera._cov_dict['x']
+            var_y = self._camera._cov_dict['y'] * self._camera._cov_dict['y']
+            var_z = self._camera._cov_dict['z'] * self._camera._cov_dict['z']
+            for k in range(cam_cov.shape[0]/3):
+                cam_cov[3*k  , 3*k]   = var_x
+                cam_cov[3*k+1, 3*k+1] = var_y
+                cam_cov[3*k+2, 3*k+2] = var_z
+        else:
+            var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
+            var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
+            for k in range(cam_cov.shape[0]/2):
+                cam_cov[2*k  , 2*k]   = var_u
+                cam_cov[2*k+1, 2*k+1] = var_v
 
         # Both chain and camera covariances are now in measurement space, so we can simply add them together
         if self._M_chain is not None:
