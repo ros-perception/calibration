@@ -9,5 +9,4 @@ bool verbose
 # Extra, partially processed data. Only needed for debugging
 sensor_msgs/Image image
 sensor_msgs/Image image_rect
-sensor_msgs/PointCloud2 cloud
 calibration_msgs/CalibrationPattern features

@@ -18,6 +18,7 @@
   <depend package="image_transport" />
   <depend package="sensor_msgs" />
   <depend package="geometry_msgs" />
+  <depend package="pcl_ros"/>
 
   <export>
     <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -limage_cb_detector"/>

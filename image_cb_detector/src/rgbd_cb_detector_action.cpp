@@ -39,26 +39,37 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <image_cb_detector/image_cb_detector.h>
-#include <image_transport/image_transport.h>
+
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <image_cb_detector/ConfigAction.h>
 #include <calibration_msgs/Interval.h>
+
 #include <pcl/point_types.h>
 #include <pcl_ros/point_cloud.h>
 
-class PointCloudCbDetectorAction
+#include <message_filters/subscriber.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
+
+typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::PointCloud2> CameraSyncPolicy;
+
+class RgbdCbDetectorAction
 {
 public:
-  PointCloudCbDetectorAction() : as_("cb_detector_config", false), it_(nh_)
+  RgbdCbDetectorAction(ros::NodeHandle & n) : nh_(n),
+                           as_("cb_detector_config", false),
+                           image_sub_ (nh_, "image", 3),
+                           cloud_sub_(nh_, "points", 3),
+                           sync_(CameraSyncPolicy(10), image_sub_, cloud_sub_)
+
   {
-    as_.registerGoalCallback( boost::bind(&PointCloudCbDetectorAction::goalCallback, this) );
-    as_.registerPreemptCallback( boost::bind(&PointCloudCbDetectorAction::preemptCallback, this) );
+    as_.registerGoalCallback( boost::bind(&RgbdCbDetectorAction::goalCallback, this) );
+    as_.registerPreemptCallback( boost::bind(&RgbdCbDetectorAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
-    sub_ = nh_.subscribe("points", 2, &PointCloudCbDetectorAction::cloudCallback, this);
+    sync_.registerCallback(boost::bind(&RgbdCbDetectorAction::cameraCallback, this, _1, _2));
 
-    image_pub_ = it_.advertise("image", 1);
     as_.start();
   }
 
@@ -90,7 +101,9 @@ public:
     as_.setPreempted();
   }
 
-  void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
+  void cameraCallback ( const sensor_msgs::ImageConstPtr& image,
+                        const sensor_msgs::PointCloud2ConstPtr& depth)
+//  void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
   {
     boost::mutex::scoped_lock lock(run_mutex_);
 
@@ -98,16 +111,9 @@ public:
     {
       calibration_msgs::CalibrationPattern features;
       bool success;
-
-      // pull an image out of the cloud
-      sensor_msgs::ImagePtr image(new sensor_msgs::Image);
       // convert cloud to PCL
       pcl::PointCloud<pcl::PointXYZRGB> cloud;
-      pcl::fromROSMsg(*msg, cloud);
-      // get an OpenCV image from the cloud
-      pcl::toROSMsg(cloud, *image);
-      image->header = cloud.header;
-      image_pub_.publish(image);
+      pcl::fromROSMsg(*depth, cloud);
       success = detector_.detect(image, features);
       if (!success)
       {
@@ -115,19 +121,15 @@ public:
         return;
       }
 
-      // update x,y,z to point cloud data for all for points
-      features.cloud_points.resize(features.image_points.size());
       for(size_t i = 0; i< features.image_points.size(); i++){
-        geometry_msgs::Point *cp = &(features.cloud_points[i]);
-        geometry_msgs::Point *ip = &(features.image_points[i]);
-        pcl::PointXYZRGB pt = cloud((int)(ip->x+0.5), (int)(ip->y+0.5));
+        geometry_msgs::Point *p = &(features.image_points[i]);
+        pcl::PointXYZRGB pt = cloud((int)(p->x+0.5), (int)(p->y+0.5));
         if( isnan(pt.x) || isnan(pt.y) || isnan(pt.z) ) {
           ROS_ERROR("Invalid point in checkerboard, not going to publish CalibrationPattern");
           return;
         }
-        cp->x = pt.x;
-        cp->y = pt.y;
-        cp->z = pt.z;
+        // z is set to distance
+        p->z = sqrt( (pt.x*pt.x) + (pt.y*pt.y) + (pt.z*pt.z) );
       }
 
       pub_.publish(features);
@@ -140,18 +142,18 @@ private:
   actionlib::SimpleActionServer<image_cb_detector::ConfigAction> as_;
   image_cb_detector::ImageCbDetector detector_;
 
-  image_transport::ImageTransport it_;
-  image_transport::Publisher image_pub_;
+  message_filters::Subscriber<sensor_msgs::Image> image_sub_; 
+  message_filters::Subscriber<sensor_msgs::PointCloud2> cloud_sub_;
+  message_filters::Synchronizer<CameraSyncPolicy> sync_;
 
   ros::Publisher pub_;
-  ros::Subscriber sub_;
 };
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "point_cloud_cb_detector_action");
+  ros::init(argc, argv, "rgbd_cb_detector_action");
   ros::NodeHandle n;
-  PointCloudCbDetectorAction detector_action;
+  RgbdCbDetectorAction detector_action(n);
   ros::spin();
   return 0;
 }

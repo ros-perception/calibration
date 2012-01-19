@@ -1,19 +1,20 @@
 <launch>
 
+  <arg name="image_topic" default="image_rect"/>
   <arg name="points_topic" default="points"/>
   <arg name="frequency" default="2"/>
 
   <node type="throttle"
         pkg="topic_tools"
         name="throttle"
-        args="messages $(arg points_topic) $(arg frequency) points_throttle" />
+        args="messages $(arg image_topic) $(arg frequency) image_rect_throttle" />
 
-  <node type="point_cloud_cb_detector_action"
-        pkg="point_cloud_cb_detector"
+  <node type="rgbd_cb_detector_action"
+        pkg="image_cb_detector"
         name="cb_detector"
         output="screen">
-    <remap from="points" to="points_throttle" />
-    <remap from="image" to="image_throttle" />
+    <remap from="points" to="$(arg points_topic)" />
+    <remap from="image" to="image_rect_throttle" />
   </node>
 
   <node type="image_annotator"
@@ -21,7 +22,7 @@
         name="cb_annotator"
         output="screen">
     <remap from="annotated" to="image_rect_annotated" />
-    <remap from="image" to="image_throttle" />
+    <remap from="image" to="image_rect_throttle" />
     <param name="marker_size" type="int" value="3" />
     <param name="scaling" type="double" value=".5" />
   </node>
