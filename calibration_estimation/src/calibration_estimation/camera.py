@@ -48,15 +48,12 @@ class RectifiedCamera:
         self._config = config
         self._cov_dict = config['cov']
         try:
-            self._rgbd = config["rgbd"]
+            self._rgbd = config["baseline_rgbd"] != 0.0
         except:
-            self._rgbd = False
+            self._rgbd = None
 
     def calc_free(self, free_config):
-        if self._rgbd:
-            return []
-        else:
-            return [free_config[x] == 1 for x in param_names]
+        return [free_config[x] == 1 for x in param_names]
 
     def params_to_config(self, param_vec):
         param_list = array(param_vec)[:,0].tolist()
@@ -64,46 +61,34 @@ class RectifiedCamera:
             param_dict = dict()
         else:
             param_dict = dict(zip(param_names, param_list))
-        param_dict['cov']      = self._cov_dict
-        param_dict['rgbd']     = self._rgbd
+        param_dict['cov'] = self._cov_dict
+        param_dict['baseline_rgbd'] = self._rgbd
         param_dict['frame_id'] = self._config['frame_id']
         param_dict['chain_id'] = self._config['chain_id']   # TODO: kill this
         return param_dict
 
     # Convert column vector of params into config, expects a 4x1 matrix
     def inflate(self, param_vec):
-        if not self._rgbd:
-            param_list = array(param_vec)[:,0].tolist()
-            for x,y in zip(param_names, param_list):
-                self._config[x] = y
+        param_list = array(param_vec)[:,0].tolist()
+        for x,y in zip(param_names, param_list):
+            self._config[x] = y
 
     # Return column vector of config. In this case, it's always a 4x1 matrix
     def deflate(self):
-        if self._rgbd:
-            return matrix([])
-        else:
-            return matrix([self._config[x] for x in param_names]).T
+        return matrix([self._config[x] for x in param_names]).T
 
     # Returns # of params needed for inflation & deflation
     def get_length(self):
-        if self._rgbd:
-            return 0
-        else:
-            return len(param_names)
+        return len(param_names)
 
     def get_param_names(self):
-        if self._rgbd:
-            return []
-        else:
-            return param_names
+        return param_names
 
     # Project a set of 3D points points into pixel coordinates
     # P_list - Projection matrix. We expect this to be a 1x12 list. We then reshape
     #          it into a 3x4 matrix (by filling 1 row at a time)
     # pts - 4xN numpy matrix holding the points that we want to project (homogenous coords)
     def project(self, P_list, pts):
-        if self._rgbd:
-            return pts[0:3,:]
         N = pts.shape[1]
 
         # Reshape P_list into an actual matrix
@@ -123,7 +108,17 @@ class RectifiedCamera:
         pixel_pts_h = P * pts
 
         # Strip out last row (3rd) and rescale
-        pixel_pts = pixel_pts_h[0:2,:] / pixel_pts_h[2,:]
+        if self._rgbd:
+            pixel_pts = pixel_pts_h[0:3,:] / pixel_pts_h[2,:]
+            for i in range(N):
+                d = sqrt( (pts[0,i] * pts[0,i]) + (pts[1,i] * pts[1,i]) + pts[2,i] * pts[2,i]) )
+                pixel_pts[2,i] = self.get_disparity(P,d)
+        else:
+            pixel_pts = pixel_pts_h[0:2,:] / pixel_pts_h[2,:]
 
         return pixel_pts
+
+    def get_disparity(self, P_list, distance_to_point):
+        return (P_list[0,0] * self._config["rgbd_baseline"]) / distance_to_point
+        
 

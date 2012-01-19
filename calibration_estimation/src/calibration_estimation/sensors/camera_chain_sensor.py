@@ -40,7 +40,6 @@
 #      \
 #       checkerboard
 
-
 import numpy
 from numpy import matrix, reshape, array, zeros, diag, real
 
@@ -78,11 +77,7 @@ class CameraChainBundler:
                     M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
                     M_chain = None
                     cur_config["chain_id"] = None
-                #try: 
-                    #if config_dict["rgbd"]:
-                cur_sensor = RgbdChainSensor(cur_config, M_cam, M_chain)
-                #except:
-                #    cur_sensor = CameraChainSensor(cur_config, M_cam, M_chain)
+                cur_sensor = CameraChainSensor(cur_config, M_cam, M_chain)
                 sensors.append(cur_sensor)
             else:
                 rospy.logdebug("  Didn't find block")
@@ -108,6 +103,8 @@ class CameraChainSensor:
         self._full_chain = FullChainRobotParams(config_dict["chain_id"], config_dict["frame_id"])
 
         self.terms_per_sample = 2
+        if "baseline_rgbd" in config_dict.keys():
+            self.terms_per_sample = 3
 
     def update_config(self, robot_params):
         """
@@ -125,7 +122,8 @@ class CameraChainSensor:
         Input:
         - target_pts: 4XN matrix, storing features point locations in world cartesian homogenous coordinates.
         Output:
-        - r: 2N long vector, storing pixel residuals for the target points in the form [u1, v1, u2, v2, ..., uN, vN]
+        - r: terms_per_sample*N long vector, storing pixel residuals for the target points in the form of
+             [u1, v1, u2, v2, ..., uN, vN] or [u1, v1, u'1, u2....]
         """
         z_mat = self.get_measurement()
         h_mat = self.compute_expected(target_pts)
@@ -150,11 +148,11 @@ class CameraChainSensor:
         import scipy.linalg
         cov = self.compute_cov(target_pts)
         gamma = matrix(zeros(cov.shape))
-        num_pts = self.get_residual_length()/2
+        num_pts = self.get_residual_length()/self.samples_per_term
 
         for k in range(num_pts):
-            first = 2*k
-            last = 2*k+2
+            first = self.samples_per_term*k
+            last = self.samples_per_term*k+self.samples_per_term
             sub_cov = matrix(cov[first:last, first:last])
             sub_gamma_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov.I))
             sub_gamma_sqrt = real(sub_gamma_sqrt_full)
@@ -163,28 +161,16 @@ class CameraChainSensor:
         return gamma
 
     def get_residual_length(self):
-        return 2*len(self._M_cam.image_points)
-#        if self._rgbd:
-#            return N*3
-#        else:
-#            return N*2
+        return self.terms_per_sample*len(self._M_cam.image_points)
 
-    # Get the observed measurement
-    #   for RGBD sensors, this is an 3XN matrix of world coordinates
-    #   for 2D cams, this is an Nx2 matrix of pixel coordinates
     def get_measurement(self):
         """
         Get the target's pixel coordinates as measured by the actual sensor
         """
-#        if self._rgbd:
-#            if self._M_chain is not None:
-#                camera_pose_root = self._full_chain.calc_block.fk(self._M_chain.chain_state)
-#            else:
-#                camera_pose_root = self._full_chain.calc_block.fk(None)
-#            pts = camera_pose_root * numpy.matrix([[pt.x, pt.y, pt.z, 1] for pt in self._M_cam.image_points]).T # points
-#            return pts[0:3,:]
-#        else:
-        return numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])       # pixels
+        if self.terms_per_sample == 2:
+            return numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])
+        elif self.terms_per_sample == 3:
+            return numpy.matrix([[pt.x, pt.y, self._camera.get_disparity(self._M_cam.cam_info.P, pt.z)] for pt in self._M_cam.image_points])
 
     def compute_expected(self, target_pts):
         """
@@ -250,9 +236,11 @@ class CameraChainSensor:
         # Convert StdDev into variance
         var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
         var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
-        for k in range(cam_cov.shape[0]/2):
-            cam_cov[2*k  , 2*k]   = var_u
-            cam_cov[2*k+1, 2*k+1] = var_v
+        for k in range(cam_cov.shape[0]/self.terms_per_sample):
+            cam_cov[self.terms_per_sample*k  , self.terms_per_sample*k]   = var_u
+            cam_cov[self.terms_per_sample*k+1, self.terms_per_sample*k+1] = var_v
+            if self.terms_per_sample == 3:
+                cam_cov[self.terms_per_sample*k+2, self.terms_per_sample*k+2] = self._camera._cov_dict['x'] * self._camera._cov_dict['x']
 
         # Both chain and camera covariances are now in measurement space, so we can simply add them together
         if self._M_chain is not None:
@@ -301,101 +289,4 @@ class CameraChainSensor:
         sparsity['rectified_cams'] = {}
         sparsity['rectified_cams'][self.sensor_id] = dict( [(x,1) for x in self._camera.get_param_names()] )
         return sparsity
-
-class RgbdChainSensor(CameraChainSensor):
-    def __init__(self, config_dict, M_cam, M_chain):
-        self.sensor_type = "camera"
-        self.sensor_id = config_dict["sensor_id"]
-
-        self._config_dict = config_dict
-        self._M_cam = M_cam
-        self._M_chain = M_chain
-
-        self._full_chain = FullChainRobotParams(config_dict["chain_id"], config_dict["frame_id"])
-
-        self.terms_per_sample = 2
-
-    def get_residual_length(self):
-        return 3*len(self._M_cam.image_points)
-
-    def get_measurement(self):
-        """
-        Get the target's 3d coordinates as measured by the actual sensor
-        """
-        if self._M_chain is not None:
-            camera_pose_root = self._full_chain.calc_block.fk(self._M_chain.chain_state)
-        else:
-            camera_pose_root = self._full_chain.calc_block.fk(None)
-        pts = camera_pose_root * numpy.matrix([[pt.x, pt.y, pt.z, 1] for pt in self._M_cam.image_points]).T # points
-        return pts[0:3,:].T
-
-    def compute_expected(self, target_pts):
-        """
-        Compute the expected 3d coordinates for a set of target points.
-        target_pts: 4xN matrix, storing feature points of the target, in homogeneous coords
-        Returns: target points in a Nx3 matrix
-        """
-        return target_pts[0:3,:].T
-    
-    def compute_cov(self, target_pts):
-        '''
-        Computes the measurement covariance in pixel coordinates for the given
-        set of target points (target_pts)
-        Input:
-         - target_pts: 4xN matrix, storing N feature points of the target, in homogeneous coords
-        '''
-        cam_cov = matrix(zeros([self.get_residual_length(), self.get_residual_length()]))
-
-        # Convert StdDev into variance
-        var_x = self._camera._cov_dict['x'] * self._camera._cov_dict['x']
-        var_y = self._camera._cov_dict['y'] * self._camera._cov_dict['y']
-        var_z = self._camera._cov_dict['z'] * self._camera._cov_dict['z']
-        for k in range(cam_cov.shape[0]/3):
-            cam_cov[3*k  , 3*k]   = var_x
-            cam_cov[3*k+1, 3*k+1] = var_y
-            cam_cov[3*k+2, 3*k+2] = var_z
-
-        # Both chain and camera covariances are now in measurement space, so we can simply add them together
-        if self._M_chain is not None:
-            return self.get_chain_cov(target_pts) + cam_cov
-        else:
-            return cam_cov
-
-    def compute_expected_J(self, target_pts):
-        """
-        The output Jacobian J shows how moving target_pts in cartesian space affects
-        the expected measurement in (x,y,z) camera coordinates.
-        For n points in target_pts, J is a 2nx3n matrix
-        Note: This doesn't seem to be used anywhere, except maybe in some drawing code
-        """
-        # TODO
-        epsilon = 1e-8
-        N = len(self._M_cam.image_points)
-        Jt = zeros([N*3, N*3])
-        for k in range(N):
-            # Compute jacobian for point k
-            sub_Jt = zeros([3,3])
-            x = target_pts[:,k].copy()
-            f0 = self.compute_expected(x)
-            for i in [0,1,2]:
-                x[i,0] += epsilon
-                fTest = self.compute_expected(x)
-                sub_Jt[i,:] = array((fTest - f0) / epsilon)
-                x[i,0] -= epsilon
-            Jt[k*3:(k+1)*3, k*3:(k+1)*3] = sub_Jt
-        #print Jt.T
-        return Jt.T
-#        else:
-#            Jt = zeros([N*3, N*2])
-#            for k in range(N):
-#                # Compute jacobian for point k
-#                sub_Jt = zeros([3,2])
-#                x = target_pts[:,k].copy()
-#                f0 = self.compute_expected(x)
-#                for i in [0,1,2]:
-#                    x[i,0] += epsilon
-#                    fTest = self.compute_expected(x)
-#                    sub_Jt[i,:] = array((fTest - f0) / epsilon)
-#                    x[i,0] -= epsilon
-#                Jt[k*3:(k+1)*3, k*2:(k+1)*2] = sub_Jt
 
