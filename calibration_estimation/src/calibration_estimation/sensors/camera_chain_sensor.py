@@ -78,7 +78,11 @@ class CameraChainBundler:
                     M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
                     M_chain = None
                     cur_config["chain_id"] = None
-                cur_sensor = CameraChainSensor(cur_config, M_cam, M_chain)
+                #try: 
+                    #if config_dict["rgbd"]:
+                cur_sensor = RgbdChainSensor(cur_config, M_cam, M_chain)
+                #except:
+                #    cur_sensor = CameraChainSensor(cur_config, M_cam, M_chain)
                 sensors.append(cur_sensor)
             else:
                 rospy.logdebug("  Didn't find block")
@@ -94,13 +98,8 @@ class CameraChainSensor:
         - M_cam: The camera measurement of type calibration_msgs/CameraMeasurement
         - M_chain: The chain measurement of type calibration_msgs/ChainMeasurement
         """
-
         self.sensor_type = "camera"
         self.sensor_id = config_dict["sensor_id"]
-        try:
-            self._rgbd = config_dict["rgbd"]
-        except:
-            self._rgbd = False
 
         self._config_dict = config_dict
         self._M_cam = M_cam
@@ -117,7 +116,6 @@ class CameraChainSensor:
         the newest set of system parameters.
         """
         self._camera = robot_params.rectified_cams[ self.sensor_id ]
-
         if self._full_chain is not None:
             self._full_chain.update_config(robot_params)
 
@@ -165,21 +163,28 @@ class CameraChainSensor:
         return gamma
 
     def get_residual_length(self):
-        N = len(self._M_cam.image_points)
-        if self._rgbd:
-            return N*3
-        else:
-            return N*2
+        return 2*len(self._M_cam.image_points)
+#        if self._rgbd:
+#            return N*3
+#        else:
+#            return N*2
 
-    # Get the observed measurement in a Nx2/Nx3 Matrix
+    # Get the observed measurement
+    #   for RGBD sensors, this is an 3XN matrix of world coordinates
+    #   for 2D cams, this is an Nx2 matrix of pixel coordinates
     def get_measurement(self):
         """
         Get the target's pixel coordinates as measured by the actual sensor
         """
-        if self._rgbd:
-            return numpy.matrix([[pt.x, pt.y, pt.z] for pt in self._M_cam.image_points]) # points
-        else:
-            return numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])       # pixels
+#        if self._rgbd:
+#            if self._M_chain is not None:
+#                camera_pose_root = self._full_chain.calc_block.fk(self._M_chain.chain_state)
+#            else:
+#                camera_pose_root = self._full_chain.calc_block.fk(None)
+#            pts = camera_pose_root * numpy.matrix([[pt.x, pt.y, pt.z, 1] for pt in self._M_cam.image_points]).T # points
+#            return pts[0:3,:]
+#        else:
+        return numpy.matrix([[pt.x, pt.y] for pt in self._M_cam.image_points])       # pixels
 
     def compute_expected(self, target_pts):
         """
@@ -240,51 +245,40 @@ class CameraChainSensor:
         Input:
          - target_pts: 4xN matrix, storing N feature points of the target, in homogeneous coords
         '''
-        epsilon = 1e-8
-        if self._M_chain is not None:
-            num_joints = len(self._M_chain.chain_state.position)
-            Jt = zeros([num_joints, self.get_residual_length()])
-
-            x = JointState()
-            x.position = self._M_chain.chain_state.position[:]
-
-            # Compute the Jacobian from the chain's joint angles to pixel residuals
-            f0 = reshape(array(self._compute_expected(x, target_pts)), [-1])
-            for i in range(num_joints):
-                x.position = [cur_pos for cur_pos in self._M_chain.chain_state.position]
-                x.position[i] += epsilon
-                fTest = reshape(array(self._compute_expected(x, target_pts)), [-1])
-                Jt[i] = (fTest - f0)/epsilon
-            cov_angles = [x*x for x in self._full_chain.calc_block._chain._cov_dict['joint_angles']]
-
-            # Transform the chain's covariance from joint angle space into pixel space using the just calculated jacobian
-            chain_cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
-
         cam_cov = matrix(zeros([self.get_residual_length(), self.get_residual_length()]))
 
         # Convert StdDev into variance
-        if self._rgbd:
-            var_x = self._camera._cov_dict['x'] * self._camera._cov_dict['x']
-            var_y = self._camera._cov_dict['y'] * self._camera._cov_dict['y']
-            var_z = self._camera._cov_dict['z'] * self._camera._cov_dict['z']
-            for k in range(cam_cov.shape[0]/3):
-                cam_cov[3*k  , 3*k]   = var_x
-                cam_cov[3*k+1, 3*k+1] = var_y
-                cam_cov[3*k+2, 3*k+2] = var_z
-        else:
-            var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
-            var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
-            for k in range(cam_cov.shape[0]/2):
-                cam_cov[2*k  , 2*k]   = var_u
-                cam_cov[2*k+1, 2*k+1] = var_v
+        var_u = self._camera._cov_dict['u'] * self._camera._cov_dict['u']
+        var_v = self._camera._cov_dict['v'] * self._camera._cov_dict['v']
+        for k in range(cam_cov.shape[0]/2):
+            cam_cov[2*k  , 2*k]   = var_u
+            cam_cov[2*k+1, 2*k+1] = var_v
 
         # Both chain and camera covariances are now in measurement space, so we can simply add them together
         if self._M_chain is not None:
-            cov = chain_cov + cam_cov
+            return self.get_chain_cov(target_pts) + cam_cov
         else:
-            cov = cam_cov
-        return cov
+            return cam_cov
 
+    def get_chain_cov(self, target_pts, epsilon=1e-8):
+        num_joints = len(self._M_chain.chain_state.position)
+        Jt = zeros([num_joints, self.get_residual_length()])
+
+        x = JointState()
+        x.position = self._M_chain.chain_state.position[:]
+
+        # Compute the Jacobian from the chain's joint angles to pixel residuals
+        f0 = reshape(array(self._compute_expected(x, target_pts)), [-1])
+        for i in range(num_joints):
+            x.position = [cur_pos for cur_pos in self._M_chain.chain_state.position]
+            x.position[i] += epsilon
+            fTest = reshape(array(self._compute_expected(x, target_pts)), [-1])
+            Jt[i] = (fTest - f0)/epsilon
+        cov_angles = [x*x for x in self._full_chain.calc_block._chain._cov_dict['joint_angles']]
+
+        # Transform the chain's covariance from joint angle space into pixel space using the just calculated jacobian
+        return matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
+        
     def build_sparsity_dict(self):
         """
         Build a dictionary that defines which parameters will in fact affect this measurement.
@@ -307,4 +301,101 @@ class CameraChainSensor:
         sparsity['rectified_cams'] = {}
         sparsity['rectified_cams'][self.sensor_id] = dict( [(x,1) for x in self._camera.get_param_names()] )
         return sparsity
+
+class RgbdChainSensor(CameraChainSensor):
+    def __init__(self, config_dict, M_cam, M_chain):
+        self.sensor_type = "camera"
+        self.sensor_id = config_dict["sensor_id"]
+
+        self._config_dict = config_dict
+        self._M_cam = M_cam
+        self._M_chain = M_chain
+
+        self._full_chain = FullChainRobotParams(config_dict["chain_id"], config_dict["frame_id"])
+
+        self.terms_per_sample = 2
+
+    def get_residual_length(self):
+        return 3*len(self._M_cam.image_points)
+
+    def get_measurement(self):
+        """
+        Get the target's 3d coordinates as measured by the actual sensor
+        """
+        if self._M_chain is not None:
+            camera_pose_root = self._full_chain.calc_block.fk(self._M_chain.chain_state)
+        else:
+            camera_pose_root = self._full_chain.calc_block.fk(None)
+        pts = camera_pose_root * numpy.matrix([[pt.x, pt.y, pt.z, 1] for pt in self._M_cam.image_points]).T # points
+        return pts[0:3,:].T
+
+    def compute_expected(self, target_pts):
+        """
+        Compute the expected 3d coordinates for a set of target points.
+        target_pts: 4xN matrix, storing feature points of the target, in homogeneous coords
+        Returns: target points in a Nx3 matrix
+        """
+        return target_pts[0:3,:].T
+    
+    def compute_cov(self, target_pts):
+        '''
+        Computes the measurement covariance in pixel coordinates for the given
+        set of target points (target_pts)
+        Input:
+         - target_pts: 4xN matrix, storing N feature points of the target, in homogeneous coords
+        '''
+        cam_cov = matrix(zeros([self.get_residual_length(), self.get_residual_length()]))
+
+        # Convert StdDev into variance
+        var_x = self._camera._cov_dict['x'] * self._camera._cov_dict['x']
+        var_y = self._camera._cov_dict['y'] * self._camera._cov_dict['y']
+        var_z = self._camera._cov_dict['z'] * self._camera._cov_dict['z']
+        for k in range(cam_cov.shape[0]/3):
+            cam_cov[3*k  , 3*k]   = var_x
+            cam_cov[3*k+1, 3*k+1] = var_y
+            cam_cov[3*k+2, 3*k+2] = var_z
+
+        # Both chain and camera covariances are now in measurement space, so we can simply add them together
+        if self._M_chain is not None:
+            return self.get_chain_cov(target_pts) + cam_cov
+        else:
+            return cam_cov
+
+    def compute_expected_J(self, target_pts):
+        """
+        The output Jacobian J shows how moving target_pts in cartesian space affects
+        the expected measurement in (x,y,z) camera coordinates.
+        For n points in target_pts, J is a 2nx3n matrix
+        Note: This doesn't seem to be used anywhere, except maybe in some drawing code
+        """
+        # TODO
+        epsilon = 1e-8
+        N = len(self._M_cam.image_points)
+        Jt = zeros([N*3, N*3])
+        for k in range(N):
+            # Compute jacobian for point k
+            sub_Jt = zeros([3,3])
+            x = target_pts[:,k].copy()
+            f0 = self.compute_expected(x)
+            for i in [0,1,2]:
+                x[i,0] += epsilon
+                fTest = self.compute_expected(x)
+                sub_Jt[i,:] = array((fTest - f0) / epsilon)
+                x[i,0] -= epsilon
+            Jt[k*3:(k+1)*3, k*3:(k+1)*3] = sub_Jt
+        #print Jt.T
+        return Jt.T
+#        else:
+#            Jt = zeros([N*3, N*2])
+#            for k in range(N):
+#                # Compute jacobian for point k
+#                sub_Jt = zeros([3,2])
+#                x = target_pts[:,k].copy()
+#                f0 = self.compute_expected(x)
+#                for i in [0,1,2]:
+#                    x[i,0] += epsilon
+#                    fTest = self.compute_expected(x)
+#                    sub_Jt[i,:] = array((fTest - f0) / epsilon)
+#                    x[i,0] -= epsilon
+#                Jt[k*3:(k+1)*3, k*2:(k+1)*2] = sub_Jt
 
