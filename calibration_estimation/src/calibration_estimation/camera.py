@@ -31,7 +31,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import numpy
-from numpy import matrix, array, vsplit, sin, cos, reshape, ones
+from numpy import matrix, array, vsplit, sin, cos, reshape, ones, sqrt
 import rospy
 
 param_names = ['baseline_shift', 'f_shift', 'cx_shift', 'cy_shift']
@@ -62,7 +62,8 @@ class RectifiedCamera:
         else:
             param_dict = dict(zip(param_names, param_list))
         param_dict['cov'] = self._cov_dict
-        param_dict['baseline_rgbd'] = self._rgbd
+        if self._rgbd:
+            param_dict['baseline_rgbd'] = self._rgbd
         param_dict['frame_id'] = self._config['frame_id']
         param_dict['chain_id'] = self._config['chain_id']   # TODO: kill this
         return param_dict
@@ -111,7 +112,7 @@ class RectifiedCamera:
         if self._rgbd:
             pixel_pts = pixel_pts_h[0:3,:] / pixel_pts_h[2,:]
             for i in range(N):
-                d = sqrt( (pts[0,i] * pts[0,i]) + (pts[1,i] * pts[1,i]) + pts[2,i] * pts[2,i]) )
+                d = sqrt( (pts[0,i] * pts[0,i]) + (pts[1,i] * pts[1,i]) + (pts[2,i] * pts[2,i]) )
                 pixel_pts[2,i] = self.get_disparity(P,d)
         else:
             pixel_pts = pixel_pts_h[0:2,:] / pixel_pts_h[2,:]
@@ -119,6 +120,7 @@ class RectifiedCamera:
         return pixel_pts
 
     def get_disparity(self, P_list, distance_to_point):
-        return (P_list[0,0] * self._config["rgbd_baseline"]) / distance_to_point
+        P = reshape( matrix(P_list, float), (3,4) )
+        return (P[0,0] * self._config["baseline_rgbd"]) / distance_to_point
         
 

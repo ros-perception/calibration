@@ -148,11 +148,11 @@ class CameraChainSensor:
         import scipy.linalg
         cov = self.compute_cov(target_pts)
         gamma = matrix(zeros(cov.shape))
-        num_pts = self.get_residual_length()/self.samples_per_term
+        num_pts = self.get_residual_length()/self.terms_per_sample
 
         for k in range(num_pts):
-            first = self.samples_per_term*k
-            last = self.samples_per_term*k+self.samples_per_term
+            first = self.terms_per_sample*k
+            last = self.terms_per_sample*k+self.terms_per_sample
             sub_cov = matrix(cov[first:last, first:last])
             sub_gamma_sqrt_full = matrix(scipy.linalg.sqrtm(sub_cov.I))
             sub_gamma_sqrt = real(sub_gamma_sqrt_full)
