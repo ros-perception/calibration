@@ -57,10 +57,7 @@ class RectifiedCamera:
 
     def params_to_config(self, param_vec):
         param_list = array(param_vec)[:,0].tolist()
-        if self._rgbd:
-            param_dict = dict()
-        else:
-            param_dict = dict(zip(param_names, param_list))
+        param_dict = dict(zip(param_names, param_list))
         param_dict['cov'] = self._cov_dict
         if self._rgbd:
             param_dict['baseline_rgbd'] = self._rgbd
