@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # Software License Agreement (BSD License)
 #
-# Copyright (c) 2008-2011, Willow Garage, Inc.
+# Copyright (c) 2008-2012, Willow Garage, Inc.
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -121,6 +121,7 @@ if __name__ == '__main__':
         # Only grab the samples that have both the requested cam and requested 3D sensor
         multisensors_pruned, cb_poses_pruned = zip(*[(ms,cb) for ms,cb in zip(multisensors, cb_poses) if len(ms.sensors) == 2])
         sample_ind = [k for k,ms in zip(range(len(multisensors)), multisensors) if len(ms.sensors) == 2]
+        sample_ind = [i for i in sample_ind if i not in sample_skip_list]
 
         print "Sample Indices:"
         print ", ".join(["%u" % i for i in sample_ind])
@@ -138,9 +139,16 @@ if __name__ == '__main__':
         print ""
         print "Errors Breakdown:"
         for sensor_id, error_list in errors_dict.items():
+            print "  %s:" % sensor_id
+            i = 0
+            for error in error_list:
+                if i in sample_ind:        
+                    rms_error = numpy.sqrt( numpy.mean(error**2) )
+                    print "    Sample %d: %.6f" % (i, rms_error)
+                i += 1
             error_cat = numpy.concatenate(error_list)
             rms_error = numpy.sqrt( numpy.mean(error_cat**2) )
-            print "  %s: %.6f" % (sensor_id, rms_error)
+            print "    Total: %.6f" % rms_error
 
         # Calculate loop errors
         chain_sensors = [[s for s in ms.sensors if s.sensor_id == cur_loop['3d']][0]  for ms in multisensors_pruned]
@@ -183,22 +191,11 @@ if __name__ == '__main__':
         proj_points = [s.compute_expected(pts) for (s,pts) in zip(cam_sensors,fk_points)]
         meas_points = [s.get_measurement() for s in cam_sensors]
 
-        sample_ind = sum([ [sample_ind[k]]*meas_points[k].shape[0] for k in range(len(proj_points))], [])
-
         r = numpy.concatenate(proj_points) - numpy.concatenate(meas_points)
 
         import matplotlib.pyplot as plt
         cur_scatter = plt.scatter(array(r)[:,0], array(r)[:,1], **cur_loop['plot_ops'])
         scatter_list.append(cur_scatter)
-
-        for cur_cov in full_covs[0:1]:
-            circ_angles = numpy.linspace(0,2*numpy.pi, 360, endpoint=True)
-            circ_pos = numpy.concatenate( [ [numpy.sin(circ_angles)],
-                                            [numpy.cos(circ_angles)] ] )
-            for k in range(cur_cov.shape[0]/2)[0:1]:
-                l,v = numpy.linalg.eig(cur_cov[(2*k):(2*k+2),(2*k):(2*k+2)])
-                ellip = numpy.sqrt(4.6052) * matrix(v) * matrix(diag(numpy.sqrt(l))) * matrix(circ_pos)
-                ellip_shifted = array(ellip + r[k,:].T)
 
     plt.axis('equal')
     plt.grid(True)
