@@ -36,7 +36,8 @@
 #define SETTLERLIB_DEFLATED_H_
 
 #include <boost/shared_ptr.hpp>
-#include "roslib/Header.h"
+//#include "roslib/Header.h"
+#include <std_msgs/Header.h>
 
 namespace settlerlib
 {
@@ -44,7 +45,7 @@ namespace settlerlib
 class Deflated
 {
 public:
-  roslib::Header header; // Need header to put in cache
+  std_msgs::Header header; // Need header to put in cache
   std::vector<double> channels_;
 
 
