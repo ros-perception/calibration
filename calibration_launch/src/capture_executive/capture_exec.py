@@ -128,6 +128,11 @@ class CaptureExecutive:
             done = True
         self.lock.release()
 
+        for (i, cam) in enumerate(next_configuration["camera_measurements"]):
+            if not self.cam_config.has_key(cam["cam_id"]):
+                print "Not capturing measurement for camera: %s"%(cam["cam_id"])
+                del next_configuration["camera_measurements"][i]
+
         # Set up the pipeline
         self.config_manager.reconfigure(next_configuration)
 
