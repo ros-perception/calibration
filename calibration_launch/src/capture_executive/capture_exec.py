@@ -55,7 +55,7 @@ from urdf_python.urdf import *
 
 
 class CaptureExecutive:
-    def __init__(self, config_dir, system, robot_desc):
+    def __init__(self, config_dir, system, robot_desc, output_debug=False):
         # Load configs
         self.cam_config        = yaml.load(open(config_dir + "/cam_config.yaml"))
         self.chain_config      = yaml.load(open(config_dir + "/chain_config.yaml"))
@@ -64,6 +64,8 @@ class CaptureExecutive:
         # Not all robots have lasers.... :(
         if self.laser_config == None:
             self.laser_config = dict()
+        # Debug mode makes bag files huge...
+        self.output_debug = output_debug
 
         # parse urdf and get list of links
         links = URDF().parse(robot_desc).links.keys()
@@ -154,7 +156,7 @@ class CaptureExecutive:
         for cam_id, cam_manager in self.cam_managers:
             if cam_id in [x["cam_id"] for x in next_configuration["camera_measurements"]]:
                 enable_list.append(cam_id)
-                cam_manager.enable(True)
+                cam_manager.enable(self.output_debug)
             else:
                 disable_list.append(cam_id)
                 cam_manager.disable()
@@ -171,7 +173,7 @@ class CaptureExecutive:
             enabled_lasers = [x["laser_id"] for x in next_configuration["laser_measurements"]]
             if laser_id in enabled_lasers:
                 enable_list.append(laser_id)
-                laser_manager.enable(True)
+                laser_manager.enable(self.output_debug)
             else:
                 disable_list.append(laser_id)
                 laser_manager.disable()
