@@ -15,18 +15,12 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 rosbuild_genmsg()
-# rosbuild_gensrv()
 
 rosbuild_add_library(${PROJECT_NAME} src/monocam_settler.cpp)
 
+rosbuild_add_boost_directories()
 rosbuild_add_executable(monocam_settler_action src/monocam_settler_action.cpp)
 target_link_libraries(monocam_settler_action ${PROJECT_NAME})
-
-#common commands for building c++ executables and libraries
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+rosbuild_link_libraries(monocam_settler_action thread)
 
 add_subdirectory(test EXCLUDE_FROM_ALL)

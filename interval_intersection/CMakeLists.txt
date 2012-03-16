@@ -18,26 +18,16 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #uncomment if you have defined messages
 rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
 
 #common commands for building c++ executables and libraries
 rosbuild_add_library(${PROJECT_NAME} src/interval_intersection.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#target_link_libraries(example ${PROJECT_NAME})
-
-#rosbuild_add_executable(interval_intersection src/interval_intersection.cpp src/interval_intersector.cpp)
 
 rosbuild_add_executable(interval_intersection_node src/interval_intersection_node.cpp)
 target_link_libraries(interval_intersection_node ${PROJECT_NAME})
 
+rosbuild_add_boost_directories()
 rosbuild_add_executable(interval_intersection_action src/interval_intersection_action.cpp)
 target_link_libraries(interval_intersection_action ${PROJECT_NAME})
-
-#rosbuild_add_executable(test_interval_intersector test/test_interval_intersector.cpp src/interval_intersector.cpp)
-#rosbuild_add_gtest(test_interval_intersector test/test_interval_intersector.cpp src/interval_intersector.cpp)
-#set_target_properties(test_interval_intersector PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/test)
+rosbuild_link_boost(interval_intersection_action thread)
 
 add_subdirectory(test EXCLUDE_FROM_ALL)

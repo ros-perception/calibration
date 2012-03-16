@@ -36,8 +36,7 @@
 #define SETTLERLIB_DEFLATED_H_
 
 #include <boost/shared_ptr.hpp>
-//#include "roslib/Header.h"
-#include <std_msgs/Header.h>
+#include "std_msgs/Header.h"
 
 namespace settlerlib
 {

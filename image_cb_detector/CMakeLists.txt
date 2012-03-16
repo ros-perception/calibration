@@ -18,13 +18,13 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #uncomment if you have defined messages
 rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
 
+rosbuild_add_boost_directories()
 rosbuild_add_library(image_cb_detector src/image_cb_detector.cpp)
 
 rosbuild_add_executable(image_cb_detector_action src/image_cb_detector_action.cpp)
 target_link_libraries(image_cb_detector_action image_cb_detector)
+rosbuild_link_boost(image_cb_detector_action thread)
 
 rosbuild_add_executable(rgbd_cb_detector_action src/rgbd_cb_detector_action.cpp)
 target_link_libraries(rgbd_cb_detector_action image_cb_detector)

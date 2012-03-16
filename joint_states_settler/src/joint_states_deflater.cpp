@@ -51,7 +51,7 @@ void JointStatesDeflater::setDeflationJointNames(std::vector<std::string> joint_
 
 void JointStatesDeflater::deflate(const sensor_msgs::JointStateConstPtr& joint_states, DeflatedJointStates& deflated_elem)
 {
-  if (joint_states->get_name_size() !=  joint_states->get_position_size()){
+  if (joint_states->name.size() != joint_states->position.size()){
     ROS_ERROR("JointStatesDeflater got invalid joint state message");
     return;
   }
@@ -79,7 +79,7 @@ void JointStatesDeflater::deflate(const sensor_msgs::JointStateConstPtr& joint_s
 
 void JointStatesDeflater::prune(const sensor_msgs::JointState& joint_states, sensor_msgs::JointState& pruned_joint_states)
 {
-  if (joint_states.get_name_size() !=  joint_states.get_position_size())
+  if (joint_states.name.size() !=  joint_states.position.size())
   {
     ROS_ERROR("JointStatesDeflater got invalid joint state message. name's size and position's size don't match.");
     return;
