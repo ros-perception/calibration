@@ -21,6 +21,6 @@ rosbuild_add_library(${PROJECT_NAME} src/monocam_settler.cpp)
 rosbuild_add_boost_directories()
 rosbuild_add_executable(monocam_settler_action src/monocam_settler_action.cpp)
 target_link_libraries(monocam_settler_action ${PROJECT_NAME})
-rosbuild_link_libraries(monocam_settler_action thread)
+rosbuild_link_boost(monocam_settler_action thread)
 
 add_subdirectory(test EXCLUDE_FROM_ALL)
