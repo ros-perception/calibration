@@ -19,6 +19,7 @@
   <depend package="geometry_msgs" />
   <depend package="pcl_ros"/>
 
+  <rosdep package="opencv2"/>
   <export>
     <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -limage_cb_detector"/>
   </export> 
