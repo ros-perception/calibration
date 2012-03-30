@@ -128,7 +128,7 @@ class ChainConfigManager:
             goal = joint_states_settler.msg.ConfigGoal()
             goal.joint_names = settler_config["joint_names"]
             goal.tolerances  = settler_config["tolerances"]
-            goal.max_step    = roslib.rostime.Duration(settler_config["max_step"])
+            goal.max_step    = rospy.Duration(settler_config["max_step"])
             goal.cache_size  = settler_config["cache_size"]
 
             # Send the goal out
@@ -169,7 +169,7 @@ class CameraConfigManager:
             goal = monocam_settler.msg.ConfigGoal()
             goal.tolerance = settler_config["tolerance"]
             goal.ignore_failures = settler_config["ignore_failures"]
-            goal.max_step = roslib.rostime.Duration(settler_config["max_step"])
+            goal.max_step = rospy.Duration(settler_config["max_step"])
             goal.cache_size  = settler_config["cache_size"]
             self._settler_ac.send_goal(goal)
 
