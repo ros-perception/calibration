@@ -33,4 +33,5 @@ target_link_libraries(rgbd_cb_detector_action image_cb_detector ${OpenCV_LIBS})
 
 rosbuild_add_executable(image_annotator src/image_annotator.cpp)
 target_link_libraries(image_annotator image_cb_detector ${OpenCV_LIBS})
+rosbuild_link_boost(image_annotator signals)
 
