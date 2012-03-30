@@ -108,6 +108,7 @@ if __name__ == '__main__':
     sample_skip_list = rospy.get_param('calibration_skip_list', [])
     scatter_list = []
     marker_count = 0
+    label_list = list()
     for cur_loop in loop_list:
         marker_count += 1
 
@@ -117,6 +118,7 @@ if __name__ == '__main__':
         if (len([ms for ms in multisensors if len(ms.sensors) == 2]) == 0):
             print "********** No Data for [%s] + [%s] pair **********" % (cur_loop['cam'], cur_loop['3d'])
             continue
+        label_list.append(cur_loop)
 
         # Only grab the samples that have both the requested cam and requested 3D sensor
         multisensors_pruned, cb_poses_pruned = zip(*[(ms,cb) for ms,cb in zip(multisensors, cb_poses) if len(ms.sensors) == 2])
@@ -199,7 +201,7 @@ if __name__ == '__main__':
 
     plt.axis('equal')
     plt.grid(True)
-    plt.legend(scatter_list, [x['name'] for x in loop_list], prop={'size':'x-small'})
+    plt.legend(scatter_list, [x['name'] for x in label_list], prop={'size':'x-small'})
     plt.show()
 
     rospy.spin()
