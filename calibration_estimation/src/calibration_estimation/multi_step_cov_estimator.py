@@ -168,12 +168,12 @@ def update_urdf(urdf, calibrated_params):
     # update each transmission
     for chain in calibrated_params.chains.values():
         joints += chain._active
-        axis += numpy.array(chain._axis)[:,0].tolist()
+        axis += numpy.array(chain._axis)[0,:].tolist()
         for joint, gearing in zip(chain._active, chain._gearing):
             if gearing != 1.0:
                 update_transmission(urdf, joint, gearing)
     for laser in calibrated_params.tilting_lasers.values():
-        joints += laser._config['joint']
+        joints.append(laser._config['joint'])
         axis.append(5) # TODO: remove this assumption
         if laser._gearing != 1.0:
             update_transmission(urdf, laser._config['joint'], laser._gearing)
@@ -189,19 +189,20 @@ def update_urdf(urdf, calibrated_params):
             if diff(r1, updated[3:6]):
                 # TODO: remove assumption that joints are revolute
                 if joint_name in joints and urdf.joints[joint_name].calibration != None:
-                    print 'Updating calibration for', joint_name
                     cal = urdf.joints[joint_name].calibration 
-                    a = axis[joints.index(joint_name)]   
+                    a = axis[joints.index(joint_name)]
+                    a = int(a) - 1
+                    print 'Updating calibration for', joint_name, 'by', updated[a]
                     if cal.rising != None:
-                        cal.rising += updated[axis]   
+                        urdf.joints[joint_name].calibration.rising += updated[a]   
                     if cal.falling != None:
-                        cal.falling += updated[axis]
+                        urdf.joints[joint_name].calibration.falling += updated[a]
                 else:
                     rot = angle_axis_to_RPY(updated[3:6])
                     print 'Updating rpy for', joint_name, 'old:', urdf.joints[joint_name].origin.rotation, 'new:', rot
                     urdf.joints[joint_name].origin.rotation = rot                
-        except:
-            pass #print "Joint removed:", joint_name
+        except KeyError:
+            print "Joint removed:", joint_name
 
     return urdf
 
