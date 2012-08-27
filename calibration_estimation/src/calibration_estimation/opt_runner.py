@@ -146,7 +146,7 @@ class ErrorCalc:
         ms_start_col = [x-6 for x in ms_end_col]
 
 
-        for i,ms in zip(range(len(self._multisensors)), self._multisensors):
+        for i,ms in enumerate(self._multisensors):
             # Populate the parameter section for this multisensor
             J_ms_params = J[ ms_start_row[i]:ms_end_row[i],
                              0:len(opt_param_vec) ]
@@ -155,7 +155,7 @@ class ErrorCalc:
             s_start_row = [0] + s_end_row[:-1]
             target_pose_T = SingleTransform(full_pose_arr[i,:]).transform
             # Fill in parameter section one sensor at a time
-            for k,s in zip(range(len(ms.sensors)), ms.sensors):
+            for k,s in enumerate(ms.sensors):
                 J_s_params = J_ms_params[ s_start_row[k]:s_end_row[k], :]
                 J_s_params[:,:] = self.single_sensor_params_jacobian(opt_param_vec, target_pose_T, ms.checkerboard, s)
 
@@ -220,7 +220,8 @@ class ErrorCalc:
         epsilon = 1e-6
         target_points = target_pose_T * self._robot_params.checkerboards[target_id].generate_points()
         f0 = sensor.compute_residual(target_points)
-        gamma_sqrt = sensor.compute_marginal_gamma_sqrt(target_points)
+        if (self._use_cov):
+            gamma_sqrt = sensor.compute_marginal_gamma_sqrt(target_points)
         Jt = numpy.zeros([len(x0),len(f0)])
         dx = numpy.zeros(len(x0))
         for i in numpy.where(opt_sparsity_vec)[0]:
@@ -265,7 +266,8 @@ class ErrorCalc:
         epsilon = 1e-6
         world_pts = SingleTransform(x0).transform * local_cb_points
         f0 = multisensor.compute_residual(world_pts)
-        gamma_sqrt = multisensor.compute_marginal_gamma_sqrt(world_pts)
+        if (self._use_cov):
+            gamma_sqrt = multisensor.compute_marginal_gamma_sqrt(world_pts)
 
         Jt = numpy.zeros([len(x0),len(f0)])
         dx = numpy.zeros(len(x0))
