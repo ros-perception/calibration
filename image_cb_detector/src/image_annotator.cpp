@@ -39,8 +39,8 @@
 
 #include <calibration_msgs/CalibrationPattern.h>
 #include <sensor_msgs/Image.h>
-#include <cv_bridge/CvBridge.h>
-#include <opencv/cv.h>
+#include <cv_bridge/cv_bridge.h>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/subscriber.h>
 
@@ -56,8 +56,6 @@ public:
 private:
   ros::Publisher image_pub_;
   ros::NodeHandle n_;
-
-  sensor_msgs::CvBridge bridge_;
 
   // Params
   int marker_size_;
@@ -82,47 +80,40 @@ ImageAnnotator::ImageAnnotator()
 
 void ImageAnnotator::processPair(const sensor_msgs::ImageConstPtr& image, const calibration_msgs::CalibrationPatternConstPtr& features)
 {
-  if (bridge_.fromImage(*image, "rgb8"))
+  cv::Mat cv_image = cv_bridge::toCvShare(image, "rgb8")->image;
+  if (!cv_image.empty())
   {
-    IplImage* cv_image = bridge_.toIpl();
-
     // ***** Resize the image based on scaling parameters in config *****
-    const int scaled_width  = (int) (.5 + image->width  * scaling_);
-    const int scaled_height = (int) (.5 + image->height * scaling_);
-    IplImage* cv_image_scaled = cvCreateImage(cvSize( scaled_width, scaled_height),
-					      cv_image->depth,
-					      cv_image->nChannels);
-    cvResize(cv_image, cv_image_scaled, CV_INTER_LINEAR);
+    const int scaled_width  = (int) (.5 + cv_image.cols  * scaling_);
+    const int scaled_height = (int) (.5 + cv_image.rows * scaling_);
+    cv::Mat cv_image_scaled;
+    cv::resize(cv_image, cv_image_scaled, cv::Size(scaled_width, scaled_height), 0, 0, CV_INTER_LINEAR);
 
     if (features->success)
     {
-      CvPoint pt0 = cvPoint(features->image_points[0].x*scaling_,
+      cv::Point2i pt0(features->image_points[0].x*scaling_,
 			    features->image_points[0].y*scaling_);
-      cvCircle(cv_image_scaled, pt0, marker_size_*2, cvScalar(0,0,255), 1) ;
+      cv::circle(cv_image_scaled, pt0, marker_size_*2, cvScalar(0,0,255), 1) ;
       for (unsigned int i=0; i<features->image_points.size(); i++)
       {
-        CvPoint pt = cvPoint(features->image_points[i].x*scaling_,
+        cv::Point2i pt(features->image_points[i].x*scaling_,
 			     features->image_points[i].y*scaling_);
-        cvCircle(cv_image_scaled, pt, marker_size_, cvScalar(0,255,0), 1) ;
+        cv::circle(cv_image_scaled, pt, marker_size_, cvScalar(0,255,0), 1) ;
       }
     }
     else
     {
       for (unsigned int i=0; i<features->image_points.size(); i++)
       {
-        CvPoint pt = cvPoint(features->image_points[i].x*scaling_,
+        cv::Point2i pt(features->image_points[i].x*scaling_,
                              features->image_points[i].y*scaling_);
-        cvCircle(cv_image_scaled, pt, marker_size_, cvScalar(0,0,255), 1) ;
+        cv::circle(cv_image_scaled, pt, marker_size_, cvScalar(0,0,255), 1) ;
       }
     }
 
     // Send the annotated image over ROS
-    sensor_msgs::Image result_image;
-    bridge_.fromIpltoRosImage(cv_image_scaled, result_image);
-    result_image.header.frame_id = image->header.frame_id;
-    result_image.header.stamp = image->header.stamp;
+    sensor_msgs::Image result_image = *(cv_bridge::CvImage(image->header, image->encoding, cv_image_scaled).toImageMsg());
     image_pub_.publish(result_image);
-    cvReleaseImage(&cv_image_scaled);
   }
   else
     ROS_WARN("Error converting image with CvBridge");

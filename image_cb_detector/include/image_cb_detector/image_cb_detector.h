@@ -39,9 +39,6 @@
 
 #include <ros/ros.h>
 #include "sensor_msgs/Image.h"
-#include "cv_bridge/CvBridge.h"
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
 #include <image_cb_detector/ConfigGoal.h>
 #include <calibration_msgs/CalibrationPattern.h>
 
@@ -58,7 +55,6 @@ public:
 private:
   bool configured_;
   ConfigGoal config_;
-  sensor_msgs::CvBridge bridge_;
 };
 
 }
