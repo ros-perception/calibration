@@ -73,7 +73,7 @@ bool ImageCbDetector::detect(const sensor_msgs::ImageConstPtr& ros_image,
   cv::resize(image, image_scaled, cv::Size(scaled_width, scaled_height), 0, 0, CV_INTER_LINEAR);
 
   // ***** Allocate vector for found corners *****
-  vector<CvPoint2D32f> cv_corners;
+  vector<cv::Point2f> cv_corners;
   cv_corners.resize(config_.num_x*config_.num_y);
 
   // ***** Do the actual checkerboard extraction *****
