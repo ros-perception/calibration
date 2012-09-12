@@ -110,7 +110,7 @@ class ChainConfigManager:
         self._settler_ac  = actionlib.SimpleActionClient(self._configs["settler_config"], joint_states_settler.msg.ConfigAction)
         self._state = "idle"
 
-    # Check to make sure that config dict has all the necessary fields. Todo: Currently a stub
+    # Check to make sure that config dict has all the necessary fields. TODO: Currently a stub
     def validate(self):
         return True
 
@@ -134,7 +134,7 @@ class ChainConfigManager:
             # Send the goal out
             self._settler_ac.send_goal(goal)
 
-            # Todo: Need to add code that waits for goal to activate
+            # TODO: Need to add code that waits for goal to activate
 
 
 # Handles changing the configuration of the image pipeline associated with a camera
@@ -150,7 +150,7 @@ class CameraConfigManager:
         self._led_detector_ac  = actionlib.SimpleActionClient(self._configs["cb_detector_config"], image_cb_detector.msg.ConfigAction)
         self._state = "idle"
 
-    # Check to make sure that config dict has all the necessary fields. Todo: Currently a stub
+    # Check to make sure that config dict has all the necessary fields. TODO: Currently a stub
     def validate(self):
         return True
 
@@ -193,7 +193,7 @@ class CameraConfigManager:
             if led_detector_config["active"]:
                 print "Not sure yet how to deal with an active led_detector"
 
-            # Todo: Need to add code that waits for goal to activate
+            # TODO: Need to add code that waits for goal to activate
 
 # Handles publishing commands to a trajectory controller
 class ControllerCmdManager:
@@ -206,7 +206,7 @@ class ControllerCmdManager:
         # Initialize the Publisher
         self._pub  = rospy.Publisher(self._config["topic"], JointTrajectory)
 
-    # Check to make sure that config dict has all the necessary fields. Todo: Currently a stub
+    # Check to make sure that config dict has all the necessary fields. TODO: Currently a stub
     def validate(self):
         return True
 

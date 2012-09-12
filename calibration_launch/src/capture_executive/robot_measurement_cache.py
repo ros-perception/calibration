@@ -145,18 +145,26 @@ class RobotMeasurementCache:
             else:
                 laser_measurements[laser_id] = None
 
+        complete = True
+
         # See if we got everything that we needed
         for cam_id, m in cam_measurements.items():
             if m is None:
-                return None
+                complete = False
+                print "Failed to capture a sample from %s"%cam_id
 
         for chain_id, m in chain_measurements.items():
             if m is None:
-                return None
+                complete = False
+                print "Failed to capture a sample from %s"%chain_id
 
         for laser_id, m in laser_measurements.items():
             if m is None:
-                return None
+                complete = False
+                print "Failed to capture a sample from %s"%laser_id
+
+        if not complete:
+           return None
 
         print "Received everything!"
 
