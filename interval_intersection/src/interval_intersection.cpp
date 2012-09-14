@@ -116,16 +116,16 @@ void IntervalIntersector::process_queues() {
       // dependent.
       boost::mutex::scoped_lock lock(*mutexes[i]);
       if (queues[i].empty()) {
-	// We can't determine the next interval: nothing to do
-	//cout << "nothing to do" << endl;
-	return;
+        // We can't determine the next interval: nothing to do
+        //cout << "nothing to do" << endl;
+        return;
       }
       if (queues[i][0]->start > start) {
-	start = queues[i][0]->start;
+        start = queues[i][0]->start;
       }
       if (queues[i][0]->end < end) {
-	end = queues[i][0]->end;
-	queue_to_pop = i;
+        end = queues[i][0]->end;
+        queue_to_pop = i;
       }
       // mutexes[i] released
     }
