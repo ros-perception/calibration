@@ -38,6 +38,7 @@
 #include <ros/ros.h>
 #include <laser_cb_detector/laser_cb_detector.h>
 #include <sstream>
+#include <actionlib/server/simple_action_server.h>
 
 using namespace laser_cb_detector;
 using namespace std;
@@ -47,7 +48,7 @@ using namespace std;
 {\
   ostringstream ss;\
   ss << "[" << #name << "] -> " << config.name;\
-  ROS_INFO(ss.str().c_str());\
+  ROS_INFO("%s", ss.str().c_str());\
 }
 
 laser_cb_detector::ConfigGoal getParamConfig(ros::NodeHandle &n)
@@ -117,50 +118,92 @@ laser_cb_detector::ConfigGoal getParamConfig(ros::NodeHandle &n)
   return config;
 }
 
-void snapshotCallback(ros::Publisher* pub, ros::Publisher* image_pub, LaserCbDetector* detector, const calibration_msgs::DenseLaserSnapshotConstPtr& msg)
-{
-  bool detect_result;
-  calibration_msgs::CalibrationPattern result;
-  detect_result = detector->detect(*msg, result);
+class LaserCbDetectorAction {
+   public:
+      LaserCbDetectorAction() : as_("cb_detector_config", false) {
+         // Set up the LaserCbDetector
+         laser_cb_detector::ConfigGoal config = getParamConfig(nh_);
+         detector_.configure(config);
 
-  if (!detect_result)
-    ROS_ERROR("Error during checkerboard detection. (This error is worse than simply not seeing a checkerboard");
-  else
-  {
-    result.header.stamp = msg->header.stamp;
-    pub->publish(result);
-  }
+         // Set up the action server for config
+         as_.registerGoalCallback( boost::bind(&LaserCbDetectorAction::goalCallback, this) );
+         as_.registerPreemptCallback( boost::bind(&LaserCbDetectorAction::preemptCallback, this) );
 
-  sensor_msgs::Image image;
-  if(detector->getImage(*msg, image))
-  {
-    image.header.stamp = msg->header.stamp;
-    image_pub->publish(image);
-  }
-  else
-    ROS_ERROR("Error trying to generate ROS image");
-}
+         // set up feature publisher
+         pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("laser_checkerboard", 1);
+         // set up image publisher
+         image_pub_ = nh_.advertise<sensor_msgs::Image>("image", 1);
+
+         // subscribe to laser snapshotter
+         sub_ = nh_.subscribe("snapshot", 1, &LaserCbDetectorAction::snapshotCallback, this );
+
+         // start the action server
+         as_.start();
+      }
+
+      void goalCallback() {
+        boost::mutex::scoped_lock lock(run_mutex_);
+
+        if(as_.isActive()) {
+           as_.setPreempted();
+        }
+
+        laser_cb_detector::ConfigGoalConstPtr goal = as_.acceptNewGoal();
+
+        bool success = detector_.configure(*goal);
+
+        if( !success ) {
+           as_.setAborted();
+        }
+      }
+
+      void preemptCallback() {
+        boost::mutex::scoped_lock lock(run_mutex_);
+        // nothing special to do on preempt
+        as_.setPreempted();
+      }
+
+      void snapshotCallback(const calibration_msgs::DenseLaserSnapshotConstPtr& msg)
+      {
+        boost::mutex::scoped_lock lock(run_mutex_);
+
+        bool detect_result;
+        calibration_msgs::CalibrationPattern result;
+        detect_result = detector_.detect(*msg, result);
+      
+        if (!detect_result)
+          ROS_ERROR("Error during checkerboard detection. (This error is worse than simply not seeing a checkerboard");
+        else
+        {
+          result.header.stamp = msg->header.stamp;
+          pub_.publish(result);
+        }
+      
+        sensor_msgs::Image image;
+        if(detector_.getImage(*msg, image))
+        {
+          image.header.stamp = msg->header.stamp;
+          image_pub_.publish(image);
+        }
+        else
+          ROS_ERROR("Error trying to generate ROS image");
+      }
+
+   private:
+      boost::mutex run_mutex_;
+      ros::NodeHandle nh_;
+      ros::Publisher pub_;
+      ros::Publisher image_pub_;
+      ros::Subscriber sub_;
+      LaserCbDetector detector_;
+      actionlib::SimpleActionServer<laser_cb_detector::ConfigAction> as_;
+};
+
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "laser_cb_detector");
-
-  ros::NodeHandle n;
-
-  // Set up the LaserCbDetector
-  laser_cb_detector::ConfigGoal config = getParamConfig(n);
-  LaserCbDetector detector;
-  detector.configure(config);
-
-  // Output
-  ros::Publisher pub = n.advertise<calibration_msgs::CalibrationPattern>("laser_checkerboard", 1);
-  ros::Publisher image_pub = n.advertise<sensor_msgs::Image>("image", 1);
-
-  // Input
-  boost::function<void (const calibration_msgs::DenseLaserSnapshotConstPtr&)> cb
-      = boost::bind(&snapshotCallback, &pub, &image_pub, &detector, _1);
-
-  ros::Subscriber sub = n.subscribe(std::string("snapshot"), 1, cb);
-
+  LaserCbDetectorAction detector_action;
   ros::spin();
+  return 0;
 }
