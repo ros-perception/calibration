@@ -67,6 +67,9 @@ class CaptureExecutive:
         # Debug mode makes bag files huge...
         self.output_debug = output_debug
 
+        # Error message from sample capture
+        self.message = None
+
         # parse urdf and get list of links
         links = URDF().parse(robot_desc).links.keys()
 
@@ -121,6 +124,7 @@ class CaptureExecutive:
     def capture(self, next_configuration, timeout):
         done = False
         self.m_robot = None
+        self.message = None
 
         timeout_time = rospy.Time().now() + timeout
 
@@ -217,6 +221,8 @@ class CaptureExecutive:
             self.m_robot.sample_id = next_configuration["sample_id"]
             self.m_robot.target_id = next_configuration["target"]["target_id"]
             self.m_robot.chain_id  = next_configuration["target"]["chain_id"]
+        elif self.message is not None:
+            print self.message
 
         self.lock.acquire()
         self.active = False
@@ -227,13 +233,17 @@ class CaptureExecutive:
     def request_callback(self, msg):
         # See if the interval is big enough to care
         if (msg.end - msg.start) < rospy.Duration(1,0):
+            print "Duration too short: %f"%((msg.end - msg.start).to_sec())
             return
 
         self.lock.acquire()
         if self.active:
             # Do some query into the cache, and possibly stop stuff from running
-            self.m_robot = self.cache.request_robot_measurement(msg.start, msg.end)
-
+            m = self.cache.request_robot_measurement(msg.start, msg.end)
+            if isinstance(m, basestring):
+               self.message = m
+            else:
+               self.m_robot = m
             # We found a sample, so we can deactive (kind of a race condition, since 'active' triggers capture() to exit... I don't care)
             if self.m_robot is not None:
                 self.active = False

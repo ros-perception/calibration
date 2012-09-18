@@ -101,6 +101,7 @@ class RobotMeasurementCache:
         req_center   = interval_start + rospy.Duration(req_duration.to_sec()*.5)
 
         if req_duration < min_duration:
+            print "Bad duration"
             return None
 
         # Extract the cam measurements closest to the center of the interval
@@ -145,26 +146,34 @@ class RobotMeasurementCache:
             else:
                 laser_measurements[laser_id] = None
 
-        complete = True
+        failed_sensors = []
+        good_sensors = []
 
         # See if we got everything that we needed
         for cam_id, m in cam_measurements.items():
             if m is None:
-                complete = False
-                print "Failed to capture a sample from %s"%cam_id
+                failed_sensors.append(cam_id)
+            else:
+                good_sensors.append(cam_id)
 
         for chain_id, m in chain_measurements.items():
             if m is None:
-                complete = False
-                print "Failed to capture a sample from %s"%chain_id
+                failed_sensors.append(chain_id)
+            else:
+                good_sensors.append(chain_id)
 
         for laser_id, m in laser_measurements.items():
             if m is None:
-                complete = False
-                print "Failed to capture a sample from %s"%laser_id
+                failed_sensors.append(laser_id)
+            else:
+                good_sensors.append(laser_id)
 
-        if not complete:
-           return None
+        if len(failed_sensors) > 0:
+           if len(failed_sensors) > 1:
+               m= "Failed to capture samples from %s"%(', '.join(failed_sensors))
+           else:
+               m= "Failed to capture a sample from %s"%(failed_sensors[0])
+           return m
 
         print "Received everything!"
 
