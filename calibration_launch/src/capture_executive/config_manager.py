@@ -39,6 +39,7 @@ import actionlib
 import joint_states_settler.msg
 import monocam_settler.msg
 import image_cb_detector.msg
+import laser_cb_detector.msg
 import interval_intersection.msg
 import time
 from trajectory_msgs.msg import JointTrajectory
@@ -61,6 +62,13 @@ class ConfigManager:
         for name in chain_config.keys():
             print "  Constructing ChainID [%s]" % name
             self._chain_managers[name] = ChainConfigManager(name, chain_config[name])
+
+        # Set up lasers
+        print "Constructing Lasers:"
+        self._laser_managers = dict()
+        for laser_id in laser_config.keys():
+            print "  Constructing LaserID [%s]" % laser_id
+            self._laser_managers[laser_id] = LaserConfigManager(laser_id, laser_config[laser_id])
 
         # Set up Controllers
         print "Constructing Controllers:"
@@ -89,6 +97,11 @@ class ConfigManager:
         print "Reconfiguring The Chains"
         for cur_chain in config["joint_measurements"]:
             self._chain_managers[cur_chain["chain_id"]].reconfigure(cur_chain["config"])
+
+        # Reconfigure the lasers
+        print "Reconfiguring The Lasers"
+        for cur_laser in config["laser_measurements"]:
+            self._laser_managers[cur_laser["laser_id"]].reconfigure(cur_laser["config"])
 
         # Send controller commands
         print "Sending Controller Commands"
@@ -194,6 +207,64 @@ class CameraConfigManager:
                 print "Not sure yet how to deal with an active led_detector"
 
             # TODO: Need to add code that waits for goal to activate
+
+# Handles changing the configuration of the image pipeline associated with a camera
+class LaserConfigManager:
+    def __init__(self, laser_id, configs):
+        self._laser_id = laser_id
+        self._configs = configs
+        if not self.validate():
+            raise Exception("Invalid laser description")
+
+        # Initialize the ActionClients and state
+        self._settler_ac   = actionlib.SimpleActionClient(self._configs["settler_config"], monocam_settler.msg.ConfigAction)
+        self._cb_detector_ac  = actionlib.SimpleActionClient(self._configs["cb_detector_config"], laser_cb_detector.msg.ConfigAction)
+        self._state = "idle"
+
+    # Check to make sure that config dict has all the necessary fields. TODO: Currently a stub
+    def validate(self):
+        return True
+
+    # Reconfigure this chain's processing pipeline to the specified configuration. Do nothing if
+    # we're already in the correct configuration
+    def reconfigure(self, next_config_name):
+        if self._state == next_config_name:
+            print "  %s: Configured correctly as [%s]" % (self_.laser_id, self._state)
+        else:
+            print "  %s: Need to transition [%s] -> [%s]" % (self._laser_id, self._state, next_config_name)
+
+            next_config   = self._configs["configs"][next_config_name]
+
+            # Send the Settler's Goal
+            settler_config = next_config["settler"]
+            goal = monocam_settler.msg.ConfigGoal()
+            goal.tolerance = settler_config["tolerance"]
+            goal.ignore_failures = settler_config["ignore_failures"]
+            goal.max_step = rospy.Duration(settler_config["max_step"])
+            goal.cache_size  = settler_config["cache_size"]
+            self._settler_ac.send_goal(goal)
+
+            # Send the CB Detector Goal
+            cb_detector_config = next_config["cb_detector"]
+            if not cb_detector_config["active"]:
+                print "Not sure yet how to deal with inactive cb_detector"
+            goal = laser_cb_detector.msg.ConfigGoal()
+            goal.num_x = cb_detector_config["num_x"]
+            goal.num_y = cb_detector_config["num_y"]
+            goal.spacing_x = cb_detector_config["spacing_x"]
+            goal.spacing_y = cb_detector_config["spacing_y"]
+            goal.width_scaling = cb_detector_config["width_scaling"]
+            goal.height_scaling = cb_detector_config["height_scaling"]
+            goal.subpixel_window = cb_detector_config["subpixel_window"]
+            goal.subpixel_zero_zone = cb_detector_config["subpixel_zero_zone"]
+            goal.flip_horizontal = cb_detector_config["flip_horizontal"]
+            goal.min_intensity = cb_detector_config["min_intensity"]
+            goal.max_intensity = cb_detector_config["max_intensity"]
+            self._cb_detector_ac.send_goal(goal)
+
+            # TODO: Need to add code that waits for goal to activate
+
+
 
 # Handles publishing commands to a trajectory controller
 class ControllerCmdManager:

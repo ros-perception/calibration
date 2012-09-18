@@ -11,6 +11,7 @@
   <!-- capture data -->
   <depend package="topic_tools"/>
   <depend package="image_cb_detector"/>
+  <depend package="laser_cb_detector"/>
   <depend package="image_view" />
   <depend package="message_filters"/>
   <depend package="sensor_msgs"/>
