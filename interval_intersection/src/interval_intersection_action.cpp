@@ -41,6 +41,7 @@
 #include <interval_intersection/interval_intersection.hpp>
 
 #include <calibration_msgs/Interval.h>
+#include <calibration_msgs/IntervalStatus.h>
 #include <interval_intersection/ConfigAction.h>
 
 using namespace std;
@@ -54,6 +55,12 @@ public:
     as_.registerGoalCallback(    boost::bind(&IntervalIntersectionAction::goalCallback, this) );
     as_.registerPreemptCallback( boost::bind(&IntervalIntersectionAction::preemptCallback, this) );
     pub_ = nh_.advertise<calibration_msgs::Interval>("intersected_interval", 1);
+    status_pub_ = nh_.advertise<calibration_msgs::IntervalStatus>(
+          "intersected_interval_status", 1);
+
+    // set up our status timer
+    status_timer_ = nh_.createTimer(ros::Duration(1.0),
+        boost::bind(&IntervalIntersectionAction::publishStatus, this));
 
     ROS_DEBUG("Start interval intersection with no input topics");
     as_.start();
@@ -79,10 +86,12 @@ public:
     intersect_.reset(new IntervalIntersector( boost::bind(&IntervalIntersectionAction::publishResult, this, _1)));
     // Subscribe to all the requested topics
     subscribers_.resize(goal->topics.size());
+    topics_.resize(goal->topics.size());
     for (unsigned int i=0; i<goal->topics.size(); i++)
     {
       ROS_DEBUG("Subscribing to: %s", goal->topics[i].c_str());
       subscribers_[i] = intersect_nh_->subscribe<calibration_msgs::Interval>(goal->topics[i], 200, intersect_->getNewInputStream());
+      topics_[i] = goal->topics[i];
     }
   }
 
@@ -113,6 +122,24 @@ public:
     pub_.publish(interval);
   }
 
+  void publishStatus() {
+     ROS_DEBUG("Publishing interval intersection status");
+     if ( intersect_ ) {
+        // get status from intersector
+        calibration_msgs::IntervalStatus status = intersect_->get_status();
+        // fill in timestamp
+        status.header.stamp = ros::Time::now();
+        // fill in topic names
+        for ( size_t i=0; i<status.yeild_rates.size(); ++i ) {
+           status.names[i] = topics_[i];
+           ROS_DEBUG("Topic %s has a success rate of %f", 
+                 status.names[i].c_str(), status.yeild_rates[i]);
+        }
+        // publish!
+        status_pub_.publish(status);
+     }
+  }
+
 private:
   boost::mutex run_mutex_;
   actionlib::SimpleActionServer<interval_intersection::ConfigAction> as_;
@@ -120,15 +147,17 @@ private:
   boost::scoped_ptr<ros::NodeHandle> intersect_nh_;
   boost::scoped_ptr<IntervalIntersector> intersect_;
   vector<ros::Subscriber> subscribers_;
+  vector<std::string> topics_;
 
   ros::Publisher pub_;
+  ros::Publisher status_pub_;
   ros::NodeHandle nh_;
+  ros::Timer status_timer_;
 };
 
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "intersection_action_node");
-  ros::NodeHandle n;
   IntervalIntersectionAction intersect_action;
   ros::spin();
   return 0;
