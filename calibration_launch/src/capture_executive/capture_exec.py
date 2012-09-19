@@ -130,7 +130,7 @@ class CaptureExecutive:
 
         self.lock.acquire()
         if self.active:
-            print "Can't capture since we're already active"
+            rospy.logerr("Can't capture since we're already active")
             done = True
         self.lock.release()
 
@@ -141,7 +141,7 @@ class CaptureExecutive:
             if self.cam_config.has_key(cam["cam_id"]):
                 next_configuration["camera_measurements"].append(cam)
             else:
-                print "Not capturing measurement for camera: %s"%(cam["cam_id"])
+                rospy.logdebug("Not capturing measurement for camera: %s"%(cam["cam_id"]))
 
         # Set up the pipeline
         self.config_manager.reconfigure(next_configuration)
@@ -157,7 +157,7 @@ class CaptureExecutive:
             laser_ids = list()
         self.cache.reconfigure(cam_ids, chain_ids, laser_ids)
 
-        print "Setting up sensor managers"
+        rospy.logdebug("Setting up sensor managers")
         enable_list = []
         disable_list = []
         # Set up the sensor managers
@@ -233,7 +233,6 @@ class CaptureExecutive:
     def request_callback(self, msg):
         # See if the interval is big enough to care
         if (msg.end - msg.start) < rospy.Duration(1,0):
-            print "Duration too short: %f"%((msg.end - msg.start).to_sec())
             return
 
         self.lock.acquire()
@@ -266,11 +265,12 @@ class CaptureExecutive:
         self.lock.release()
 
 if __name__=='__main__':
-    print "Starting executive..."
-    time.sleep(5.0)
-
     rospy.init_node("capture_executive_node")
 
+    rospy.logdebug("Starting executive...")
+    rospy.sleep(5.0)
+
+    # TODO: convert to parameters?
     samples_dir = rospy.myargv()[1]
     config_dir = rospy.myargv()[2]
     system = rospy.myargv()[3]
@@ -278,7 +278,7 @@ if __name__=='__main__':
     try:
         robot_description = rospy.get_param('robot_description')
     except:
-        print 'robot_description not set, exiting'
+        rospy.logfatal('robot_description not set, exiting')
         sys.exit(-1)
 
     executive = CaptureExecutive(config_dir, system, robot_description)
@@ -301,8 +301,9 @@ if __name__=='__main__':
         sample_success[directory] = 0
         sample_failure[directory] = 0
     sample_steps.sort()
+
     for step in sample_steps:
-        print "%s Samples: \n - %s" % (sample_options[step]['group'], "\n - ".join(sample_names[step]))
+        rospy.logdebug("%s Samples: \n - %s" % (sample_options[step]['group'], "\n - ".join(sample_names[step])))
 
     pub = rospy.Publisher("robot_measurement", RobotMeasurement)
 
@@ -313,6 +314,7 @@ if __name__=='__main__':
             cur_config = yaml.load(open(full_paths[0]))
             m_robot = executive.capture(cur_config, rospy.Duration(0.01))
             while not rospy.is_shutdown() and keep_collecting:
+                print
                 print sample_options[step]["prompt"]
                 print "Press <enter> to continue, type N to exit this step"
                 resp = raw_input(">>>")
