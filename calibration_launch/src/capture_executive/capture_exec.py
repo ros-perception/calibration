@@ -70,6 +70,9 @@ class CaptureExecutive:
         # Error message from sample capture
         self.message = None
 
+        # Status message from interval computation
+        self.interval_status = None
+
         # parse urdf and get list of links
         links = URDF().parse(robot_desc).links.keys()
 
@@ -118,6 +121,11 @@ class CaptureExecutive:
         # Subscribe to topic containing stable intervals
         self.request_interval_sub = rospy.Subscriber("intersected_interval", calibration_msgs.msg.Interval, self.request_callback)
 
+        # Subscribe to topic containing stable intervals
+        self.interval_status_sub = rospy.Subscriber(
+              "intersected_interval_status",
+              calibration_msgs.msg.IntervalStatus, self.status_callback)
+
         # Hardcoded cache sizes. Not sure where these params should live
         # ...
 
@@ -125,6 +133,7 @@ class CaptureExecutive:
         done = False
         self.m_robot = None
         self.message = None
+        self.interval_status = None
 
         timeout_time = rospy.Time().now() + timeout
 
@@ -221,6 +230,30 @@ class CaptureExecutive:
             self.m_robot.sample_id = next_configuration["sample_id"]
             self.m_robot.target_id = next_configuration["target"]["target_id"]
             self.m_robot.chain_id  = next_configuration["target"]["chain_id"]
+        elif self.interval_status is not None:
+            total = 0
+            bad_sensors = []
+            l = len(self.interval_status.names)
+            if l != len(self.interval_status.yeild_rates):
+               rospy.logerr("Invalid interval status message; names and yeild rates have different lengths")
+               l = min(l, len(self.interval_status.yeild_rates))
+            # analyze status message
+            for i in range(l):
+               if self.interval_status.yeild_rates[i] == 0.0:
+                  bad_sensors.append(self.interval_status.names[i])
+               total += self.interval_status.yeild_rates[i]
+
+            # if we didn't get any samples from some sensors, complain
+            if len(bad_sensors) > 0:
+               print "Didn't get good data from %s"%(', '.join(bad_sensors))
+            else:
+               # if we got data from all of our sensors, complain about the
+               # ones that were below the mean (heuristic)
+               avg = total / l
+               for i in range(l):
+                  if self.interval_status.yeild_rates[i] <= avg:
+                     bad_sensors.append(self.interval_status.names[i])
+               print "%s may be performing poorly"%(", ".join(bad_sensors))
         elif self.message is not None:
             print self.message
 
@@ -246,6 +279,12 @@ class CaptureExecutive:
             # We found a sample, so we can deactive (kind of a race condition, since 'active' triggers capture() to exit... I don't care)
             if self.m_robot is not None:
                 self.active = False
+        self.lock.release()
+
+    def status_callback(self, msg):
+        self.lock.acquire()
+        if self.active:
+            self.interval_status = msg
         self.lock.release()
 
     def add_cam_measurement(self, cam_id, msg):
