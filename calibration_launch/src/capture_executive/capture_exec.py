@@ -67,6 +67,12 @@ class CaptureExecutive:
         # Debug mode makes bag files huge...
         self.output_debug = output_debug
 
+        # Error message from sample capture
+        self.message = None
+
+        # Status message from interval computation
+        self.interval_status = None
+
         # parse urdf and get list of links
         links = URDF().parse(robot_desc).links.keys()
 
@@ -115,18 +121,25 @@ class CaptureExecutive:
         # Subscribe to topic containing stable intervals
         self.request_interval_sub = rospy.Subscriber("intersected_interval", calibration_msgs.msg.Interval, self.request_callback)
 
+        # Subscribe to topic containing stable intervals
+        self.interval_status_sub = rospy.Subscriber(
+              "intersected_interval_status",
+              calibration_msgs.msg.IntervalStatus, self.status_callback)
+
         # Hardcoded cache sizes. Not sure where these params should live
         # ...
 
     def capture(self, next_configuration, timeout):
         done = False
         self.m_robot = None
+        self.message = None
+        self.interval_status = None
 
         timeout_time = rospy.Time().now() + timeout
 
         self.lock.acquire()
         if self.active:
-            print "Can't capture since we're already active"
+            rospy.logerr("Can't capture since we're already active")
             done = True
         self.lock.release()
 
@@ -137,7 +150,7 @@ class CaptureExecutive:
             if self.cam_config.has_key(cam["cam_id"]):
                 next_configuration["camera_measurements"].append(cam)
             else:
-                print "Not capturing measurement for camera: %s"%(cam["cam_id"])
+                rospy.logdebug("Not capturing measurement for camera: %s"%(cam["cam_id"]))
 
         # Set up the pipeline
         self.config_manager.reconfigure(next_configuration)
@@ -153,7 +166,7 @@ class CaptureExecutive:
             laser_ids = list()
         self.cache.reconfigure(cam_ids, chain_ids, laser_ids)
 
-        print "Setting up sensor managers"
+        rospy.logdebug("Setting up sensor managers")
         enable_list = []
         disable_list = []
         # Set up the sensor managers
@@ -217,6 +230,32 @@ class CaptureExecutive:
             self.m_robot.sample_id = next_configuration["sample_id"]
             self.m_robot.target_id = next_configuration["target"]["target_id"]
             self.m_robot.chain_id  = next_configuration["target"]["chain_id"]
+        elif self.interval_status is not None:
+            total = 0
+            bad_sensors = []
+            l = len(self.interval_status.names)
+            if l != len(self.interval_status.yeild_rates):
+               rospy.logerr("Invalid interval status message; names and yeild rates have different lengths")
+               l = min(l, len(self.interval_status.yeild_rates))
+            # analyze status message
+            for i in range(l):
+               if self.interval_status.yeild_rates[i] == 0.0:
+                  bad_sensors.append(self.interval_status.names[i])
+               total += self.interval_status.yeild_rates[i]
+
+            # if we didn't get any samples from some sensors, complain
+            if len(bad_sensors) > 0:
+               print "Didn't get good data from %s"%(', '.join(bad_sensors))
+            else:
+               # if we got data from all of our sensors, complain about the
+               # ones that were below the mean (heuristic)
+               avg = total / l
+               for i in range(l):
+                  if self.interval_status.yeild_rates[i] <= avg:
+                     bad_sensors.append(self.interval_status.names[i])
+               print "%s may be performing poorly"%(", ".join(bad_sensors))
+        elif self.message is not None:
+            print self.message
 
         self.lock.acquire()
         self.active = False
@@ -232,11 +271,20 @@ class CaptureExecutive:
         self.lock.acquire()
         if self.active:
             # Do some query into the cache, and possibly stop stuff from running
-            self.m_robot = self.cache.request_robot_measurement(msg.start, msg.end)
-
+            m = self.cache.request_robot_measurement(msg.start, msg.end)
+            if isinstance(m, basestring):
+               self.message = m
+            else:
+               self.m_robot = m
             # We found a sample, so we can deactive (kind of a race condition, since 'active' triggers capture() to exit... I don't care)
             if self.m_robot is not None:
                 self.active = False
+        self.lock.release()
+
+    def status_callback(self, msg):
+        self.lock.acquire()
+        if self.active:
+            self.interval_status = msg
         self.lock.release()
 
     def add_cam_measurement(self, cam_id, msg):
@@ -256,11 +304,12 @@ class CaptureExecutive:
         self.lock.release()
 
 if __name__=='__main__':
-    print "Starting executive..."
-    time.sleep(5.0)
-
     rospy.init_node("capture_executive_node")
 
+    rospy.logdebug("Starting executive...")
+    rospy.sleep(5.0)
+
+    # TODO: convert to parameters?
     samples_dir = rospy.myargv()[1]
     config_dir = rospy.myargv()[2]
     system = rospy.myargv()[3]
@@ -268,7 +317,7 @@ if __name__=='__main__':
     try:
         robot_description = rospy.get_param('robot_description')
     except:
-        print 'robot_description not set, exiting'
+        rospy.logfatal('robot_description not set, exiting')
         sys.exit(-1)
 
     executive = CaptureExecutive(config_dir, system, robot_description)
@@ -291,8 +340,9 @@ if __name__=='__main__':
         sample_success[directory] = 0
         sample_failure[directory] = 0
     sample_steps.sort()
+
     for step in sample_steps:
-        print "%s Samples: \n - %s" % (sample_options[step]['group'], "\n - ".join(sample_names[step]))
+        rospy.logdebug("%s Samples: \n - %s" % (sample_options[step]['group'], "\n - ".join(sample_names[step])))
 
     pub = rospy.Publisher("robot_measurement", RobotMeasurement)
 
@@ -303,6 +353,7 @@ if __name__=='__main__':
             cur_config = yaml.load(open(full_paths[0]))
             m_robot = executive.capture(cur_config, rospy.Duration(0.01))
             while not rospy.is_shutdown() and keep_collecting:
+                print
                 print sample_options[step]["prompt"]
                 print "Press <enter> to continue, type N to exit this step"
                 resp = raw_input(">>>")

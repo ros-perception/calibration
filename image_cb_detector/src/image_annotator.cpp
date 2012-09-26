@@ -80,24 +80,25 @@ ImageAnnotator::ImageAnnotator()
 
 void ImageAnnotator::processPair(const sensor_msgs::ImageConstPtr& image, const calibration_msgs::CalibrationPatternConstPtr& features)
 {
-  cv::Mat cv_image = cv_bridge::toCvShare(image, "rgb8")->image;
-  if (!cv_image.empty())
-  {
+  try {
+    cv_bridge::CvImageConstPtr cv_image = cv_bridge::toCvShare(image, "rgb8");
+
     // ***** Resize the image based on scaling parameters in config *****
-    const int scaled_width  = (int) (.5 + cv_image.cols  * scaling_);
-    const int scaled_height = (int) (.5 + cv_image.rows * scaling_);
+    const int scaled_width  = (int) (.5 + cv_image->image.cols  * scaling_);
+    const int scaled_height = (int) (.5 + cv_image->image.rows * scaling_);
     cv::Mat cv_image_scaled;
-    cv::resize(cv_image, cv_image_scaled, cv::Size(scaled_width, scaled_height), 0, 0, CV_INTER_LINEAR);
+    cv::resize(cv_image->image, cv_image_scaled, 
+          cv::Size(scaled_width, scaled_height), 0, 0, CV_INTER_LINEAR);
 
     if (features->success)
     {
-      cv::Point2i pt0(features->image_points[0].x*scaling_,
-			    features->image_points[0].y*scaling_);
+      cv::Point2i pt0(features->image_points[0].x*scaling_, 
+            features->image_points[0].y*scaling_);
       cv::circle(cv_image_scaled, pt0, marker_size_*2, cvScalar(0,0,255), 1) ;
       for (unsigned int i=0; i<features->image_points.size(); i++)
       {
-        cv::Point2i pt(features->image_points[i].x*scaling_,
-			     features->image_points[i].y*scaling_);
+        cv::Point2i pt(features->image_points[i].x*scaling_, 
+              features->image_points[i].y*scaling_);
         cv::circle(cv_image_scaled, pt, marker_size_, cvScalar(0,255,0), 1) ;
       }
     }
@@ -106,18 +107,17 @@ void ImageAnnotator::processPair(const sensor_msgs::ImageConstPtr& image, const 
       for (unsigned int i=0; i<features->image_points.size(); i++)
       {
         cv::Point2i pt(features->image_points[i].x*scaling_,
-                             features->image_points[i].y*scaling_);
-        cv::circle(cv_image_scaled, pt, marker_size_, cvScalar(0,0,255), 1) ;
+              features->image_points[i].y*scaling_);
+        cv::circle(cv_image_scaled, pt, marker_size_, cvScalar(255,0,0), 1) ;
       }
     }
 
     // Send the annotated image over ROS
-    sensor_msgs::Image result_image = *(cv_bridge::CvImage(image->header, image->encoding, cv_image_scaled).toImageMsg());
+    sensor_msgs::Image result_image = *(cv_bridge::CvImage(cv_image->header, cv_image->encoding, cv_image_scaled).toImageMsg());
     image_pub_.publish(result_image);
+  } catch(cv_bridge::Exception & e) {
+    ROS_ERROR("cv_bridge exception: %s", e.what());
   }
-  else
-    ROS_WARN("Error converting image with CvBridge");
-
 }
 
 int main(int argc, char** argv)

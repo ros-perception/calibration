@@ -68,6 +68,8 @@ boost::function<void (const calibration_msgs::IntervalConstPtr&)> IntervalInters
     mutexes[i]->lock();
   }
   queues.resize(n+1);
+  queue_stats.resize(n+1);
+  queue_stats[n].reset(new queue_stat());
   mutexes.resize(n+1);
   mutexes[n].reset(new boost::mutex());
   for (size_t i=0; i<n; i++) {
@@ -83,10 +85,14 @@ boost::function<void (const calibration_msgs::IntervalConstPtr&)> IntervalInters
  * until one of them is empty.
  */
 void IntervalIntersector::inputCallback(const calibration_msgs::IntervalConstPtr& interval_ptr, size_t i) {
-  ROS_DEBUG("Got message on stream [%u]", i);
+  ROS_DEBUG("Got message on stream [%zu]", i);
   boost::mutex::scoped_lock lock(*mutexes[i]);
   if (queues[i].size() < max_queue_size) {
     queues[i].push_back(interval_ptr);
+    queue_stats[i]->count++;
+    if( interval_ptr->start == interval_ptr->end ) {
+      queue_stats[i]->nil_count++;
+    }
   }
   lock.unlock();
 
@@ -116,16 +122,16 @@ void IntervalIntersector::process_queues() {
       // dependent.
       boost::mutex::scoped_lock lock(*mutexes[i]);
       if (queues[i].empty()) {
-	// We can't determine the next interval: nothing to do
-	//cout << "nothing to do" << endl;
-	return;
+        // We can't determine the next interval: nothing to do
+        //cout << "nothing to do" << endl;
+        return;
       }
       if (queues[i][0]->start > start) {
-	start = queues[i][0]->start;
+        start = queues[i][0]->start;
       }
       if (queues[i][0]->end < end) {
-	end = queues[i][0]->end;
-	queue_to_pop = i;
+        end = queues[i][0]->end;
+        queue_to_pop = i;
       }
       // mutexes[i] released
     }
@@ -158,4 +164,25 @@ void IntervalIntersector::process_queues() {
   }
 }
 
+calibration_msgs::IntervalStatus IntervalIntersector::get_status() {
+  calibration_msgs::IntervalStatus status;
+  // we only provide the raw status; the upper levels have to fill in the
+  // header stamp and the names
+
+  boost::mutex::scoped_lock processing_lock(processing_mutex);
+  size_t n = queue_stats.size();
+  status.names.resize(n);
+  status.yeild_rates.resize(n);
+  for (size_t i=0; i<n; i++) {
+    boost::mutex::scoped_lock lock(*mutexes[i]);
+    int count = queue_stats[i]->count;
+    if( 0 == count ) {
+       status.yeild_rates[i] = 0.0;
+    } else {
+       double good = count - queue_stats[i]->nil_count;
+       status.yeild_rates[i] = good / count;
+    }
+  }
+  return status;
+}
 

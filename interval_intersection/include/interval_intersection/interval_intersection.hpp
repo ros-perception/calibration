@@ -39,6 +39,7 @@
 #include <boost/function.hpp>
 #include <boost/thread/mutex.hpp>
 #include "calibration_msgs/Interval.h"
+#include "calibration_msgs/IntervalStatus.h"
 
 using namespace std;
 
@@ -46,13 +47,15 @@ namespace interval_intersection
 {
 /** IntervalIntersector
  *
- * This class receives streams of interval messages, sorted by end time within each stream. For each end
- * time, it outputs the largest intervals contained in one interval of each stream.
- * This class is general, but is designed to compute the intervals of time where a list of sensors were
- * all stable at the same time, and can therefore be used together for calibration.
- * The code assumes that start times of intervals are also non-decreasing. If not, it will output a
- * reasonable answer though not an optimal one (it is impossible in that case to guarantee optimality
- * since a later message can extend a previously output interval).
+ * This class receives streams of interval messages, sorted by end time within
+ * each stream. For each end time, it outputs the largest intervals contained
+ * in one interval of each stream. This class is general, but is designed to
+ * compute the intervals of time where a list of sensors were all stable at
+ * the same time, and can therefore be used together for calibration. The code
+ * assumes that start times of intervals are also non-decreasing. If not, it
+ * will output a reasonable answer though not an optimal one (it is impossible
+ * in that case to guarantee optimality since a later message can extend a
+ * previously output interval).
  */
 class IntervalIntersector {
 public:
@@ -60,6 +63,8 @@ public:
   ~IntervalIntersector();
 
   boost::function<void (const calibration_msgs::IntervalConstPtr&)> getNewInputStream();
+
+  calibration_msgs::IntervalStatus get_status();
 
 private:
   /*!
@@ -71,7 +76,13 @@ private:
   void inputCallback(const calibration_msgs::IntervalConstPtr& interval_ptr, size_t i);
   void process_queues();
 
+  struct queue_stat {
+     int count;
+     int nil_count;
+  };
+
   vector<deque<calibration_msgs::IntervalConstPtr> > queues;
+  vector<boost::shared_ptr<queue_stat> > queue_stats;
   vector<boost::shared_ptr<boost::mutex> > mutexes;  // Protects the individual queues
   boost::mutex processing_mutex;  // Protects the consumption of elements from the set of queues
   size_t max_queue_size;  // must be greater than 0, or all messages will be dropped

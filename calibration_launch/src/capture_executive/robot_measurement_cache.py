@@ -88,7 +88,6 @@ class RobotMeasurementCache:
             cur_cache.pop(0)
 
     def add_laser_measurement(self, laser_id, m, interval_start, interval_end):
-        print self._laser_caches.keys()
         cur_cache = self._laser_caches[laser_id]
         cur_cache.append( [m, interval_start, interval_end] )
         cur_cache.sort(laser_cmp)
@@ -145,19 +144,36 @@ class RobotMeasurementCache:
             else:
                 laser_measurements[laser_id] = None
 
+        failed_sensors = []
+        good_sensors = []
+
         # See if we got everything that we needed
         for cam_id, m in cam_measurements.items():
             if m is None:
-                return None
+                failed_sensors.append(cam_id)
+            else:
+                good_sensors.append(cam_id)
 
         for chain_id, m in chain_measurements.items():
             if m is None:
-                return None
+                failed_sensors.append(chain_id)
+            else:
+                good_sensors.append(chain_id)
 
         for laser_id, m in laser_measurements.items():
             if m is None:
-                return None
+                failed_sensors.append(laser_id)
+            else:
+                good_sensors.append(laser_id)
 
+        if len(failed_sensors) > 0:
+           if len(failed_sensors) > 1:
+               m= "Failed to capture samples from %s"%(', '.join(failed_sensors))
+           else:
+               m= "Failed to capture a sample from %s"%(failed_sensors[0])
+           return m
+
+        # TODO: eliminate print statement or convert to rospy.log*
         print "Received everything!"
 
         # Push everything into a RobotMeasurement message
