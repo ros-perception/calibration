@@ -20,6 +20,10 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 rosbuild_genmsg()
 
 find_package(OpenCV REQUIRED)
+find_package(PCL REQUIRED)
+include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS}
+                           ${PCL_INCLUDE_DIRS}
+)
 
 rosbuild_add_boost_directories()
 rosbuild_add_library(image_cb_detector src/image_cb_detector.cpp)
