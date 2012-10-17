@@ -20,16 +20,20 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+find_package(OpenCV REQUIRED)
+include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
+
 rosbuild_add_library(${PROJECT_NAME} src/cv_laser_bridge.cpp
                                      src/laser_cb_detector.cpp
                                      src/laser_interval_calc.cpp)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
 rosbuild_add_boost_directories()
 rosbuild_add_executable(laser_cb_detector_node src/laser_cb_detector_node.cpp)
-target_link_libraries(laser_cb_detector_node ${PROJECT_NAME})
+target_link_libraries(laser_cb_detector_node ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 
 rosbuild_add_executable(laser_interval_calc_node src/laser_interval_calc_node.cpp)
-target_link_libraries(laser_interval_calc_node ${PROJECT_NAME})
+target_link_libraries(laser_interval_calc_node ${PROJECT_NAME} ${OpenCV_LIBRARIES})
 rosbuild_link_boost(laser_interval_calc_node signals)
 
 rosbuild_genmsg()

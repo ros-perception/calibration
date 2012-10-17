@@ -21,7 +21,7 @@
   <depend package="image_cb_detector"/>
 
   <!-- opencv -->
-  <depend package="opencv2" />
+  <rosdep name="opencv2"/>
   <depend package="cv_bridge" />
 </package>
 
