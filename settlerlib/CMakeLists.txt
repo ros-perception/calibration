@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(settlerlib)
 
-find_package(catkin REQUIRED calibration_msgs rostime)
-catkin_package(DEPENDS calibration_msgs rostime
+find_package(Boost REQUIRED)
+find_package(catkin REQUIRED calibration_msgs rosconsole rostime)
+catkin_package(DEPENDS Boost calibration_msgs rosconsole rostime
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME}
 )

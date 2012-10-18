@@ -9,6 +9,8 @@ catkin_package(INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME}
 )
 
+catkin_python_setup()
+
 # generate the messages
 add_action_files(DIRECTORY action FILES Config.action)
 

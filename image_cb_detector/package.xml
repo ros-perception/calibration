@@ -23,18 +23,13 @@
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
 
-  <depend package="calibration_msgs"/>
-  <depend package="roscpp"/>
-  <depend package="cv_bridge"/>
-  <depend package="actionlib" />
-  <depend package="actionlib_msgs" />
-  <depend package="image_transport" />
-  <depend package="sensor_msgs" />
-  <depend package="geometry_msgs" />
-  <depend package="pcl_ros"/>
-
-  <rosdep name="opencv2"/>
-  <export>
-    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -limage_cb_detector"/>
-  </export> 
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>message_filters</run_depend>
+  <run_depend>opencv2</run_depend>
+  <run_depend>pcl</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
 </package>
