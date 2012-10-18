@@ -1,0 +1,27 @@
+<package>
+  <name>calibration</name>
+  <version>0.9.9</version>
+  <description>
+     Provides a toolchain running through the robot calibration process. This
+     involves capturing calibration data, estimating parameters, and
+     then updating the URDF.
+  </description>
+  <license>BSD</license>
+
+  <url>http://www.ros.org/wiki/ros_comm</url>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+
+  <run_depend>calibration_estimation</run_depend>  
+  <run_depend>calibration_launch</run_depend>
+  <run_depend>calibration_msgs</run_depend>  
+  <run_depend>image_cb_detector</run_depend>  
+  <run_depend>interval_intersection</run_depend>
+  <run_depend>joint_states_settler</run_depend>  
+  <run_depend>laser_cb_detector</run_depend>  
+  <run_depend>monocam_settler</run_depend>  
+  <run_depend>settlerlib</run_depend>  
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

@@ -1,21 +1,19 @@
 <package>
+  <name>settlerlib</name>
+  <version>0.9.9</version>
   <description brief="A set of routines to help with creating a settler">
     Defines helper functions and routines that greatly help when trying to create a settler
     for a specific sensor channel. This package is experimental and unstable.
     Expect its APIs to change.
   </description>
   <author>Vijay Pradeep</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
   <license>BSD</license>
-  <review status="unreviewed" notes=""/>
   <url>http://www.ros.org/wiki/settlerlib</url>
 
-  <export>
-    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lsettlerlib"/>
-  </export> 
+  <build_depend>calibration_msgs</build_depend>
+  <build_depend>rostime</build_depend>
 
-  <!-- ros -->
-  <depend package="roscpp"/>
-
-  <!-- calibration -->
-  <depend package="calibration_msgs"/>
+  <run_depend>calibration_msgs</run_depend>
+  <run_depend>rostime</run_depend>
 </package>

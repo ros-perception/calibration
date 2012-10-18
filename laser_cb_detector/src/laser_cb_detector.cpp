@@ -36,7 +36,7 @@
 
 #include <laser_cb_detector/laser_cb_detector.h>
 #include <ros/console.h>
-#include <cv_bridge/CvBridge.h>
+#include <cv_bridge/cv_bridge.h>
 //#include <highgui.h>
 
 using namespace std;
@@ -81,8 +81,8 @@ bool LaserCbDetector::detect(const calibration_msgs::DenseLaserSnapshot& snapsho
   else
     ROS_DEBUG("Not flipping image");
 
-  sensor_msgs::CvBridge cvbridge_;
-  sensor_msgs::Image::Ptr ros_image = cvbridge_.cvToImgMsg(image);
+  cv_bridge::CvImage cv_image(snapshot.header, "passthrough", image);
+  sensor_msgs::ImagePtr ros_image = cv_image.toImageMsg();
   if(detector_.detect(ros_image, result)){
     if (config_.flip_horizontal){
       for(int i=0; i < result.image_points.size(); i++)
@@ -102,11 +102,7 @@ bool LaserCbDetector::getImage(const calibration_msgs::DenseLaserSnapshot& snaps
   }
   IplImage* image = bridge_.toIpl();
 
-  if(!sensor_msgs::CvBridge::fromIpltoRosImage(image, ros_image, "mono8"))
-  {
-    ROS_ERROR("Error converting IplImage to a ROS sensor_msgs::Image");
-    return false;
-  }
+  cv_bridge::CvImage(snapshot.header, "mono8", image).toImageMsg(ros_image);
 
   return true;
 }

@@ -1,13 +1,27 @@
 <package>
+  <name>image_cb_detector</name>
+  <version>0.9.9</version>
   <description brief="Extract checkerboards from images">
     Provide a node that extracts checkerboard corners from ROS images.
     This package is still experimental and unstable.
     Expect its APIs to change.
   </description>
-  <author>Vijay Pradeep and Eitan Marder-Eppstein</author>
+  <author>Vijay Pradeep</author>
+  <author>Eitan Marder-Eppstein</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
   <license>BSD</license>
-  <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/image_cb_detector</url>
+
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>catkin</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>message_filters</build_depend>
+  <build_depend>opencv2</build_depend>
+  <build_depend>pcl</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
 
   <depend package="calibration_msgs"/>
   <depend package="roscpp"/>

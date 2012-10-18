@@ -1,15 +1,20 @@
 <package>
+  <name>calibration_launch</name>
+  <version>0.9.9</version>
   <description brief="Launch files for data collection.">
     This package contains a collection of launch files that can be helpful in configuring
     the calibration stack to run on your robot.
   </description>
   <author>Michael Ferguson</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+
   <license>BSD</license>
-  <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/calibration_launch</url>
 
+  <build_depend>catkin</build_depend>
+
   <!-- capture data -->
-  <depend package="topic_tools"/>
+<!--  <depend package="topic_tools"/>
   <depend package="image_cb_detector"/>
   <depend package="laser_cb_detector"/>
   <depend package="image_view" />
@@ -18,15 +23,15 @@
 
   <depend package="monocam_settler"/>
   <depend package="joint_states_settler"/>
-  <depend package="interval_intersection"/>
+  <depend package="interval_intersection"/>-->
 
   <!-- messages -->
-  <depend package="calibration_msgs"/>
+<!--  <depend package="calibration_msgs"/>
   <depend package="sensor_msgs"/>
   <depend package="geometry_msgs"/>
-  <depend package="trajectory_msgs"/>
+  <depend package="trajectory_msgs"/>-->
 
   <!-- urdf_pub -->
-  <depend package="rospy"/>
-  <depend package="std_msgs"/>
+<!--  <depend package="rospy"/>
+  <depend package="std_msgs"/>-->
 </package>

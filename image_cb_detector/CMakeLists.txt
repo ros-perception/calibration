@@ -1,42 +1,70 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(image_cb_detector)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
-
-rosbuild_init()
-
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
-#uncomment if you have defined messages
-rosbuild_genmsg()
-
+find_package(Boost REQUIRED thread signals)
+find_package(catkin REQUIRED actionlib actionlib_msgs cv_bridge genmsg geometry_msgs image_transport message_filters pcl_ros roscpp std_msgs)
 find_package(OpenCV REQUIRED)
 find_package(PCL REQUIRED)
-include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS}
+catkin_package(INCLUDE_DIRS include
+               LIBRARIES ${PROJECT_NAME}
+)
+
+# generate the messages
+add_action_files(DIRECTORY action FILES Config.action)
+
+add_message_files(DIRECTORY msg
+                  FILES ImagePoint.msg
+                        ObjectInImage.msg
+)
+
+generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs std_msgs)
+
+# define some includes
+include_directories(include)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS}
+                           ${catkin_INCLUDE_DIRS}
+                           ${OpenCV_INCLUDE_DIRS}
                            ${PCL_INCLUDE_DIRS}
 )
 
-rosbuild_add_boost_directories()
-rosbuild_add_library(image_cb_detector src/image_cb_detector.cpp)
-target_link_libraries(image_cb_detector ${OpenCV_LIBRARIES} ${PCL_LIBRARIES}) 
+# add the library
+add_library(${PROJECT_NAME} src/image_cb_detector.cpp)
+target_link_libraries(image_cb_detector ${catkin_LIBRARIES}
+                                        ${OpenCV_LIBRARIES}
+                                        ${PCL_LIBRARIES}
+)
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
-rosbuild_add_executable(image_cb_detector_action src/image_cb_detector_action.cpp)
-target_link_libraries(image_cb_detector_action image_cb_detector ${OpenCV_LIBRARIES} ${PCL_LIBRARIES})
-rosbuild_link_boost(image_cb_detector_action thread signals)
+# add some executables
+add_executable(image_cb_detector_action src/image_cb_detector_action.cpp)
+target_link_libraries(image_cb_detector_action ${Boost_LIBRARIES}
+                                               ${catkin_LIBRARIES}
+                                               image_cb_detector
+                                               ${OpenCV_LIBRARIES}
+                                               ${PCL_LIBRARIES}
+)
 
-rosbuild_add_executable(rgbd_cb_detector_action src/rgbd_cb_detector_action.cpp)
-target_link_libraries(rgbd_cb_detector_action image_cb_detector ${OpenCV_LIBRARIES} ${PCL_LIBRARIES})
-rosbuild_link_boost(rgbd_cb_detector_action thread signals)
+add_executable(rgbd_cb_detector_action src/rgbd_cb_detector_action.cpp)
+target_link_libraries(rgbd_cb_detector_action ${Boost_LIBRARIES}
+                                              ${catkin_LIBRARIES}
+                                              image_cb_detector
+                                              ${OpenCV_LIBRARIES}
+                                              ${PCL_LIBRARIES}
+)
 
-rosbuild_add_executable(image_annotator src/image_annotator.cpp)
+add_executable(image_annotator src/image_annotator.cpp)
 target_link_libraries(image_annotator image_cb_detector ${OpenCV_LIBRARIES} ${PCL_LIBRARIES})
-rosbuild_link_boost(image_annotator signals)
+target_link_libraries(image_annotator ${Boost_LIBRARIES}
+                                      ${catkin_LIBRARIES}
+                                      image_cb_detector
+                                      ${OpenCV_LIBRARIES}
+                                      ${PCL_LIBRARIES}
+)
+
+install(TARGETS image_cb_detector_action rgbd_cb_detector_action image_annotator
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+

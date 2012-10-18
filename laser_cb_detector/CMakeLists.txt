@@ -1,40 +1,40 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+cmake_minimum_required(VERSION 2.8.3)
+project(laser_cb_detector)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
+find_package(Boost REQUIRED signals)
+find_package(catkin REQUIRED actionlib_msgs cv_bridge image_cb_detector settlerlib std_msgs)
+catkin_package(DEPENDS actionlib_msgs cv_bridge image_cb_detector settlerlib std_msgs
+               INCLUDE_DIRS include
+               LIBRARIES ${PROJECT_NAME}
+)
 
-rosbuild_find_ros_package(actionlib_msgs)
-include(${actionlib_msgs_PACKAGE_PATH}/cmake/actionbuild.cmake)
-genaction()
+add_action_files(DIRECTORY action FILES Config.action)
 
-rosbuild_init()
-
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
 
 find_package(OpenCV REQUIRED)
-include_directories(SYSTEM ${OpenCV_INCLUDE_DIRS})
+include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
+                           ${OpenCV_INCLUDE_DIRS}
+)
+include_directories(include)
 
-rosbuild_add_library(${PROJECT_NAME} src/cv_laser_bridge.cpp
-                                     src/laser_cb_detector.cpp
-                                     src/laser_interval_calc.cpp)
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBRARIES})
+add_library(${PROJECT_NAME} src/cv_laser_bridge.cpp
+                            src/laser_cb_detector.cpp
+                            src/laser_interval_calc.cpp)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES}
+                                      ${OpenCV_LIBRARIES}
+)
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
 
-rosbuild_add_boost_directories()
-rosbuild_add_executable(laser_cb_detector_node src/laser_cb_detector_node.cpp)
-target_link_libraries(laser_cb_detector_node ${PROJECT_NAME} ${OpenCV_LIBRARIES})
+add_executable(laser_cb_detector_node src/laser_cb_detector_node.cpp)
+target_link_libraries(laser_cb_detector_node ${PROJECT_NAME}
+                                             ${OpenCV_LIBRARIES}
+)
 
-rosbuild_add_executable(laser_interval_calc_node src/laser_interval_calc_node.cpp)
-target_link_libraries(laser_interval_calc_node ${PROJECT_NAME} ${OpenCV_LIBRARIES})
-rosbuild_link_boost(laser_interval_calc_node signals)
+add_executable(laser_interval_calc_node src/laser_interval_calc_node.cpp)
+target_link_libraries(laser_interval_calc_node ${Boost_LIBRARIES}
+                                               ${PROJECT_NAME}
+                                               ${OpenCV_LIBRARIES}
+)
 
-rosbuild_genmsg()
 add_subdirectory(test EXCLUDE_FROM_ALL)

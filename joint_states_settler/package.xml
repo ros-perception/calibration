@@ -1,0 +1,40 @@
+<package>
+  <name>joint_states_settler</name>
+  <version>0.9.9</version>
+  <description brief="Detect when a set of joints has stopped moving">
+     Provides a node that reports how long a subset of joints has been
+     settled. That is, it calculates how long a set of joints has remained
+     within a specified threshold. This package is experimental and unstable.
+     Expect its APIs to change.
+  </description>
+  <author>Vijay Pradeep</author>
+  <author>Eitan Marder-Eppstein</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+  <license>BSD</license>
+  <url>http://www.ros.org/wiki/joint_states_settler</url>
+
+  <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>rosconsole</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>roscpp_serialization</build_depend>
+  <build_depend>settlerlib</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <run_depend>actionlib</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>rosconsole</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>roscpp_serialization</run_depend>
+  <run_depend>settlerlib</run_depend>
+  <run_depend>std_msgs</run_depend>
+
+  <!-- common_msgs -->
+  <depend package="sensor_msgs"/>
+
+  <!-- common -->
+  <depend package="actionlib"/>
+
+  <!-- calibration -->
+  <depend package="calibration_msgs"/>
+</package>

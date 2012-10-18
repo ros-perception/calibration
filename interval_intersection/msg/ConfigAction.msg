@@ -1,4 +1,0 @@
-
-ConfigActionGoal action_goal
-ConfigActionResult action_result
-ConfigActionFeedback action_feedback

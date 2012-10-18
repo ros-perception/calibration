@@ -1,0 +1,25 @@
+<package>
+  <name>calibration_estimation</name>
+  <version>0.9.9</version>
+  <description brief="Runs an optimization to estimate a robot's kinematic parameters">
+    Runs an optimization to estimate the a robot's kinematic parameters. This package is a
+    generic rewrite of pr2_calibration_estimation.
+  </description>
+  <author>Vijay Pradeep</author>
+  <author>Michael Ferguson</author>
+  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+  <license>BSD</license>
+  <url>http://ros.org/wiki/calibration_estimation</url>
+  
+  <build_depend>catkin</build_depend>
+
+  <run_depend>calibration_msgs</run_depend>
+  <run_depend>python-scipy</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>rostest</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+
+  <!--<depend package="urdf_python" />   for parsing URDF (currently a modified version is held internally) -->
+</package>
