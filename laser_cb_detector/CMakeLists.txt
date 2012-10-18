@@ -18,6 +18,7 @@ include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
 )
 include_directories(include)
 
+# deal witht the library
 add_library(${PROJECT_NAME} src/cv_laser_bridge.cpp
                             src/laser_cb_detector.cpp
                             src/laser_interval_calc.cpp)
@@ -25,7 +26,11 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES}
                                       ${OpenCV_LIBRARIES}
 )
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
+# deal with some executables
 add_executable(laser_cb_detector_node src/laser_cb_detector_node.cpp)
 target_link_libraries(laser_cb_detector_node ${PROJECT_NAME}
                                              ${OpenCV_LIBRARIES}
@@ -35,6 +40,10 @@ add_executable(laser_interval_calc_node src/laser_interval_calc_node.cpp)
 target_link_libraries(laser_interval_calc_node ${Boost_LIBRARIES}
                                                ${PROJECT_NAME}
                                                ${OpenCV_LIBRARIES}
+)
+
+install(TARGETS laser_cb_detector_node laser_interval_calc_node
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 add_subdirectory(test EXCLUDE_FROM_ALL)

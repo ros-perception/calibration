@@ -20,7 +20,12 @@ include_directories(include)
 add_library(${PROJECT_NAME} src/monocam_settler.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
 
+
+# deal with the executable
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 add_executable(monocam_settler_action src/monocam_settler_action.cpp)
 target_link_libraries(monocam_settler_action ${Boost_LIBRARIES}
@@ -28,7 +33,7 @@ target_link_libraries(monocam_settler_action ${Boost_LIBRARIES}
                                              ${PROJECT_NAME}
 )
 install(TARGETS monocam_settler_action
-        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
 add_subdirectory(test EXCLUDE_FROM_ALL)

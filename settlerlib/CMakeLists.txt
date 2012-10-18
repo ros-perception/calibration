@@ -15,4 +15,8 @@ add_library(${PROJECT_NAME} src/interval_calc.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
 add_subdirectory(test EXCLUDE_FROM_ALL)

@@ -19,16 +19,24 @@ generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs std_msgs)
 add_library(${PROJECT_NAME} src/interval_intersection.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
+install(TARGETS ${PROJECT_NAME}
+        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+)
+
+# deal with the executable
 add_executable(interval_intersection_node src/interval_intersection_node.cpp)
 target_link_libraries(interval_intersection_node ${PROJECT_NAME})
 
 include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
-message(INFO ${CATKIN_BUILD_PREFIX}/${CATKIN_GLOBAL_INCLUDE_DESTINATION})
 add_executable(interval_intersection_action src/interval_intersection_action.cpp)
 target_link_libraries(interval_intersection_action ${Boost_LIBRARIES}
                                                    ${catkin_LIBRARIES}
                                                    ${PROJECT_NAME}
 )
 add_dependencies(interval_intersection_action ${PROJECT_NAME}_gencpp)
+
+install(TARGETS interval_intersection_node interval_intersection_action
+        DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 add_subdirectory(test EXCLUDE_FROM_ALL)
