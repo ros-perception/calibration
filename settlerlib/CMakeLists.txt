@@ -11,6 +11,10 @@ catkin_package(DEPENDS Boost calibration_msgs rosconsole rostime
 # common commands for building c++ executables and libraries
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
 include_directories(include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/settlerlib/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+ 
 add_library(${PROJECT_NAME} src/interval_calc.cpp
                             src/deflated.cpp
 )

@@ -28,7 +28,10 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS}
                            ${OpenCV_INCLUDE_DIRS}
                            ${PCL_INCLUDE_DIRS}
 )
-
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/image_cb_detector/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+ 
 # add the library
 add_library(${PROJECT_NAME} src/image_cb_detector.cpp)
 target_link_libraries(image_cb_detector ${catkin_LIBRARIES}
@@ -69,4 +72,3 @@ target_link_libraries(image_annotator ${Boost_LIBRARIES}
 install(TARGETS image_cb_detector_action rgbd_cb_detector_action image_annotator
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-

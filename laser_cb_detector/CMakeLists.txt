@@ -18,6 +18,10 @@ include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
 )
 include_directories(include)
 
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/laser_cb_detector/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+) 
+
 # deal witht the library
 add_library(${PROJECT_NAME} src/cv_laser_bridge.cpp
                             src/laser_cb_detector.cpp

@@ -9,7 +9,10 @@ catkin_package(DEPENDS actionlib actionlib_msgs Boost calibration_msgs geometry_
 
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
 include_directories(include)
-
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/interval_intersection/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+ 
 # generate the messages
 add_action_files(DIRECTORY action FILES Config.action)
 

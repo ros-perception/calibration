@@ -18,7 +18,10 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS}
                            ${catkin_INCLUDE_DIRS}
 )
 include_directories(include)
-
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/joint_state_settler/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+ 
 add_library(${PROJECT_NAME} src/joint_states_deflater.cpp
                                      src/joint_states_settler.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})

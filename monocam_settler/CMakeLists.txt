@@ -14,9 +14,15 @@ add_action_files(DIRECTORY action FILES Config.action)
 
 generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
 
-# create the libraries
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
 include_directories(include)
+
+# deal with the include
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/monocam_settler/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+# create the libraries
 add_library(${PROJECT_NAME} src/monocam_settler.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
