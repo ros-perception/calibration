@@ -1,7 +1,7 @@
 <package>
   <name>monocam_settler</name>
   <version>0.9.11</version>
-  <description brief="Waits for features in a single camera to settle">
+  <description>
      Listens on a ImageFeatures topic, and waits for the data to settle.
      This package is experimental and unstable.
      Expect its APIs to change.

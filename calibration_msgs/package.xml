@@ -1,7 +1,7 @@
 <package>
   <name>calibration_msgs</name>
   <version>0.9.11</version>
-  <description brief="Messages for full robot calibration">
+  <description>
      This package defines messages for storing calibration samples
      to be used in full robot calibration procedures. This package
      is still unstable. Expect the messages to change.

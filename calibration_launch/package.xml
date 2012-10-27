@@ -1,7 +1,7 @@
 <package>
   <name>calibration_launch</name>
   <version>0.9.11</version>
-  <description brief="Launch files for data collection.">
+  <description>
     This package contains a collection of launch files that can be helpful in configuring
     the calibration stack to run on your robot.
   </description>

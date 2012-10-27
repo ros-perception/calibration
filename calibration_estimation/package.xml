@@ -1,7 +1,7 @@
 <package>
   <name>calibration_estimation</name>
   <version>0.9.11</version>
-  <description brief="Runs an optimization to estimate a robot's kinematic parameters">
+  <description>
     Runs an optimization to estimate the a robot's kinematic parameters. This package is a
     generic rewrite of pr2_calibration_estimation.
   </description>

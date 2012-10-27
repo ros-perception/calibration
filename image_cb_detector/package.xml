@@ -1,7 +1,7 @@
 <package>
   <name>image_cb_detector</name>
   <version>0.9.11</version>
-  <description brief="Extract checkerboards from images">
+  <description>
     Provide a node that extracts checkerboard corners from ROS images.
     This package is still experimental and unstable.
     Expect its APIs to change.
