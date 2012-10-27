@@ -1,6 +1,6 @@
 <package>
   <name>interval_intersection</name>
-  <version>0.9.10</version>
+  <version>0.9.11</version>
   <description brief="Compute the intersection of many interval msgs">
     Tools for calculating the intersection of interval messages coming
     in on several topics. This package is experimental and unstable.
