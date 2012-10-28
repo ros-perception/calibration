@@ -18,7 +18,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS}
                            ${catkin_INCLUDE_DIRS}
 )
 include_directories(include)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/joint_state_settler/
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/joint_states_settler/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
  
