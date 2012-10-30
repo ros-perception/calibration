@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(laser_cb_detector)
 
 find_package(Boost REQUIRED signals thread)
-find_package(catkin REQUIRED actionlib_msgs cv_bridge image_cb_detector settlerlib std_msgs)
-catkin_package(DEPENDS actionlib_msgs cv_bridge image_cb_detector settlerlib std_msgs
+find_package(catkin REQUIRED actionlib_msgs cv_bridge image_cb_detector roscpp settlerlib std_msgs)
+catkin_package(DEPENDS actionlib_msgs cv_bridge image_cb_detector roscpp settlerlib std_msgs
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME}
 )
