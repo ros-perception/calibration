@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(laser_cb_detector)
 
 find_package(Boost REQUIRED signals thread)
-find_package(catkin REQUIRED actionlib_msgs cv_bridge image_cb_detector roscpp settlerlib std_msgs)
-catkin_package(DEPENDS actionlib_msgs cv_bridge image_cb_detector roscpp settlerlib std_msgs
+find_package(catkin REQUIRED actionlib actionlib_msgs cv_bridge image_cb_detector roscpp settlerlib std_msgs)
+catkin_package(DEPENDS actionlib actionlib_msgs cv_bridge image_cb_detector roscpp settlerlib std_msgs
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME}
 )
@@ -37,12 +37,14 @@ install(TARGETS ${PROJECT_NAME}
 # deal with some executables
 add_executable(laser_cb_detector_node src/laser_cb_detector_node.cpp)
 target_link_libraries(laser_cb_detector_node ${Boost_LIBRARIES}
+                                             ${catkin_LIBRARIES}
                                              ${PROJECT_NAME}
                                              ${OpenCV_LIBRARIES}
 )
 
 add_executable(laser_interval_calc_node src/laser_interval_calc_node.cpp)
 target_link_libraries(laser_interval_calc_node ${Boost_LIBRARIES}
+                                               ${catkin_LIBRARIES}
                                                ${PROJECT_NAME}
                                                ${OpenCV_LIBRARIES}
 )
