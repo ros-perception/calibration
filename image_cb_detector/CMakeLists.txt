@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(image_cb_detector)
 
 find_package(Boost REQUIRED thread signals)
-find_package(catkin REQUIRED actionlib actionlib_msgs cv_bridge genmsg geometry_msgs image_transport message_filters pcl_ros roscpp std_msgs)
+find_package(catkin REQUIRED actionlib actionlib_msgs calibration_msgs cv_bridge genmsg geometry_msgs image_transport message_filters pcl_ros roscpp sensor_msgs std_msgs)
 find_package(OpenCV REQUIRED)
 find_package(PCL REQUIRED)
 catkin_package(INCLUDE_DIRS include
