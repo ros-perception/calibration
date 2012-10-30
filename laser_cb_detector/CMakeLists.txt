@@ -36,7 +36,8 @@ install(TARGETS ${PROJECT_NAME}
 
 # deal with some executables
 add_executable(laser_cb_detector_node src/laser_cb_detector_node.cpp)
-target_link_libraries(laser_cb_detector_node ${PROJECT_NAME}
+target_link_libraries(laser_cb_detector_node ${Boost_LIBRARIES}
+                                             ${PROJECT_NAME}
                                              ${OpenCV_LIBRARIES}
 )
 
