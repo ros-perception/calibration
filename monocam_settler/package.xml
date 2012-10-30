@@ -1,6 +1,6 @@
 <package>
   <name>monocam_settler</name>
-  <version>0.9.15</version>
+  <version>0.9.16</version>
   <description>
      Listens on a ImageFeatures topic, and waits for the data to settle.
      This package is experimental and unstable.

@@ -1,6 +1,6 @@
 <package>
   <name>calibration</name>
-  <version>0.9.15</version>
+  <version>0.9.16</version>
   <description>
      Provides a toolchain running through the robot calibration process. This
      involves capturing calibration data, estimating parameters, and

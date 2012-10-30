@@ -1,6 +1,6 @@
 <package>
   <name>settlerlib</name>
-  <version>0.9.15</version>
+  <version>0.9.16</version>
   <description>
     Defines helper functions and routines that greatly help when trying to create a settler
     for a specific sensor channel. This package is experimental and unstable.
