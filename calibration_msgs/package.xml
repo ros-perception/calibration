@@ -1,6 +1,6 @@
 <package>
   <name>calibration_msgs</name>
-  <version>0.9.19</version>
+  <version>0.9.20</version>
   <description>
      This package defines messages for storing calibration samples
      to be used in full robot calibration procedures. This package
