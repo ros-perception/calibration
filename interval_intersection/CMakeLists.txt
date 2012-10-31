@@ -3,9 +3,6 @@ project(interval_intersection)
 
 find_package(Boost REQUIRED thread)
 find_package(catkin REQUIRED actionlib actionlib_msgs calibration_msgs geometry_msgs rosconsole roscpp roscpp_serialization rostime std_msgs)
-catkin_package(DEPENDS actionlib actionlib_msgs Boost calibration_msgs geometry_msgs rosconsole roscpp roscpp_serialization rostime std_msgs
-               INCLUDE_DIRS include
-)
 
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
 include_directories(include)
@@ -17,6 +14,11 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/interval_intersection/
 add_action_files(DIRECTORY action FILES Config.action)
 
 generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs std_msgs)
+
+# define the package
+catkin_package(DEPENDS actionlib actionlib_msgs Boost calibration_msgs geometry_msgs rosconsole roscpp roscpp_serialization rostime std_msgs
+               INCLUDE_DIRS include
+)
 
 #common commands for building c++ executables and libraries
 add_library(${PROJECT_NAME} src/interval_intersection.cpp)

@@ -3,15 +3,16 @@ project(joint_states_settler)
 
 find_package(Boost REQUIRED thread)
 find_package(catkin REQUIRED actionlib actionlib_msgs rosconsole roscpp roscpp_serialization settlerlib std_msgs)
-catkin_package(DEPENDS actionlib actionlib_msgs rosconsole roscpp roscpp_serialization settlerlib std_msgs
-               INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME}
-)
-
 
 add_action_files(DIRECTORY action FILES Config.action)
 
 generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
+
+# define the package
+catkin_package(DEPENDS actionlib actionlib_msgs rosconsole roscpp roscpp_serialization settlerlib std_msgs
+               INCLUDE_DIRS include
+               LIBRARIES ${PROJECT_NAME}
+)
 
 # create the library
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS}

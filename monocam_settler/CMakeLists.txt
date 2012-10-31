@@ -3,16 +3,18 @@ project(monocam_settler)
 
 find_package(Boost REQUIRED thread)
 find_package(catkin REQUIRED actionlib actionlib_msgs rosconsole roscpp_serialization settlerlib std_msgs)
+
+# define the messages
+add_action_files(DIRECTORY action FILES Config.action)
+
+generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
+
+# define the package
 catkin_package(DEPENDS actionlib actionlib_msgs rosconsole roscpp_serialization settlerlib std_msgs
                INCLUDE_DIRS include
                LIBRARIES ${PROJECT_NAME}
 )
 
-
-
-add_action_files(DIRECTORY action FILES Config.action)
-
-generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
 
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
 include_directories(include)

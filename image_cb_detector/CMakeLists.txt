@@ -5,9 +5,6 @@ find_package(Boost REQUIRED thread signals)
 find_package(catkin REQUIRED actionlib actionlib_msgs calibration_msgs cv_bridge genmsg geometry_msgs image_transport message_filters pcl_ros roscpp sensor_msgs std_msgs)
 find_package(OpenCV REQUIRED)
 find_package(PCL REQUIRED)
-catkin_package(INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME}
-)
 
 catkin_python_setup()
 
@@ -20,6 +17,11 @@ add_message_files(DIRECTORY msg
 )
 
 generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs std_msgs)
+
+# define the package
+catkin_package(INCLUDE_DIRS include
+               LIBRARIES ${PROJECT_NAME}
+)
 
 # define some includes
 include_directories(include)

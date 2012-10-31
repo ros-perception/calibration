@@ -3,14 +3,16 @@ project(laser_cb_detector)
 
 find_package(Boost REQUIRED signals thread)
 find_package(catkin REQUIRED actionlib actionlib_msgs cv_bridge image_cb_detector message_filters roscpp settlerlib std_msgs)
-catkin_package(DEPENDS actionlib actionlib_msgs cv_bridge image_cb_detector message_filters roscpp settlerlib std_msgs
-               INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME}
-)
 
 add_action_files(DIRECTORY action FILES Config.action)
 
 generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
+
+# define the package
+catkin_package(DEPENDS actionlib actionlib_msgs cv_bridge image_cb_detector message_filters roscpp settlerlib std_msgs
+               INCLUDE_DIRS include
+               LIBRARIES ${PROJECT_NAME}
+)
 
 find_package(OpenCV REQUIRED)
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS}
