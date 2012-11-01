@@ -6,9 +6,6 @@ find_package(catkin REQUIRED actionlib actionlib_msgs calibration_msgs geometry_
 
 include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
 include_directories(include)
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/interval_intersection/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
  
 # generate the messages
 add_action_files(DIRECTORY action FILES Config.action)
@@ -18,6 +15,10 @@ generate_messages(DEPENDENCIES actionlib_msgs geometry_msgs std_msgs)
 # define the package
 catkin_package(DEPENDS actionlib actionlib_msgs Boost calibration_msgs geometry_msgs rosconsole roscpp roscpp_serialization rostime std_msgs
                INCLUDE_DIRS include
+)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/interval_intersection/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
 #common commands for building c++ executables and libraries
