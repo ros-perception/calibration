@@ -1,6 +1,6 @@
 <package>
   <name>joint_states_settler</name>
-  <version>0.9.20</version>
+  <version>0.9.21</version>
   <description>
      Provides a node that reports how long a subset of joints has been
      settled. That is, it calculates how long a set of joints has remained
