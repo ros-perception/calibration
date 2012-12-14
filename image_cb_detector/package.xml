@@ -12,10 +12,11 @@
   <license>BSD</license>
   <url>http://ros.org/wiki/image_cb_detector</url>
 
+  <buildtool_depend>catkin</buildtool_depend>
+
   <build_depend>actionlib</build_depend>
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>calibration_msgs</build_depend>
-  <build_depend>catkin</build_depend>
   <build_depend>cv_bridge</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>image_transport</build_depend>

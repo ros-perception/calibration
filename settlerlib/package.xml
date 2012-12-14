@@ -11,6 +11,8 @@
   <license>BSD</license>
   <url>http://www.ros.org/wiki/settlerlib</url>
 
+  <buildtool_depend>catkin</buildtool_depend>
+
   <build_depend>boost</build_depend>
   <build_depend>calibration_msgs</build_depend>
   <build_depend>rosconsole</build_depend>
