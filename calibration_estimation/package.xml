@@ -11,7 +11,7 @@
   <license>BSD</license>
   <url>http://ros.org/wiki/calibration_estimation</url>
   
-  <build_depend>catkin</build_depend>
+  <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>calibration_msgs</run_depend>
   <run_depend>python-scipy</run_depend>

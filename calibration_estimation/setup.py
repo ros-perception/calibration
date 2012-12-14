@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-from catkin_pkg.package import parse_package_for_distutils
+from catkin_pkg.python_setup import generate_distutils_setup
 
-d = parse_package_for_distutils()
-d['packages'] = ['calibration_estimation', 'urdf_python']
-d['package_dir'] = {'': 'src'}
-d['install_requires'] = ['genpy', 'numpy', 'rosgraph', 'roslib', 'rospkg']
+d = generate_distutils_setup(
+    packages=['calibration_estimation', 'urdf_python'],
+    package_dir={'': 'src'},
+    install_requires=['genpy', 'numpy', 'rosgraph', 'roslib', 'rospkg'],
+    )
 
 setup(**d)
