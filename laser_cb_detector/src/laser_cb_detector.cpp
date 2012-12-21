@@ -81,7 +81,7 @@ bool LaserCbDetector::detect(const calibration_msgs::DenseLaserSnapshot& snapsho
   else
     ROS_DEBUG("Not flipping image");
 
-  cv_bridge::CvImage cv_image(snapshot.header, "passthrough", image);
+  cv_bridge::CvImage cv_image(snapshot.header, "mono8", image);
   sensor_msgs::ImagePtr ros_image = cv_image.toImageMsg();
   if(detector_.detect(ros_image, result)){
     if (config_.flip_horizontal){
