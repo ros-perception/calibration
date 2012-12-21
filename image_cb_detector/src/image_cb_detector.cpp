@@ -60,7 +60,7 @@ bool ImageCbDetector::detect(const sensor_msgs::ImageConstPtr& ros_image,
   }
   catch (cv_bridge::Exception error)
   {
-    ROS_ERROR("error");
+    ROS_ERROR("error: %s", error.what());
     return false;
   }
 
