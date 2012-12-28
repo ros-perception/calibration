@@ -36,6 +36,7 @@ import roslib; roslib.load_manifest('calibration_estimation')
 
 import sys
 import unittest
+import os
 import rospy
 import time
 import numpy
@@ -136,8 +137,9 @@ class TestSingleTransform(unittest.TestCase):
 
     def test_hard(self):
         sample_nums = range(1,6)
-        params_filenames    = ["test/data/single_transform_data/params_%02u.txt" % n for n in sample_nums]
-        transform_filenames = ["test/data/single_transform_data/transform_%02u.txt" % n for n in sample_nums]
+        dir_name = os.path.dirname(os.path.realpath(__file__))
+        params_filenames    = [os.path.join(dir_name, 'data', 'single_transform_data', 'params_%02u.txt' % n) for n in sample_nums]
+        transform_filenames = [os.path.join(dir_name, 'data', 'single_transform_data', 'transform_%02u.txt' % n) for n in sample_nums]
 
         for params_filename, transform_filename in zip(params_filenames, transform_filenames):
             f_params = open(params_filename)
