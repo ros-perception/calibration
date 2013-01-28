@@ -84,8 +84,10 @@ class ConfigManager:
         # Reconfigure Interval Intersection
 
         intersect_goal = interval_intersection.msg.ConfigGoal();
-        intersect_goal.topics = [x['cam_id'] for x in config["camera_measurements"]] + [x['chain_id'] for x in config["joint_measurements"]] + [x['laser_id'] for x in config["laser_measurements"]]
-        #intersect_goal.topics = [x['cam_id'] for x in config["camera_measurements"]] + [x['chain_id'] for x in config["joint_measurements"]]
+        try: # handle case where there are no lasers
+            intersect_goal.topics = [x['cam_id'] for x in config["camera_measurements"]] + [x['chain_id'] for x in config["joint_measurements"]] + [x['laser_id'] for x in config["laser_measurements"]]
+        except KeyError:
+            intersect_goal.topics = [x['cam_id'] for x in config["camera_measurements"]] + [x['chain_id'] for x in config["joint_measurements"]]
         self._intersect_ac.send_goal(intersect_goal)
 
         # Reconfigure the cameras
@@ -100,8 +102,11 @@ class ConfigManager:
 
         # Reconfigure the lasers
         rospy.logdebug("Reconfiguring The Lasers")
-        for cur_laser in config["laser_measurements"]:
-            self._laser_managers[cur_laser["laser_id"]].reconfigure(cur_laser["config"])
+        try:
+            for cur_laser in config["laser_measurements"]:
+                self._laser_managers[cur_laser["laser_id"]].reconfigure(cur_laser["config"])
+        except KeyError:
+            pass # if no lasers, nothing to do.
 
         # Send controller commands
         rospy.logdebug("Sending Controller Commands")
