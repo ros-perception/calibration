@@ -24,6 +24,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/interval_intersection/
 #common commands for building c++ executables and libraries
 add_library(${PROJECT_NAME} src/interval_intersection.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+add_dependencies(${PROJECT_NAME} calibration_msgs_gencpp)
 
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
@@ -32,6 +33,7 @@ install(TARGETS ${PROJECT_NAME}
 # deal with the executable
 add_executable(interval_intersection_node src/interval_intersection_node.cpp)
 target_link_libraries(interval_intersection_node ${PROJECT_NAME})
+add_dependencies(interval_intersection_node calibration_msgs_gencpp)
 
 include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
 add_executable(interval_intersection_action src/interval_intersection_action.cpp)

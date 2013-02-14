@@ -50,6 +50,7 @@ target_link_libraries(laser_interval_calc_node ${Boost_LIBRARIES}
                                                ${PROJECT_NAME}
                                                ${OpenCV_LIBRARIES}
 )
+add_dependencies(laser_interval_calc_node calibration_msgs_gencpp)
 
 install(TARGETS laser_cb_detector_node laser_interval_calc_node
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

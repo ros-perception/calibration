@@ -53,6 +53,7 @@ target_link_libraries(image_cb_detector_action ${Boost_LIBRARIES}
                                                ${OpenCV_LIBRARIES}
                                                ${PCL_LIBRARIES}
 )
+add_dependencies(image_cb_detector_action calibration_msgs_gencpp)
 
 add_executable(rgbd_cb_detector_action src/rgbd_cb_detector_action.cpp)
 target_link_libraries(rgbd_cb_detector_action ${Boost_LIBRARIES}
@@ -61,6 +62,7 @@ target_link_libraries(rgbd_cb_detector_action ${Boost_LIBRARIES}
                                               ${OpenCV_LIBRARIES}
                                               ${PCL_LIBRARIES}
 )
+add_dependencies(rgbd_cb_detector_action calibration_msgs_gencpp)
 
 add_executable(image_annotator src/image_annotator.cpp)
 target_link_libraries(image_annotator image_cb_detector ${OpenCV_LIBRARIES} ${PCL_LIBRARIES})
@@ -70,6 +72,7 @@ target_link_libraries(image_annotator ${Boost_LIBRARIES}
                                       ${OpenCV_LIBRARIES}
                                       ${PCL_LIBRARIES}
 )
+add_dependencies(image_annotator calibration_msgs_gencpp)
 
 install(TARGETS image_cb_detector_action rgbd_cb_detector_action image_annotator
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
