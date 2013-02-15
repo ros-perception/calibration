@@ -32,7 +32,6 @@ install(TARGETS ${PROJECT_NAME}
         DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
-
 # deal with the executable
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 add_executable(monocam_settler_action src/monocam_settler_action.cpp)
@@ -43,5 +42,6 @@ target_link_libraries(monocam_settler_action ${Boost_LIBRARIES}
 install(TARGETS monocam_settler_action
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+add_dependencies(monocam_settler_action calibration_msgs_gencpp)
 
 add_subdirectory(test EXCLUDE_FROM_ALL)

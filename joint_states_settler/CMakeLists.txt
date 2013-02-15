@@ -36,9 +36,11 @@ add_executable(joint_states_settler_action src/joint_states_settler_action.cpp)
 target_link_libraries(joint_states_settler_action ${Boost_LIBRARIES}
                                                   ${PROJECT_NAME}
 )
+add_dependencies(joint_states_settler_action calibration_msgs_gencpp)
 
 add_executable(view_interval src/view_interval.cpp)
 target_link_libraries(view_interval ${catkin_LIBRARIES})
+add_dependencies(view_interval calibration_msgs_gencpp)
 
 install(TARGETS joint_states_settler_action view_interval
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
