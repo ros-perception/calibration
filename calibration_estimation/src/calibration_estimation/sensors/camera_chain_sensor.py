@@ -67,7 +67,7 @@ class CameraChainBundler:
         sensors = []
         for cur_config in self._valid_configs:
             if cur_config["sensor_id"] in [ x.camera_id for x in M_robot.M_cam ]:
-                if "chain_id" in cur_config.keys() and cur_config["chain_id"] != None:
+                if "chain_id" in cur_config.keys() and cur_config["chain_id"] != None and cur_config["chain_id"] != "NONE":
                     if cur_config["chain_id"] in [ x.chain_id  for x in M_robot.M_chain ] :
                         M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
                         M_chain = M_robot.M_chain[ [ x.chain_id  for x in M_robot.M_chain ].index(cur_config["chain_id"]) ]
