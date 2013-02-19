@@ -51,6 +51,7 @@ class ErrorCalc:
         self._free_list = robot_params.calc_free(free_dict)
         self._multisensors = multisensors
         self._use_cov = use_cov
+        self._j_count = 0
 
 
     def calculate_full_param_vec(self, opt_param_vec):
@@ -63,9 +64,6 @@ class ErrorCalc:
         return full_param_vec
 
     def calculate_error(self, opt_all_vec):
-        print "x ",
-        sys.stdout.flush()
-
         opt_param_vec, full_pose_arr = self.split_all(opt_all_vec)
 
         full_param_vec = self.calculate_full_param_vec(opt_param_vec)
@@ -88,7 +86,8 @@ class ErrorCalc:
         r_vec = concatenate(r_list)
 
         rms_error = numpy.sqrt( numpy.mean(r_vec**2) )
-        print "%.3f " % rms_error,
+        
+        print "\t\t\t\t\tRMS error: %.3f    \r" % rms_error,
         sys.stdout.flush()
 
         return array(r_vec)
@@ -126,7 +125,9 @@ class ErrorCalc:
             of the J_m_s_pose blocks are zero, except J_sensor_pose_m, since target m is the only target that
             was viewed by the sensors in this multisensor.
         """
-        sys.stdout.write("J-")
+        self._j_count += 1;
+        sys.stdout.write("                     \r")
+        sys.stdout.write("Computing Jacobian.. (cycle #%d)\r" % self._j_count)
         sys.stdout.flush()
         #import scipy.optimize.slsqp.approx_jacobian as approx_jacobian
         #J = approx_jacobian(opt_param_vec, self.calculate_error, 1e-6)
@@ -165,7 +166,6 @@ class ErrorCalc:
             assert(J_ms_pose.shape[1] == 6)
             J_ms_pose[:,:] = self.multisensor_pose_jacobian(opt_param_vec, full_pose_arr[i,:], ms)
 
-        print "-J",
         sys.stdout.flush()
 
         return J
