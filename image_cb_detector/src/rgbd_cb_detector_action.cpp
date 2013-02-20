@@ -71,6 +71,8 @@ public:
     sync_.registerCallback(boost::bind(&RgbdCbDetectorAction::cameraCallback, this, _1, _2));
 
     as_.start();
+
+    last_sample_invalid_ = false;
   }
 
   void goalCallback()
@@ -107,6 +109,9 @@ public:
   {
     boost::mutex::scoped_lock lock(run_mutex_);
 
+    std::ostringstream s;
+    s << image_sub_.getTopic() << ", " << cloud_sub_.getTopic() << ": ";
+
     if (as_.isActive())
     {
       calibration_msgs::CalibrationPattern features;
@@ -117,19 +122,29 @@ public:
       success = detector_.detect(image, features);
       if (!success)
       {
-        ROS_ERROR("Error trying to detect checkerboard, not going to publish CalibrationPattern");
+        ROS_ERROR_STREAM(s.str()<<"Error trying to detect checkerboard, not going to publish CalibrationPattern");
         return;
       }
 
+      unsigned missing_points = 0;
       for(size_t i = 0; i< features.image_points.size(); i++){
         geometry_msgs::Point *p = &(features.image_points[i]);
         pcl::PointXYZRGB pt = cloud((int)(p->x+0.5), (int)(p->y+0.5));
         if( isnan(pt.x) || isnan(pt.y) || isnan(pt.z) ) {
-          ROS_ERROR("Invalid point in checkerboard, not going to publish CalibrationPattern");
-          return;
+          missing_points++;
         }
         // z is set to distance
         p->z = sqrt( (pt.x*pt.x) + (pt.y*pt.y) + (pt.z*pt.z) );
+      }
+
+      if( missing_points > features.image_points.size()/2 ) {
+        ROS_ERROR_STREAM(s.str() << "More than 50% missing 3d points in checkerboard, not going to publish CalibrationPattern");
+        return;
+      }
+
+      if ( missing_points > 0 )
+      {
+    	ROS_INFO_STREAM(s.str() << missing_points << " of " << features.image_points.size() << " 3d points on checkerboard are missing.");
       }
 
       pub_.publish(features);
@@ -147,6 +162,8 @@ private:
   message_filters::Synchronizer<CameraSyncPolicy> sync_;
 
   ros::Publisher pub_;
+
+  bool last_sample_invalid_;
 };
 
 int main(int argc, char** argv)
