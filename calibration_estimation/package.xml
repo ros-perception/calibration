@@ -23,6 +23,5 @@
   <run_depend>python-matplotlib</run_depend>
   <run_depend>python-tk</run_depend>
 
-  <test_depend>python-scipy</test_depend>
   <!--<depend package="urdf_python" />   for parsing URDF (currently a modified version is held internally) -->
 </package>
