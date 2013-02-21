@@ -55,7 +55,9 @@ target_link_libraries(image_cb_detector_action ${Boost_LIBRARIES}
 )
 add_dependencies(image_cb_detector_action calibration_msgs_gencpp)
 
-add_executable(rgbd_cb_detector_action src/rgbd_cb_detector_action.cpp)
+add_executable(rgbd_cb_detector_action 
+src/rgbd_cb_detector_action.cpp
+src/depth_to_pointcloud.cpp)
 target_link_libraries(rgbd_cb_detector_action ${Boost_LIBRARIES}
                                               ${catkin_LIBRARIES}
                                               image_cb_detector

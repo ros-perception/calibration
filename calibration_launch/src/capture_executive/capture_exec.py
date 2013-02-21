@@ -195,10 +195,10 @@ class CaptureExecutive:
                 disable_list.append(laser_id)
                 laser_manager.disable()
 
-        print "Enabling"
+        print "Enabling:"
         for cur_enabled in enable_list:
             print " + %s" % cur_enabled
-        print "Disabling"
+        print "Disabling:"
         for cur_disabled in disable_list:
             print " - %s" % cur_disabled
 
@@ -206,6 +206,7 @@ class CaptureExecutive:
         self.active = True
         self.lock.release()
 
+        print "\nCollecting sensor data.."
         # Keep waiting until the request_callback function populates the m_robot msg
         while (not rospy.is_shutdown()) and (not done) and (rospy.Time().now() < timeout_time):
             time.sleep(.1)
@@ -214,6 +215,7 @@ class CaptureExecutive:
                 done = True
             self.lock.release()
 
+        print "Stopping sensor streams..\n"
         # Stop listening to all the sensor streams
         for cam_id, cam_manager in self.cam_managers:
             cam_manager.disable()
