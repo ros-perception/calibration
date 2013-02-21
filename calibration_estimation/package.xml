@@ -1,6 +1,6 @@
 <package>
   <name>calibration_estimation</name>
-  <version>0.9.24</version>
+  <version>0.9.25</version>
   <description>
     Runs an optimization to estimate the a robot's kinematic parameters. This package is a
     generic rewrite of pr2_calibration_estimation.
@@ -23,6 +23,5 @@
   <run_depend>python-matplotlib</run_depend>
   <run_depend>python-tk</run_depend>
 
-  <test_depend>python-scipy</test_depend>
   <!--<depend package="urdf_python" />   for parsing URDF (currently a modified version is held internally) -->
 </package>
