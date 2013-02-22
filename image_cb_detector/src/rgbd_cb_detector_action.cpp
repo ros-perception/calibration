@@ -236,8 +236,7 @@ public:
         */
         /////////////////////////////////
 
-        // z is set to distance
-        pixel.z = sqrt( (ray.x*ray.x) + (ray.y*ray.y) + (ray.z*ray.z) );
+        pixel.z = ray.z;
       }
 
       // print 'back to normal' message once
