@@ -336,7 +336,7 @@ def opt_runner(robot_params, pose_guess_arr, free_dict, multisensors, use_cov):
     # Construct the initial guess
     opt_all = build_opt_vector(robot_params, free_dict, pose_guess_arr)
 
-    x, cov_x, infodict, mesg, iter = scipy.optimize.leastsq(error_calc.calculate_error, opt_all, Dfun=error_calc.calculate_jacobian, full_output=1, ftol=0.001, xtol=0.001 )
+    x, cov_x, infodict, mesg, iter = scipy.optimize.leastsq(error_calc.calculate_error, opt_all, Dfun=error_calc.calculate_jacobian, full_output=1 )
 
     J = error_calc.calculate_jacobian(x)
 
