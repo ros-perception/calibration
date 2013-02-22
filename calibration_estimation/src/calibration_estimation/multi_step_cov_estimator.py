@@ -49,6 +49,7 @@ import stat
 import os
 
 from numpy import matrix
+from numpy import multiply
 
 from calibration_estimation.cal_bag_helpers import *
 from calibration_estimation.urdf_params import UrdfParams
@@ -254,6 +255,9 @@ if __name__ == '__main__':
         previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
     else:
         previous_pose_guesses = numpy.zeros([msg_count,6])
+        if 'default_initial_pose' in config.keys():
+            for p in range(msg_count):
+                previous_pose_guesses[p,] = config['default_initial_pose']
 
     # Check if we can write to all of our output files
     output_filenames = [calibrated_xml]
