@@ -178,10 +178,12 @@ public:
         return;
       }
 
+      /*
       std::cerr << "Model coefficients: " << coefficients->values[0] << " "
                                           << coefficients->values[1] << " "
                                           << coefficients->values[2] << " "
                                           << coefficients->values[3] << std::endl;
+       */
 
       // get normal
       float nx = coefficients->values[0];
