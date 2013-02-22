@@ -49,6 +49,7 @@ import stat
 import os
 
 from numpy import matrix
+from numpy import multiply
 
 from calibration_estimation.cal_bag_helpers import *
 from calibration_estimation.urdf_params import UrdfParams
@@ -204,7 +205,7 @@ def update_urdf(urdf, calibrated_params):
                     link_updated = 1
                 else:
                     rot = angle_axis_to_RPY(updated_link_params[3:6])
-                    print 'Updating rpy for', joint_name, '\n old:', urdf.joints[joint_name].origin.rotation, '\n new:', rot
+                    print 'Updating rpy for', joint_name, '\n old:', multiply(urdf.joints[joint_name].origin.rotation, 180.0/math.pi), '(deg)\n new:', multiply(rot, 180.0/math.pi ), '(deg)';
                     urdf.joints[joint_name].origin.rotation = rot
                     link_updated = 1                
         except KeyError:
@@ -265,6 +266,9 @@ if __name__ == '__main__':
         previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
     else:
         previous_pose_guesses = numpy.zeros([msg_count,6])
+        if 'default_initial_pose' in config.keys():
+            for p in range(msg_count):
+                previous_pose_guesses[p,] = config['default_initial_pose']
 
     # Check if we can write to all of our output files
     output_filenames = [calibrated_xml]
