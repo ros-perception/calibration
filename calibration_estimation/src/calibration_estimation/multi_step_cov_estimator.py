@@ -49,7 +49,6 @@ import stat
 import os
 
 from numpy import matrix
-from numpy import multiply
 
 from calibration_estimation.cal_bag_helpers import *
 from calibration_estimation.urdf_params import UrdfParams
