@@ -1,7 +1,7 @@
 <launch>
 
   <arg name="image_topic" default="image_rect"/>
-  <arg name="depth_topic" default="points"/>
+  <arg name="depth_topic" default="depth"/>
   <arg name="camera_info_topic" default="camera_info"/>
   <arg name="frequency" default="2"/>
 
