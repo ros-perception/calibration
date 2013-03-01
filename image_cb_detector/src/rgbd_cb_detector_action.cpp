@@ -178,10 +178,10 @@ public:
         return;
       }
 
-      std::cerr << "Model coefficients: " << coefficients->values[0] << " "
+      ROS_DEBUG_STREAM( "Model coefficients: " << coefficients->values[0] << " "
                                           << coefficients->values[1] << " "
                                           << coefficients->values[2] << " "
-                                          << coefficients->values[3] << std::endl;
+                                          << coefficients->values[3] );
 
       // get normal
       float nx = coefficients->values[0];
