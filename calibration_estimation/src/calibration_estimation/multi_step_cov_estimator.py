@@ -178,38 +178,49 @@ def update_urdf(urdf, calibrated_params):
         if laser._gearing != 1.0:
             update_transmission(urdf, laser._config['joint'], laser._gearing)
 
+    unchanged_joints = [];
+
     # update each transform (or joint calibration)
     for joint_name in calibrated_params.transforms.keys():
+        link_updated = 0
         try:
-            updated = calibrated_params.transforms[joint_name]._config.T.tolist()[0]
-            if diff(updated[0:3],  urdf.joints[joint_name].origin.position):
-                print 'Updating xyz for', joint_name, 'old:', urdf.joints[joint_name].origin.position, 'new:', updated[0:3]
-                urdf.joints[joint_name].origin.position = updated[0:3]
+            updated_link_params = calibrated_params.transforms[joint_name]._config.T.tolist()[0]
+            if diff(updated_link_params[0:3],  urdf.joints[joint_name].origin.position):
+                print 'Updating xyz for', joint_name, '\n old:', urdf.joints[joint_name].origin.position, '\n new:', updated_link_params[0:3]
+                urdf.joints[joint_name].origin.position = updated_link_params[0:3]
+                link_updated = 1
             r1 = RPY_to_angle_axis(urdf.joints[joint_name].origin.rotation)
-            if diff(r1, updated[3:6]):
+            if diff(r1, updated_link_params[3:6]):
                 # TODO: remove assumption that joints are revolute
                 if joint_name in joints and urdf.joints[joint_name].calibration != None:
                     cal = urdf.joints[joint_name].calibration 
                     a = axis[joints.index(joint_name)]
                     a = int(a) - 1
-                    print 'Updating calibration for', joint_name, 'by', updated[a]
+                    print 'Updating calibration for', joint_name, 'by', updated_link_params[a]
                     if cal.rising != None:
-                        urdf.joints[joint_name].calibration.rising += updated[a]   
+                        urdf.joints[joint_name].calibration.rising += updated_link_params[a]   
                     if cal.falling != None:
-                        urdf.joints[joint_name].calibration.falling += updated[a]
+                        urdf.joints[joint_name].calibration.falling += updated_link_params[a]
+                    link_updated = 1
                 else:
-                    rot = angle_axis_to_RPY(updated[3:6])
-                    print 'Updating rpy for', joint_name, 'old:', urdf.joints[joint_name].origin.rotation, 'new:', rot
-                    urdf.joints[joint_name].origin.rotation = rot                
+                    rot = angle_axis_to_RPY(updated_link_params[3:6])
+                    print 'Updating rpy for', joint_name, '\n old:', urdf.joints[joint_name].origin.rotation, '\n new:', rot
+                    urdf.joints[joint_name].origin.rotation = rot
+                    link_updated = 1                
         except KeyError:
             print "Joint removed:", joint_name
-
+            link_updated = 1
+        if not link_updated:
+            unchanged_joints.append( joint_name );
+    
+    print "The following joints weren't updated: \n", ', '.join(unchanged_joints)
     return urdf
 
 if __name__ == '__main__':
     import time
     xml_time = time.strftime('%Y_%m_%d_%H_%M', time.localtime())
     calibrated_xml = 'robot_calibrated_'+xml_time+'.xml'
+    uncalibrated_xml = 'robot_uncalibrated_'+xml_time+'.xml'
 
     rospy.init_node("multi_step_cov_estimator", anonymous=True)
     print "Starting The Multi Step [Covariance] Estimator Node\n"
@@ -329,10 +340,21 @@ if __name__ == '__main__':
 
         previous_pose_guesses = output_poses
 
-    # write out to URDF
-    rospy.loginfo('Writing updates to %s', calibrated_xml)
-    outfile = open(calibrated_xml, 'w')
+    # write original urdf so you can do a diff later
+    rospy.loginfo('Writing original urdf to %s', uncalibrated_xml)
+    outfile = open(uncalibrated_xml, 'w')
+    outfile.write( robot_params.get_clean_urdf().to_xml() )
+    outfile.close()
+
+    #update urdf
     urdf = update_urdf(robot_params.get_clean_urdf(), robot_params)
+
+    # write out to URDF
+    outfile = open(calibrated_xml, 'w')
+    rospy.loginfo('Writing updates to %s', calibrated_xml)
     outfile.write( urdf.to_xml() )
     outfile.close()
 
+    outfile = open('latest_calibrated_xml', 'w')
+    outfile.write( calibrated_xml )
+    outfile.close()
