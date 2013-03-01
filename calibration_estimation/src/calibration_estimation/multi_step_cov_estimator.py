@@ -254,9 +254,12 @@ if __name__ == '__main__':
         previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
     else:
         previous_pose_guesses = numpy.zeros([msg_count,6])
+        
+        # TODO: add alternate methods of defining default poses guesses
+        # See https://github.com/ros-perception/calibration/pull/9
         if 'default_initial_pose' in config.keys():
             for p in range(msg_count):
-                previous_pose_guesses[p,] = config['default_initial_pose']
+                previous_pose_guesses[p,] = config['default_floating_initial_pose']
 
     # Check if we can write to all of our output files
     output_filenames = [calibrated_xml]
