@@ -257,7 +257,11 @@ if __name__ == '__main__':
         
         # TODO: add alternate methods of defining default poses guesses
         # See https://github.com/ros-perception/calibration/pull/9
-        if 'default_initial_pose' in config.keys():
+        if 'default_floating_initial_pose' in config.keys():
+            default_pose = config['default_floating_initial_pose']
+            if len(default_pose) != 6:
+                print "The 'default_initial_pose' parameter has", len(default_pose), "elements, but it should have 6!"
+                sys.exit(-1)
             for p in range(msg_count):
                 previous_pose_guesses[p,] = config['default_floating_initial_pose']
 
