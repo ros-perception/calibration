@@ -1,7 +1,8 @@
 <launch>
 
   <arg name="image_topic" default="image_rect"/>
-  <arg name="points_topic" default="points"/>
+  <arg name="depth_topic" default="depth"/>
+  <arg name="camera_info_topic" default="camera_info"/>
   <arg name="frequency" default="2"/>
 
   <node type="throttle"
@@ -13,15 +14,16 @@
         pkg="image_cb_detector"
         name="cb_detector"
         output="screen">
-    <remap from="points" to="$(arg points_topic)" />
     <remap from="image" to="image_rect_throttle" />
+    <remap from="depth" to="$(arg depth_topic)" />
+    <remap from="camera_info" to="$(arg camera_info_topic)" />
   </node>
 
   <node type="image_annotator"
         pkg="image_cb_detector"
         name="cb_annotator"
         output="screen">
-    <remap from="annotated" to="image_rect_annotated" />
+    <remap from="annotated" to="$(arg image_topic)_annotated" />
     <remap from="image" to="image_rect_throttle" />
     <param name="marker_size" type="int" value="3" />
     <param name="scaling" type="double" value=".5" />

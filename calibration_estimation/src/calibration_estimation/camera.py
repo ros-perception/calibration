@@ -44,7 +44,7 @@ class RectifiedCamera:
     Parameters are ordered as follows [baseline_shift, f_shift, cx_shift, cy_shift]
     '''
     def __init__(self, config):
-        rospy.logdebug('Initializng rectified camera')
+        rospy.logdebug('Initializing rectified camera')
         self._config = config
         self._cov_dict = config['cov']
         try:
@@ -109,15 +109,15 @@ class RectifiedCamera:
         if self._rgbd:
             pixel_pts = pixel_pts_h[0:3,:] / pixel_pts_h[2,:]
             for i in range(N):
-                d = sqrt( (pts[0,i] * pts[0,i]) + (pts[1,i] * pts[1,i]) + (pts[2,i] * pts[2,i]) )
-                pixel_pts[2,i] = self.get_disparity(P,d)
+                depth = pts[2,i]
+                pixel_pts[2,i] = self.get_disparity(P,depth)
         else:
             pixel_pts = pixel_pts_h[0:2,:] / pixel_pts_h[2,:]
 
         return pixel_pts
 
-    def get_disparity(self, P_list, distance_to_point):
+    def get_disparity(self, P_list, depth):
         P = reshape( matrix(P_list, float), (3,4) )
-        return (P[0,0] * self._config["baseline_rgbd"]) / distance_to_point
+        return (P[0,0] * self._config["baseline_rgbd"]) / depth
         
 
