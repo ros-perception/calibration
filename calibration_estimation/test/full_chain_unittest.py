@@ -122,8 +122,8 @@ class TestFullChainCalcBlock(unittest.TestCase):
 
         chain_state = JointState(position=[pi/2, 0])
         result = chain.calc_block.fk(chain_state)
-        expected = numpy.matrix( [[ 0,-1, 0,10],
-                                  [ 1, 0, 0, 1],
+        expected = numpy.matrix( [[ 0,-1, 0,11],
+                                  [ 1, 0, 0, 0],
                                   [ 0, 0, 1,20],
                                   [ 0, 0, 0, 1]], float )
         print result
