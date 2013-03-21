@@ -47,6 +47,11 @@ static const double eps = 1e-6;
 
 static const bool DEBUG=false;
 
+// The path to our test data comes in from CMake as TEST_PATH;
+//  stringify it and stuff it into a variable for later use.
+#define xstr(s) str(s)
+#define str(s) #s
+static const string test_path = xstr(TEST_PATH);
 
 calibration_msgs::DenseLaserSnapshot getSnapshot(const string& filename)
 {
@@ -163,7 +168,7 @@ TEST(LaserCbDetector, easy_cb_3x4)
   LaserCbDetector detector;
   calibration_msgs::DenseLaserSnapshot snapshot;
 
-  snapshot = getSnapshot("test/data/cb_3x4.png");
+  snapshot = getSnapshot( test_path +  "/data/cb_3x4.png");
 
   ASSERT_EQ(snapshot.readings_per_scan, (unsigned int) 303);
   ASSERT_EQ(snapshot.num_scans, (unsigned int) 325);
@@ -183,7 +188,7 @@ TEST(LaserCbDetector, scaled_cb_3x4)
   LaserCbDetector detector;
   calibration_msgs::DenseLaserSnapshot snapshot;
 
-  snapshot = getSnapshot("test/data/cb_3x4.png");
+  snapshot = getSnapshot( test_path +  "/data/cb_3x4.png");
 
   ASSERT_EQ(snapshot.readings_per_scan, (unsigned int) 303);
   ASSERT_EQ(snapshot.num_scans, (unsigned int) 325);
@@ -207,7 +212,7 @@ TEST(LaserCbDetector, reflected_cb_3x4)
   LaserCbDetector detector;
   calibration_msgs::DenseLaserSnapshot snapshot;
 
-  snapshot = getSnapshot("test/data/cb_3x4.png");
+  snapshot = getSnapshot( test_path +  "/data/cb_3x4.png");
 
   ASSERT_EQ(snapshot.readings_per_scan, (unsigned int) 303);
   ASSERT_EQ(snapshot.num_scans, (unsigned int) 325);
@@ -233,7 +238,7 @@ TEST(LaserCbDetector, malformedTest)
   calibration_msgs::DenseLaserSnapshot snapshot;
 
   detector.configure(config3x4());
-  snapshot = getSnapshot("test/data/cb_3x4.png");
+  snapshot = getSnapshot( test_path +  "/data/cb_3x4.png");
   snapshot.num_scans = 10;
 
   bool return_result;
@@ -252,7 +257,7 @@ TEST(LaserCbDetector, noCheckerboardTest)
   ConfigGoal config = config3x4();
   config.num_x = 4;
   detector.configure(config);
-  snapshot = getSnapshot("test/data/cb_3x4.png");
+  snapshot = getSnapshot( test_path +  "/data/cb_3x4.png");
 
   bool return_result;
   calibration_msgs::CalibrationPattern result;
