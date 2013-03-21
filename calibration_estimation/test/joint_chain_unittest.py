@@ -116,8 +116,8 @@ class TestJointChain(LoadJointChain):
         chain_state.position = [numpy.pi/2, 0, 0]
         eef = self.chain.fk(chain_state, 0)
         print eef
-        eef_expected = numpy.matrix( [[ 0,-1, 0, 0],
-                                      [ 1, 0, 0, 1],
+        eef_expected = numpy.matrix( [[ 0,-1, 0, 1],
+                                      [ 1, 0, 0, 0],
                                       [ 0, 0, 1, 0],
                                       [ 0, 0, 0, 1]] )
         self.assertAlmostEqual(numpy.linalg.norm(eef-eef_expected), 0.0, 6)
@@ -127,7 +127,7 @@ class TestJointChain(LoadJointChain):
         chain_state.position = [numpy.pi/2, numpy.pi/2, 0]
         eef = self.chain.fk(chain_state, 1)
         print eef
-        eef_expected = numpy.matrix( [[-1, 0, 0,-1],
+        eef_expected = numpy.matrix( [[-1, 0, 0, 1],
                                       [ 0,-1, 0, 1],
                                       [ 0, 0, 1, 0],
                                       [ 0, 0, 0, 1]] )
