@@ -72,7 +72,7 @@ calibration_msgs::Interval IntervalCalc::computeLatestInterval(const SortedDeque
   if ( N == 0 )
   {
     calibration_msgs::Interval result;
-    result.end.sec = std::numeric_limits<typeof result.end.sec>::max();
+    result.end.sec = std::numeric_limits<uint32_t>::max();
     return result;
   }
 
