@@ -218,6 +218,8 @@ def update_urdf(urdf, calibrated_params):
                     link_updated = 1                
         except KeyError:
             print "Joint removed:", joint_name
+            print ' xyz:', updated_link_params[0:3]
+            print ' rpy:', angle_axis_to_RPY(updated_link_params[3:6])
             link_updated = 1
         if not link_updated:
             unchanged_joints.append( joint_name );
