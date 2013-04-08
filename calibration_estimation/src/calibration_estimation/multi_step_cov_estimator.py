@@ -57,6 +57,15 @@ from calibration_estimation.opt_runner import opt_runner
 
 from calibration_estimation.single_transform import angle_axis_to_RPY, RPY_to_angle_axis
 
+# Re-enable Ctrl+C cancelling
+import signal
+def signal_handler(signal, frame):
+    print '\n\nYou pressed Ctrl+C!\n'
+    sys.exit(-1)
+        
+signal.signal(signal.SIGINT, signal_handler)
+
+
 def usage():
     rospy.logerr("Not enough arguments")
     print "Usage:"
