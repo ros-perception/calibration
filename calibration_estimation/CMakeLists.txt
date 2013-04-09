@@ -17,5 +17,9 @@ catkin_add_nosetests(test/chain_sensor_unittest.py)
 #catkin_add_nosetests(test/camera_chain_sensor_unittest.py)
 catkin_add_nosetests(test/tilting_laser_sensor_unittest.py)
 
-install(PROGRAMS  src/calibration_estimation/multi_step_cov_estimator.py
+install(PROGRAMS  
+   src/calibration_estimation/multi_step_cov_estimator.py
+   src/calibration_estimation/urdf_params.py
+   src/calibration_estimation/error_visualization.py
+   src/calibration_estimation/opt_runner.py
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
