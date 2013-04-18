@@ -88,8 +88,8 @@ class Checkerboard:
         for y in range(0,self._corners_y):
             for x in range(0,self._corners_x):
                 n = y*self._corners_x + x
-                pts[:,n] = numpy.matrix([ [x * self._spacing_x],
-                                          [y * self._spacing_y],
+                pts[:,n] = numpy.matrix([ [(x-(self._corners_x-1)/2) * self._spacing_x],
+                                          [-1*(y-(self._corners_y-1)/2) * self._spacing_y],
                                           [0],
                                           [1] ])
         return pts
