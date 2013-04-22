@@ -40,6 +40,9 @@ import numpy
 from numpy import array, matrix, zeros, cumsum, concatenate, reshape
 import scipy.optimize
 import sys
+import rospy
+from visualization_msgs.msg import Marker, MarkerArray
+import geometry_msgs.msg
 
 class ErrorCalc:
     """
@@ -52,6 +55,7 @@ class ErrorCalc:
         self._multisensors = multisensors
         self._use_cov = use_cov
         self._j_count = 0
+        self.marker_pub = rospy.Publisher("pose_guesses", Marker)
 
 
     def calculate_full_param_vec(self, opt_param_vec):
@@ -76,6 +80,7 @@ class ErrorCalc:
             multisensor.update_config(self._robot_params)
 
         r_list = []
+        id = 0
         for multisensor, cb_pose_vec in zip(self._multisensors, list(full_pose_arr)):
             # Process cb pose
             cb_points = SingleTransform(cb_pose_vec).transform * self._robot_params.checkerboards[multisensor.checkerboard].generate_points()
@@ -83,6 +88,26 @@ class ErrorCalc:
                 r_list.append(multisensor.compute_residual_scaled(cb_points))
             else:
                 r_list.append(multisensor.compute_residual(cb_points))
+
+            cb_points_msgs = [ geometry_msgs.msg.Point(cur_pt[0,0], cur_pt[0,1], cur_pt[0,2]) for cur_pt in cb_points.T]   
+            
+            m = Marker()
+            m.header.frame_id = self._robot_params.base_link
+            m.ns = "points_3d"
+            m.id = id
+            m.type = Marker.SPHERE_LIST
+            m.action = Marker.MODIFY
+            m.points = cb_points_msgs
+            m.color.r = 1.0
+            m.color.g = 0.0
+            m.color.b = 1.0
+            m.color.a = 1.0
+            m.scale.x = 0.01
+            m.scale.y = 0.01
+            m.scale.z = 0.01
+            self.marker_pub.publish(m)
+            id += 1
+                
         r_vec = concatenate(r_list)
 
         rms_error = numpy.sqrt( numpy.mean(r_vec**2) )
