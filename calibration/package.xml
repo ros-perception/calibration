@@ -11,6 +11,8 @@
   <url>http://www.ros.org/wiki/ros_comm</url>
   <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
 
+  <buildtool_depend>catkin</buildtool_depend>
+  
   <run_depend>calibration_estimation</run_depend>
   <run_depend>calibration_launch</run_depend>
   <run_depend>calibration_msgs</run_depend>
