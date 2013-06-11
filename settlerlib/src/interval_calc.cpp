@@ -35,6 +35,7 @@
 //! \author Vijay Pradeep
 
 #include <sstream>
+#include <limits>
 #include <settlerlib/interval_calc.h>
 #include <ros/console.h>
 
@@ -66,6 +67,14 @@ calibration_msgs::Interval IntervalCalc::computeLatestInterval(const SortedDeque
   assert(*rev_it);  // Make sure it's not a NULL pointer
 
   const unsigned int N = (*rev_it)->channels_.size();
+
+  // if we have zero channels, the interval goes from zero to the end of time
+  if ( N == 0 )
+  {
+    calibration_msgs::Interval result;
+    result.end.sec = std::numeric_limits<uint32_t>::max();
+    return result;
+  }
 
   assert(tolerances.size() == N);
   vector<double> channel_max( (*rev_it)->channels_ );
