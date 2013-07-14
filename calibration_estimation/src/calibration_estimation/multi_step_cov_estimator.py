@@ -194,27 +194,27 @@ def update_urdf(urdf, calibrated_params):
         link_updated = 0
         try:
             updated_link_params = calibrated_params.transforms[joint_name]._config.T.tolist()[0]
-            if diff(updated_link_params[0:3],  urdf.joints[joint_name].origin.position):
-                print 'Updating xyz for', joint_name, '\n old:', urdf.joints[joint_name].origin.position, '\n new:', updated_link_params[0:3]
-                urdf.joints[joint_name].origin.position = updated_link_params[0:3]
+            if diff(updated_link_params[0:3],  urdf.joint_map[joint_name].origin.position):
+                print 'Updating xyz for', joint_name, '\n old:', urdf.joint_map[joint_name].origin.position, '\n new:', updated_link_params[0:3]
+                urdf.joint_map[joint_name].origin.position = updated_link_params[0:3]
                 link_updated = 1
-            r1 = RPY_to_angle_axis(urdf.joints[joint_name].origin.rotation)
+            r1 = RPY_to_angle_axis(urdf.joint_map[joint_name].origin.rotation)
             if diff(r1, updated_link_params[3:6]):
                 # TODO: remove assumption that joints are revolute
-                if joint_name in joints and urdf.joints[joint_name].calibration != None:
-                    cal = urdf.joints[joint_name].calibration 
+                if joint_name in joints and urdf.joint_map[joint_name].calibration != None:
+                    cal = urdf.joint_map[joint_name].calibration 
                     a = axis[joints.index(joint_name)]
                     a = int(a) - 1
                     print 'Updating calibration for', joint_name, 'by', updated_link_params[a]
                     if cal.rising != None:
-                        urdf.joints[joint_name].calibration.rising += updated_link_params[a]   
+                        urdf.joint_map[joint_name].calibration.rising += updated_link_params[a]   
                     if cal.falling != None:
-                        urdf.joints[joint_name].calibration.falling += updated_link_params[a]
+                        urdf.joint_map[joint_name].calibration.falling += updated_link_params[a]
                     link_updated = 1
                 else:
                     rot = angle_axis_to_RPY(updated_link_params[3:6])
-                    print 'Updating rpy for', joint_name, '\n old:', urdf.joints[joint_name].origin.rotation, '\n new:', rot
-                    urdf.joints[joint_name].origin.rotation = rot
+                    print 'Updating rpy for', joint_name, '\n old:', urdf.joint_map[joint_name].origin.rotation, '\n new:', rot
+                    urdf.joint_map[joint_name].origin.rotation = rot
                     link_updated = 1                
         except KeyError:
             print "Joint removed:", joint_name
