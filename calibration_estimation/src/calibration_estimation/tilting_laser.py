@@ -50,8 +50,8 @@ class TiltingLaser:
         self.inflate(param_vec)
 
     def update_config(self, robot_params):
-        parent = robot_params.urdf.joints[self._config['joint']].parent
-        child = robot_params.urdf.joints[self._config['joint']].child
+        parent = robot_params.urdf.joint_map[self._config['joint']].parent
+        child = robot_params.urdf.joint_map[self._config['joint']].child
         before_chain = robot_params.urdf.get_chain(robot_params.base_link, parent, links=False)
         before_chain.append(self._config['joint'])
         after_chain = robot_params.urdf.get_chain(child, self._config['frame_id'], links=False)
