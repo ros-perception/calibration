@@ -1,0 +1,36 @@
+Test comparisons done by globbing all unittests and diff'ing the output:
+
+	glob-test()
+	{
+		{
+		for script in *.py; do
+			echo -e "[ $script ]"
+			./$script
+		done
+		} > /tmp/calibration_estimation-test-$(git rev-parse --short HEAD).txt 2>&1
+	}
+	roscd calibration_estimation/test
+	git checkout hydro-devel
+	glob-test
+	git checkout feature/urdf-parser-py
+	glob-test
+
+	git diff -u /tmp/calibration_estimation-test-{cdebb47,7e4c234}.txt
+
+This produces no difference.
+
+
+NOTE: Several tests do not pass. The following tests fail:
+
+	$ for script in *.py; do ./$script > /dev/null 2> /dev/null || echo $script; done
+	camera_chain_sensor_unittest.py
+	chain_sensor_unittest.py
+	checkerboard_unittest.py
+	opt_runner_unittest.py
+	urdf_unittest.py
+
+
+camera_chain_sensor_unittest.py
+	Depends on old robot_params, but that was moved / refactored into urdf_params in 8f6903fd (2011-12-05)
+urdf_unittest.py:
+	Depends on /tmp/pr2_calibration/cal_measurements.bag
