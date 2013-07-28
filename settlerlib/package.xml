@@ -7,7 +7,7 @@
     Expect its APIs to change.
   </description>
   <author>Vijay Pradeep</author>
-  <maintainer email="vrabaud@willowgarage.com">Vincent Rabaud</maintainer>
+  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
   <license>BSD</license>
   <url>http://www.ros.org/wiki/settlerlib</url>
 
