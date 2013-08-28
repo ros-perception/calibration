@@ -1,6 +1,6 @@
 <package>
   <name>laser_cb_detector</name>
-  <version>0.9.28</version>
+  <version>0.9.29</version>
   <description>
      Extracts checkerboard corners from a dense laser snapshot.
      This package is experimental and unstable. Expect its APIs to change.
