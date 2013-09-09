@@ -14,14 +14,13 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>calibration_msgs</run_depend>
+  <run_depend>python-matplotlib</run_depend>
   <run_depend>python-scipy</run_depend>
+  <run_depend>python-tk</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>rostest</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>tf</run_depend>
+  <run_depend>urdfdom_py</run_depend>
   <run_depend>visualization_msgs</run_depend>
-  <run_depend>python-matplotlib</run_depend>
-  <run_depend>python-tk</run_depend>
-
-  <!--<depend package="urdf_python" />   for parsing URDF (currently a modified version is held internally) -->
 </package>
