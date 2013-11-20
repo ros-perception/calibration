@@ -11,5 +11,11 @@
   <license>BSD</license>
   <url>http://ros.org/wiki/calibration_launch</url>
 
+  <run_depend>interval_intersection</run_depend>
+  <run_depend>joint_states_settler</run_depend>
+  <run_depend>laser_cb_detector</run_depend>
+  <run_depend>monocam_settler</run_depend>
+  <run_depend>urdfdom_py</run_depend>
+
   <buildtool_depend>catkin</buildtool_depend>
 </package>
