@@ -31,7 +31,6 @@
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import roslib; roslib.load_manifest('calibration_launch')
 import rospy
 import yaml
 import sys
@@ -49,10 +48,7 @@ from capture_executive.robot_measurement_cache import RobotMeasurementCache
 
 from calibration_msgs.msg import RobotMeasurement
 
-# TODO temporary hack until urdf_python is released
-roslib.load_manifest('calibration_estimation')
-from urdf_python.urdf import *
-
+from urdf_parser_py.urdf import URDF
 
 class CaptureExecutive:
     def __init__(self, config_dir, system, robot_desc, output_debug=False):
@@ -74,7 +70,7 @@ class CaptureExecutive:
         self.interval_status = None
 
         # parse urdf and get list of links
-        links = URDF().parse(robot_desc).links.keys()
+        links = URDF().parse(robot_desc).link_map.keys()
 
         # load system config
         system = yaml.load(open(system))
