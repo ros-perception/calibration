@@ -13,6 +13,6 @@ install(FILES capture_data/annotated_viewer.launch
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/capture_data
 )
 
-install(PROGRAMS  capture_data/urdf_pub.py
-                  src/capture_executive/capture_exec.py
+install(PROGRAMS scripts/urdf_pub.py
+                 scripts/capture_exec.py
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
