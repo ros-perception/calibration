@@ -364,7 +364,7 @@ if __name__ == '__main__':
     # write original urdf so you can do a diff later
     rospy.loginfo('Writing original urdf to %s', uncalibrated_xml)
     outfile = open(uncalibrated_xml, 'w')
-    outfile.write( robot_params.get_clean_urdf().to_xml() )
+    outfile.write( robot_params.get_clean_urdf().to_xml_string() )
     outfile.close()
 
     #update urdf
@@ -373,7 +373,7 @@ if __name__ == '__main__':
     # write out to URDF
     outfile = open(calibrated_xml, 'w')
     rospy.loginfo('Writing updates to %s', calibrated_xml)
-    outfile.write( urdf.to_xml() )
+    outfile.write( urdf.to_xml_string() )
     outfile.close()
 
     outfile = open('latest_calibrated_xml', 'w')

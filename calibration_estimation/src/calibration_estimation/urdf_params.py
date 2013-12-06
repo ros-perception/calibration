@@ -245,11 +245,11 @@ class UrdfParams:
         ''' Remove checkerboard links/joints. '''
         for joint in self.urdf.joint_map.keys():
             if joint in self.fakes:
-                self.urdf.elements.remove(self.urdf.joint_map[joint])
+                self.urdf.joints.remove(self.urdf.joint_map[joint])
                 del self.urdf.joint_map[joint]
         for link in self.urdf.link_map.keys():
             if link in self.fakes:
-                self.urdf.elements.remove(self.urdf.link_map[link])
+                self.urdf.links.remove(self.urdf.link_map[link])
                 del self.urdf.link_map[link]
         return self.urdf
 
