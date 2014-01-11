@@ -164,9 +164,9 @@ def diff(v1, v2, eps = 1e-10):
 
 # URDF updating -- this should probably go in a different file
 def update_transmission(urdf, joint, gearing):
-    for transmission in urdf.transmissions.values():
+    for transmission in urdf.transmissions:
         if transmission.joint == joint:
-            transmission.reduction = transmission.reduction * gearing
+            transmission.mechanicalReduction = transmission.mechanicalReduction * gearing
             return
     print "No transmission found for:", joint
 
