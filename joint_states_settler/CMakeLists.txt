@@ -46,4 +46,6 @@ install(TARGETS joint_states_settler_action view_interval
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-add_subdirectory(test EXCLUDE_FROM_ALL)
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()

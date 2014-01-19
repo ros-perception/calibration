@@ -25,4 +25,6 @@ install(TARGETS ${PROJECT_NAME}
         DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
-add_subdirectory(test EXCLUDE_FROM_ALL)
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()
