@@ -44,4 +44,6 @@ install(TARGETS monocam_settler_action
 )
 add_dependencies(monocam_settler_action calibration_msgs_gencpp)
 
-add_subdirectory(test EXCLUDE_FROM_ALL)
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()

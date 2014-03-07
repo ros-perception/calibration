@@ -47,4 +47,6 @@ install(TARGETS interval_intersection_node interval_intersection_action
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-add_subdirectory(test EXCLUDE_FROM_ALL)
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()

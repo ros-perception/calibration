@@ -56,4 +56,6 @@ install(TARGETS laser_cb_detector_node laser_interval_calc_node
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-add_subdirectory(test EXCLUDE_FROM_ALL)
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()
