@@ -2,5 +2,5 @@
 Changelog for package calibration_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.10.8 (2014-03-07)
+-------------------
