@@ -2,8 +2,8 @@
 Changelog for package image_cb_detector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.10.9 (2014-04-09)
+-------------------
 * remove PCL dependency
 * Contributors: Vincent Rabaud
 
