@@ -2,6 +2,11 @@
 Changelog for package image_cb_detector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove PCL dependency
+* Contributors: Vincent Rabaud
+
 0.10.8 (2014-03-07)
 -------------------
 * no need to depend on opencv2 as we depend on cv_bridge
