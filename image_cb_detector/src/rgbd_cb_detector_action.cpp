@@ -40,18 +40,13 @@
 #include <actionlib/server/simple_action_server.h>
 #include <image_cb_detector/image_cb_detector.h>
 #include <image_cb_detector/depth_to_pointcloud.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/core/core_c.h>
 
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <image_cb_detector/ConfigAction.h>
 #include <calibration_msgs/Interval.h>
-
-#include <pcl/point_types.h>
-#include <pcl/ModelCoefficients.h>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl_ros/point_cloud.h>
 
 #include <message_filters/subscriber.h>
 #include <message_filters/synchronizer.h>
@@ -137,7 +132,7 @@ public:
       std::size_t height = depth_msg->height;
 
       // make a pointcloud from the checkerboard corners
-      pcl::PointCloud<pcl::PointXYZ> corner_cloud;
+      std::vector<cv::Point3f> corner_cloud;
       for(size_t i = 0; i< features.image_points.size(); i++){
         geometry_msgs::Point pixel = features.image_points[i];
         float depth = *(depth_ptr+width*(unsigned int)pixel.y+(unsigned int)pixel.x);
@@ -146,7 +141,7 @@ public:
           continue;
         }
 
-        pcl::PointXYZ point;
+        cv::Point3f point;
         cloud_converter_.depthTo3DPoint( pixel, depth, point );
         corner_cloud.push_back( point );
       }
@@ -158,43 +153,49 @@ public:
       }
 
       // estimate plane
-      pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
-      pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
-      // Create the segmentation object
-      pcl::SACSegmentation<pcl::PointXYZ> seg;
-      // Optional
-      seg.setOptimizeCoefficients (true);
-      // Mandatory
-      seg.setModelType (pcl::SACMODEL_PLANE);
-      seg.setMethodType (pcl::SAC_RANSAC);
-      seg.setDistanceThreshold (0.01);
-      seg.setInputCloud (corner_cloud.makeShared ());
-      seg.segment (*inliers, *coefficients);
+      cv::Vec3f n;
+      float d;
+      float best_ratio = 0;
+      cv::RNG rng;
+      for(size_t i = 0; i < 100; ++i) {
+        // Get 3 random points
+        for(int i=0;i<3;++i) {
+          std::swap(corner_cloud[i], corner_cloud[rng.uniform(i+1, int(corner_cloud.size()))]);
+        }
+        // Compute the plane from those
+        cv::Vec3f nrm = cv::Vec3f(corner_cloud[2]-corner_cloud[0]).cross(cv::Vec3f(corner_cloud[1])-cv::Vec3f(corner_cloud[0]));
+        nrm = nrm / cv::norm(nrm);
+        cv::Vec3f x0(corner_cloud[0]);
 
-      if (inliers->indices.size () == 0)
+        float p_to_plane_thresh = 0.01;
+        int num_inliers = 0;
+
+        // Check the number of inliers
+        for (size_t i=0; i<corner_cloud.size(); ++i) {
+            cv::Vec3f w = cv::Vec3f(corner_cloud[i]) - x0;
+            float D = std::fabs(nrm.dot(w));
+            if(D < p_to_plane_thresh)
+              ++num_inliers;
+        }
+        float ratio = float(num_inliers) / float(corner_cloud.size());
+        if (ratio > best_ratio) {
+          best_ratio = ratio;
+          n = nrm;
+          d = -x0.dot(nrm);
+        }
+      }
+
+      if(best_ratio < 0.9)
       {
         ROS_ERROR ("Could not estimate a planar model from the checkboard corners.");
         last_sample_invalid_ = true;
         return;
       }
 
-      ROS_DEBUG_STREAM( "Model coefficients: " << coefficients->values[0] << " "
-                                          << coefficients->values[1] << " "
-                                          << coefficients->values[2] << " "
-                                          << coefficients->values[3] );
-
-      // get normal
-      float nx = coefficients->values[0];
-      float ny = coefficients->values[1];
-      float nz = coefficients->values[2];
-
-      // normalize length
-      float l = sqrt(nx*nx + ny*ny + nz*nz);
-      nx /= l;
-      ny /= l;
-      nz /= l;
-
-      float d = coefficients->values[3];
+      ROS_DEBUG_STREAM( "Model coefficients: " << n[0] << " "
+                                          << n[1] << " "
+                                          << n[2] << " "
+                                          << d );
 
       unsigned vi=0;
       for(size_t i = 0; i< features.image_points.size(); i++)
@@ -202,25 +203,19 @@ public:
         // intersect pixel ray with plane
         geometry_msgs::Point& pixel = features.image_points[i];
 
-        pcl::PointXYZ ray;
-        cloud_converter_.depthTo3DPoint( pixel, 1.0, ray );
-        l = sqrt(ray.x*ray.x + ray.y*ray.y + ray.z*ray.z);
-        ray.x /= l;
-        ray.y /= l;
-        ray.z /= l;
+        cv::Point3f ray_pt;
+        cloud_converter_.depthTo3DPoint( pixel, 1.0, ray_pt );
+        cv::Vec3f ray(ray_pt);
+        ray = ray / cv::norm(ray);
 
-        float d1 = ray.x*nx + ray.y*ny + ray.z*nz;
+        float d1 = ray.dot(n);
         float lambda = d / d1;
 
-        ray.x *= lambda;
-        ray.y *= lambda;
-        ray.z *= lambda;
+        ray = ray * lambda;
 
-        if ( ray.z <  0 )
+        if ( ray[2] <  0 )
         {
-          ray.x *= -1.0f;
-          ray.y *= -1.0f;
-          ray.z *= -1.0f;
+          ray = -ray;
         }
 
         ///////////////////////////////
@@ -236,7 +231,7 @@ public:
         */
         /////////////////////////////////
 
-        pixel.z = ray.z;
+        pixel.z = ray[2];
       }
 
       // print 'back to normal' message once
