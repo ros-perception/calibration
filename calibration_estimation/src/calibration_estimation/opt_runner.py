@@ -106,6 +106,32 @@ class ErrorCalc:
             m.scale.y = 0.01
             m.scale.z = 0.01
             self.marker_pub.publish(m)
+            
+            cur_pt = cb_points.T[0]
+            
+            m_id = Marker()
+            m_id.header.frame_id = self._robot_params.base_link
+            m_id.ns = "points_ids"
+            m_id.id = id + 10000
+            m_id.type = Marker.TEXT_VIEW_FACING
+            m_id.action = Marker.MODIFY
+            m_id.text = str(id)
+            m_id.color.r = 1.0
+            m_id.color.g = 0.0
+            m_id.color.b = 0.0
+            m_id.color.a = 1.0
+            m_id.scale.x = 0.06
+            m_id.scale.y = 0.06
+            m_id.scale.z = 0.06
+            m_id.pose.position.x = cur_pt[0,0];
+            m_id.pose.position.y = cur_pt[0,1];
+            m_id.pose.position.z = cur_pt[0,2] + 0.05;
+            m_id.pose.orientation.x = 0.0;
+            m_id.pose.orientation.y = 0.0;
+            m_id.pose.orientation.z = 0.0;
+            m_id.pose.orientation.w = 1.0;
+            self.marker_pub.publish(m_id)
+            
             id += 1
                 
         r_vec = concatenate(r_list)
