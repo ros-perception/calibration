@@ -176,7 +176,7 @@ class UrdfParams:
                         print 'Joint origin is rotated, calibration will fail: ', joint_name
                 elif urdf.joint_map[joint_name].joint_type == 'prismatic':
                     this_config["active_joints"].append(joint_name)
-                    axis = list(urdf.joint_map[joint_name].axis.split())
+                    axis = urdf.joint_map[joint_name].axis
                     this_config["axis"].append( sum( [i[0]*int(i[1]) for i in zip([1,2,3], axis)] ) )
                 elif urdf.joint_map[joint_name].joint_type != 'fixed':
                     print 'Unknown joint type:', urdf.joint_map[joint_name].joint_type
