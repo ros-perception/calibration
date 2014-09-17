@@ -1,0 +1,20 @@
+<package>
+  <name>calibration_setup_helper</name>
+  <version>0.10.10</version>
+  <description>
+    This package contains a script to generate calibration launch and configurationfiles for your robot
+  </description>
+  <author>Michael Ferguson</author>
+  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
+
+  <license>BSD</license>
+  <url>http://ros.org/wiki/calibration_setup_helper</url>
+
+  <run_depend>calibration_launch</run_depend>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <architecture_independent/>
+  </export>
+</package>
