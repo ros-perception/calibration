@@ -348,6 +348,10 @@ if __name__=='__main__':
         for step in sample_steps:
             keep_collecting = True
             full_paths = [samples_dir + '/' + step + '/' + x for x in sample_names[step] ]
+            if len(full_paths) == 0:
+                rospy.logfatal(samples_dir + '/' + step + '/' + ' is not found' )
+                rospy.logfatal('please run make_samples.py' )
+                sys.exit(-1)
             cur_config = yaml.load(open(full_paths[0]))
             m_robot = executive.capture(cur_config, rospy.Duration(0.01))
             while not rospy.is_shutdown() and keep_collecting:
