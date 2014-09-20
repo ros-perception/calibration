@@ -302,6 +302,10 @@ if __name__ == '__main__':
     # Generate robot parameters
     robot_description = get_robot_description(bag_filename)
     robot_params = UrdfParams(robot_description, config)
+    if robot_params == "":
+        print bag_filename, " does not have robot_description, exitting.."
+        sys.exit(-1)
+
 
     # Load all the sensors from the bagfile and config file
     for cur_step in step_list:
