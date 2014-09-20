@@ -1,3 +1,9 @@
+Forthcoming
+-----------
+* change launch file location
+* add warning when no sample is found
+* Contributors: Kei Okada
+
 0.10.10 (2014-05-06)
 --------------------
 * Export architecture_independent flag in package.xml

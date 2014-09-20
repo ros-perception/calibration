@@ -2,6 +2,9 @@
 Changelog for package interval_intersection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.10.9 (2014-04-09)
 -------------------
 
