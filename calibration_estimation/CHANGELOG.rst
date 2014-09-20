@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.10.11 (2014-09-20)
+--------------------
 * add warning if robot_description is not present in bag file
 * axis is already list
 * -Add markers showing id of calibration targets
