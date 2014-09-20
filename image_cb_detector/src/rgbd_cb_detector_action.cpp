@@ -52,6 +52,8 @@
 #include <message_filters/synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
 
+#include <sensor_msgs/image_encodings.h>
+
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::Image, sensor_msgs::Image, sensor_msgs::CameraInfo> CameraSyncPolicy;
 
 class RgbdCbDetectorAction
@@ -121,6 +123,11 @@ public:
       if (!success)
       {
         ROS_ERROR_STREAM(s.str()<<"Error trying to detect checkerboard, not going to publish CalibrationPattern");
+        last_sample_invalid_ = true;
+        return;
+      }
+      if (depth_msg->encoding != sensor_msgs::image_encodings::TYPE_32FC1) {
+        ROS_ERROR_STREAM("Depth image must be 32-bit floating point (encoding '32FC1'), but has encoding '" << depth_msg->encoding << "'");
         last_sample_invalid_ = true;
         return;
       }
