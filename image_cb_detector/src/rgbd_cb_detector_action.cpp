@@ -44,6 +44,7 @@
 #include <opencv2/core/core_c.h>
 
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <image_cb_detector/ConfigAction.h>
 #include <calibration_msgs/Interval.h>
@@ -137,6 +138,9 @@ public:
       const float* depth_ptr = reinterpret_cast<const float*>(&depth_msg->data[0]);
       std::size_t width = depth_msg->width;
       std::size_t height = depth_msg->height;
+      if(depth_msg->encoding != sensor_msgs::image_encodings::TYPE_32FC1) {
+          ROS_ERROR_STREAM("Disparity image must be 32-bit floating point (encoding '32FC1'), but has encoding '" << depth_msg->encoding << "'");
+      }
 
       // make a pointcloud from the checkerboard corners
       std::vector<cv::Point3f> corner_cloud;
