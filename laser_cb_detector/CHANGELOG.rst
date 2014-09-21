@@ -2,6 +2,11 @@
 Changelog for package laser_cb_detector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* use a non OpenCV 1 API
+* Contributors: Vincent Rabaud
+
 0.10.11 (2014-09-20)
 --------------------
 

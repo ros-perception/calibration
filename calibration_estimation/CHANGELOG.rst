@@ -1,3 +1,10 @@
+Forthcoming
+-----------
+* disable covariance for now
+* fix tests
+* get checkerboard properly centerd and fix test
+* Contributors: Vincent Rabaud
+
 0.10.11 (2014-09-20)
 --------------------
 * add warning if robot_description is not present in bag file
