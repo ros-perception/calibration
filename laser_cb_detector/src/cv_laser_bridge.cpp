@@ -54,43 +54,11 @@ bool CvLaserBridge::fromIntensity(const calibration_msgs::DenseLaserSnapshot& sn
   return true;
 }
 
-bool CvLaserBridge::reallocIfNeeded(IplImage** img, CvSize sz)
-{
-  int depth = IPL_DEPTH_8U;
-  int channels = 1;
-
-  if ((*img) != 0)
-  {
-    if ((*img)->width     != sz.width  ||
-        (*img)->height    != sz.height ||
-        (*img)->depth     != depth     ||
-        (*img)->nChannels != channels)
-    {
-      cvReleaseImage(img);
-      *img = 0;
-    }
-  }
-
-  if (*img == 0)
-  {
-    *img = cvCreateImage(sz, depth, channels);
-    return true;
-  }
-  return false;
-}
-
 void CvLaserBridge::fromSnapshot(const calibration_msgs::DenseLaserSnapshot& snapshot, const std::vector<float>& src, float min_val, float max_val)
 {
   assert(snapshot.num_scans * snapshot.readings_per_scan == src.size());
 
-  CvMat cvmHeader;
-
-  IplImage source_image;
-
-  cvInitMatHeader(&cvmHeader, snapshot.num_scans, snapshot.readings_per_scan, CV_32FC1, const_cast<float*>(&(src[0])));
-  cvGetImage(&cvmHeader, &source_image);
-
-  reallocIfNeeded(&dest_image_, cvSize(source_image.width, source_image.height) );
+  cv::Mat_<float> source_image(snapshot.num_scans, snapshot.readings_per_scan, const_cast<float*>(&(src[0])));
 
   double range = (max_val - min_val);
   double scale = 255/range;
@@ -98,5 +66,5 @@ void CvLaserBridge::fromSnapshot(const calibration_msgs::DenseLaserSnapshot& sna
 
   ROS_DEBUG("Scale: %f   Shift: %f\n", scale, shift);
 
-  cvConvertScale(&source_image, dest_image_, scale, shift);
+  source_image.convertTo(dest_image_, CV_8UC1, scale, shift);
 }

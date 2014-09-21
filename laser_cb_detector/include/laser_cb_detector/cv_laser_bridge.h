@@ -37,7 +37,7 @@
 #ifndef LASER_CB_DETECTOR_CB_LASER_BRIDGE_H_
 #define LASER_CB_DETECTOR_CB_LASER_BRIDGE_H_
 
-#include <opencv/cv.h>
+#include <opencv2/core/core.hpp>
 #include <calibration_msgs/DenseLaserSnapshot.h>
 
 namespace laser_cb_detector
@@ -46,33 +46,20 @@ namespace laser_cb_detector
 class CvLaserBridge
 {
 public:
-  CvLaserBridge() : dest_image_(0)
+  CvLaserBridge()
   {
-
-  }
-
-  ~CvLaserBridge()
-  {
-    if (dest_image_)
-    {
-      cvReleaseImage(&dest_image_);
-      dest_image_ = 0;
-    }
   }
 
   bool fromIntensity(const calibration_msgs::DenseLaserSnapshot& snapshot, float min_val, float max_val);
 
-  inline IplImage* toIpl()
+  inline cv::Mat toCvMat()
   {
     return dest_image_;
   }
 
 private:
-  IplImage* dest_image_;
-  bool reallocIfNeeded(IplImage** img, CvSize sz);
+  cv::Mat dest_image_;
   void fromSnapshot(const calibration_msgs::DenseLaserSnapshot& snapshot, const std::vector<float>& src, float min_val, float max_val);
-
-
 };
 
 }

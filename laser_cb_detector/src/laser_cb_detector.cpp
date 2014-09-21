@@ -71,12 +71,12 @@ bool LaserCbDetector::detect(const calibration_msgs::DenseLaserSnapshot& snapsho
   // ***** Convert the snapshot into an image, based on intensity window in config *****
   if(!bridge_.fromIntensity(snapshot, config_.min_intensity, config_.max_intensity))
     return false;
-  IplImage* image = bridge_.toIpl();
+  cv::Mat image = bridge_.toCvMat();
 
   if (config_.flip_horizontal)
   {
     ROS_DEBUG("Flipping image");
-    cvFlip(image, NULL, 1);
+    cv::flip(image, image, 1);
   }
   else
     ROS_DEBUG("Not flipping image");
@@ -86,7 +86,7 @@ bool LaserCbDetector::detect(const calibration_msgs::DenseLaserSnapshot& snapsho
   if(detector_.detect(ros_image, result)){
     if (config_.flip_horizontal){
       for(int i=0; i < result.image_points.size(); i++)
-        result.image_points[i].x = image->width - result.image_points[i].x - 1;
+        result.image_points[i].x = image.cols - result.image_points[i].x - 1;
     }
     return true;
   }else
@@ -97,10 +97,10 @@ bool LaserCbDetector::getImage(const calibration_msgs::DenseLaserSnapshot& snaps
 {
   if(!bridge_.fromIntensity(snapshot, config_.min_intensity, config_.max_intensity))
   {
-    ROS_ERROR("Error building IplImage from DenseLaserSnapshot's intensity data");
+    ROS_ERROR("Error building cv::Mat from DenseLaserSnapshot's intensity data");
     return false;
   }
-  IplImage* image = bridge_.toIpl();
+  cv::Mat image = bridge_.toCvMat();
 
   cv_bridge::CvImage(snapshot.header, "mono8", image).toImageMsg(ros_image);
 

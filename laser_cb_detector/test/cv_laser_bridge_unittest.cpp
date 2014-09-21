@@ -67,13 +67,13 @@ static const unsigned int NUM_SCANS = 5;
 static const unsigned int RAYS_PER_SCAN = 10;
 static const double eps = 1e-8;
 
-void displayImage(IplImage* image)
+void displayImage(cv::Mat &image)
 {
-  for (int i=0; i<image->height; i++)
+  for (int i=0; i<image.rows; i++)
   {
-    for (int j=0; j<image->width; j++)
+    for (int j=0; j<image.cols; j++)
     {
-      printf("%3u  ", *((unsigned char*)(image->imageData)+ i*image->widthStep + j));
+      printf("%3u  ", image.at<unsigned char>(i, j));
     }
     printf("\n");
   }
@@ -90,20 +90,20 @@ TEST(CvLaserBridge, easy)
   bool result;
 
   result = bridge.fromIntensity(snapshot, 0, 49);
-  IplImage* image = bridge.toIpl();
+  cv::Mat image = bridge.toCvMat();
 
   ASSERT_TRUE(result);
-  ASSERT_TRUE(image);
+  ASSERT_TRUE(image.data);
 
-  EXPECT_EQ(image->height, (int) NUM_SCANS);
-  EXPECT_EQ(image->width,  (int) RAYS_PER_SCAN);
+  EXPECT_EQ(image.rows, (int) NUM_SCANS);
+  EXPECT_EQ(image.cols,  (int) RAYS_PER_SCAN);
 
   if (DEBUG)
     displayImage(image);
 
   // Check the first and last pixel in the image
-  EXPECT_EQ( (int) *((unsigned char*)(image->imageData)+0), 0);
-  EXPECT_EQ( (int) *((unsigned char*)(image->imageData)+4*image->widthStep + 9), 255);
+  EXPECT_EQ( (int) *((unsigned char*)(image.data)+0), 0);
+  EXPECT_EQ( (int) *((unsigned char*)(image.data)+4*image.step + 9), 255);
 }
 
 TEST(CvLaserBridge, saturationTest)
@@ -114,19 +114,19 @@ TEST(CvLaserBridge, saturationTest)
 
   bool result;
   result = bridge.fromIntensity(snapshot, 10, 20);
-  IplImage* image = bridge.toIpl();
+  cv::Mat image = bridge.toCvMat();
   ASSERT_TRUE(result);
-  ASSERT_TRUE(image);
+  ASSERT_TRUE(image.data);
 
-  EXPECT_EQ(image->height, (int) NUM_SCANS);
-  EXPECT_EQ(image->width,  (int) RAYS_PER_SCAN);
+  EXPECT_EQ(image.rows, (int) NUM_SCANS);
+  EXPECT_EQ(image.cols,  (int) RAYS_PER_SCAN);
 
   if (DEBUG)
     displayImage(image);
 
   // Check to make sure some of the pixels saturated near the beginning and end of the range
-  EXPECT_EQ( (int) *((unsigned char*)(image->imageData)+5), 0);
-  EXPECT_EQ( (int) *((unsigned char*)(image->imageData)+45), 255);
+  EXPECT_EQ( (int) *((unsigned char*)(image.data)+5), 0);
+  EXPECT_EQ( (int) *((unsigned char*)(image.data)+45), 255);
 }
 
 
