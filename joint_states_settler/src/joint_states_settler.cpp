@@ -65,10 +65,9 @@ bool JointStatesSettler::configure(const joint_states_settler::ConfigGoal& goal)
   cache_.setMaxSize(goal.cache_size);
 
   std::ostringstream info;
-  info << "Configuring JointStatesSettler with the following joints:";
+  ROS_DEBUG("Configuring JointStatesSettler with the following joints:");
   for (unsigned int i=0; i<N; i++)
-    info << "\n   " << goal.joint_names[i] << ": " << goal.tolerances[i];
-  ROS_DEBUG(info.str().c_str());
+    ROS_DEBUG_STREAM("   " << goal.joint_names[i] << ": " << goal.tolerances[i]);
 
   configured_ = true;
   return true;
