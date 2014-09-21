@@ -80,8 +80,8 @@ class TestCheckerboard(unittest.TestCase):
                             "spacing_x": 10,
                             "spacing_y": 20 })
         result = cb.generate_points()
-        expected = matrix( [ [ 0, 10,   0, 10,  0, 10],
-                             [ 0,  0,  20, 20, 40, 40],
+        expected = matrix( [ [ -5,  5, -5,  5, -5,  5],
+                             [ 20, 20,  0,  0,-20,-20],
                              [ 0,  0,   0,  0,  0,  0],
                              [ 1,  1,   1,  1,  1,  1] ], float)
         print ""
