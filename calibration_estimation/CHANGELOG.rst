@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.10.12 (2014-09-21)
+--------------------
 * disable covariance for now
 * fix tests
 * get checkerboard properly centerd and fix test

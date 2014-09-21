@@ -2,8 +2,8 @@
 Changelog for package joint_states_settler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.10.12 (2014-09-21)
+--------------------
 * fix build on Hydro
 * Contributors: Vincent Rabaud
 
