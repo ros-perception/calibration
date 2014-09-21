@@ -4,6 +4,9 @@ project(image_cb_detector)
 find_package(Boost REQUIRED thread signals)
 find_package(catkin REQUIRED actionlib actionlib_msgs calibration_msgs cv_bridge genmsg geometry_msgs image_transport message_filters roscpp sensor_msgs std_msgs)
 find_package(OpenCV REQUIRED)
+if (OpenCV_VERSION VERSION_EQUAL "3")
+  add_definitions("-DOPENCV3=1")
+endif()
 
 catkin_python_setup()
 

@@ -88,18 +88,23 @@ void ImageAnnotator::processPair(const sensor_msgs::ImageConstPtr& image, const 
     const int scaled_height = (int) (.5 + cv_image->image.rows * scaling_);
     cv::Mat cv_image_scaled;
     cv::resize(cv_image->image, cv_image_scaled, 
+#if OPENCV3
+          cv::Size(scaled_width, scaled_height), 0, 0, cv::INTER_LINEAR);
+#else
           cv::Size(scaled_width, scaled_height), 0, 0, CV_INTER_LINEAR);
+#endif
+
 
     if (features->success)
     {
       cv::Point2i pt0(features->image_points[0].x*scaling_, 
             features->image_points[0].y*scaling_);
-      cv::circle(cv_image_scaled, pt0, marker_size_*2, cvScalar(0,0,255), 1) ;
+      cv::circle(cv_image_scaled, pt0, marker_size_*2, cv::Scalar(0,0,255), 1) ;
       for (unsigned int i=0; i<features->image_points.size(); i++)
       {
         cv::Point2i pt(features->image_points[i].x*scaling_, 
               features->image_points[i].y*scaling_);
-        cv::circle(cv_image_scaled, pt, marker_size_, cvScalar(0,255,0), 1) ;
+        cv::circle(cv_image_scaled, pt, marker_size_, cv::Scalar(0,255,0), 1) ;
       }
     }
     else
@@ -108,7 +113,7 @@ void ImageAnnotator::processPair(const sensor_msgs::ImageConstPtr& image, const 
       {
         cv::Point2i pt(features->image_points[i].x*scaling_,
               features->image_points[i].y*scaling_);
-        cv::circle(cv_image_scaled, pt, marker_size_, cvScalar(255,0,0), 1) ;
+        cv::circle(cv_image_scaled, pt, marker_size_, cv::Scalar(255,0,0), 1) ;
       }
     }
 

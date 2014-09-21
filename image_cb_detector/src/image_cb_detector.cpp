@@ -70,7 +70,11 @@ bool ImageCbDetector::detect(const sensor_msgs::ImageConstPtr& ros_image,
   const int scaled_width  = (int) (.5 + image.cols  * config_.width_scaling);
   const int scaled_height = (int) (.5 + image.rows * config_.height_scaling);
   cv::Mat image_scaled;
+#if OPENCV3
+  cv::resize(image, image_scaled, cv::Size(scaled_width, scaled_height), 0, 0, cv::INTER_LINEAR);
+#else
   cv::resize(image, image_scaled, cv::Size(scaled_width, scaled_height), 0, 0, CV_INTER_LINEAR);
+#endif
 
   // ***** Allocate vector for found corners *****
   vector<cv::Point2f> cv_corners;
@@ -78,7 +82,11 @@ bool ImageCbDetector::detect(const sensor_msgs::ImageConstPtr& ros_image,
 
   // ***** Do the actual checkerboard extraction *****
   cv::Size board_size(config_.num_x, config_.num_y);
+#if OPENCV3
+  int found = cv::findChessboardCorners( image_scaled, board_size, cv_corners, cv::CALIB_CB_ADAPTIVE_THRESH) ;
+#else
   int found = cv::findChessboardCorners( image_scaled, board_size, cv_corners, CV_CALIB_CB_ADAPTIVE_THRESH) ;
+#endif
 
   if(found)
   {
@@ -95,7 +103,11 @@ bool ImageCbDetector::detect(const sensor_msgs::ImageConstPtr& ros_image,
     cv::cornerSubPix( image_scaled, cv_corners, 
                        subpixel_window,
                        subpixel_zero_zone,
+#if OPENCV3
+                       cv::TermCriteria(cv::TermCriteria::MAX_ITER,20,1e-2));
+#else
                        cv::TermCriteria(CV_TERMCRIT_ITER,20,1e-2));
+#endif
   }
   else
     ROS_DEBUG("Didn't find CB");
