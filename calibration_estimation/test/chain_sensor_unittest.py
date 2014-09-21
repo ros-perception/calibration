@@ -177,8 +177,8 @@ class TestChainSensor(unittest.TestCase):
                             "boardA")
         block.update_config(robot_params)
 
-        target = matrix([[1, 2, 1, 2],
-                         [0, 0, 1, 1],
+        target = matrix([[0.5, 1.5, 0.5, 1.5],
+                         [0.5, 0.5, -0.5, -0.5],
                          [0, 0, 0, 0],
                          [1, 1, 1, 1]])
 
@@ -202,8 +202,8 @@ class TestChainSensor(unittest.TestCase):
                             "boardA")
         block.update_config(robot_params)
 
-        target = matrix([[0, 0,-1,-1],
-                         [1, 2, 1, 2],
+        target = matrix([[0.5, 0.5,1.5,1.5],
+                         [-0.5, 0.5, -0.5, 0.5],
                          [0, 0, 0, 0],
                          [1, 1, 1, 1]])
 
@@ -227,8 +227,8 @@ class TestChainSensor(unittest.TestCase):
                             "boardA")
         block.update_config(robot_params)
 
-        target = matrix([[2, 3, 2, 3],
-                         [0, 0, 1, 1],
+        target = matrix([[1.5, 2.5, 1.5, 2.5],
+                         [0.5, 0.5, -0.5, -0.5],
                          [0, 0, 0, 0],
                          [1, 1, 1, 1]])
 
