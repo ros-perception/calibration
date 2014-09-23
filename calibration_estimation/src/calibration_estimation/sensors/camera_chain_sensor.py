@@ -71,6 +71,9 @@ class CameraChainBundler:
                     if cur_config["chain_id"] in [ x.chain_id  for x in M_robot.M_chain ] :
                         M_cam   = M_robot.M_cam  [ [ x.camera_id for x in M_robot.M_cam   ].index(cur_config["sensor_id"])]
                         M_chain = M_robot.M_chain[ [ x.chain_id  for x in M_robot.M_chain ].index(cur_config["chain_id"]) ]
+                        if cur_config["frame_id"] != M_cam.cam_info.header.frame_id:
+                            rospy.logwarn('WARNING frame_id of cam_info.header.frame_id({}) from bag file'.format(M_cam.cam_info.header.frame_id))
+                            rospy.logwarn('        and sensors.rectified_cams.{}.frame_id({}) of system.yaml differ'.format(cur_config["chain_id"],cur_config["frame_id"]))
                     else:
                         continue
                 else:
