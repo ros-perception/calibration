@@ -273,7 +273,11 @@ if __name__ == '__main__':
     msg_count = get_robot_measurement_count(bag_filename, sample_skip_list)
 
     if 'initial_poses' in config.keys():
-        previous_pose_guesses = numpy.array(yaml.load(config['initial_poses']))
+        if os.path.exists(config['initial_poses']):
+            with open(config['initial_poses']) as f:
+                previous_pose_guesses = numpy.array(yaml.load(f))
+        else:
+            rospy.logwarn("cannot find %s" % (config['initial_poses']))
     else:
         previous_pose_guesses = numpy.zeros([msg_count,6])
         
