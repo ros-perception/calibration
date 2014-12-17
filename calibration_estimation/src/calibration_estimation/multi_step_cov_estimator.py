@@ -278,6 +278,7 @@ if __name__ == '__main__':
                 previous_pose_guesses = numpy.array(yaml.load(f))
         else:
             rospy.logwarn("cannot find %s" % (config['initial_poses']))
+            previous_pose_guesses = numpy.zeros([msg_count,6])
     else:
         previous_pose_guesses = numpy.zeros([msg_count,6])
         
