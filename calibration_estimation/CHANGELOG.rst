@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.10.13 (2014-12-21)
+--------------------
 * Fill previous_pose_guesses by zero if no initial_poses file exists
 * Fix to use stream rather than file name to load initial_poses yaml file
 * check if frame_id from bagfile and system.yaml is same

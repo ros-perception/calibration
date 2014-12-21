@@ -2,8 +2,8 @@
 Changelog for package calibration_setup_helper
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.10.13 (2014-12-21)
+--------------------
 * add copyright notes
 * set k-oakda as maintainer/author
 * add calibration_setup_helper program
