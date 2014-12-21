@@ -1,3 +1,10 @@
+Forthcoming
+-----------
+* Fill previous_pose_guesses by zero if no initial_poses file exists
+* Fix to use stream rather than file name to load initial_poses yaml file
+* check if frame_id from bagfile and system.yaml is same
+* Contributors: Kei Okada, Ryohei Ueda
+
 0.10.12 (2014-09-21)
 --------------------
 * disable covariance for now

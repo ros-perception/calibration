@@ -2,6 +2,9 @@
 Changelog for package image_cb_detector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.10.12 (2014-09-21)
 --------------------
 * make code compile with OpenCV3
