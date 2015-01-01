@@ -34,7 +34,7 @@ import numpy
 from numpy import matrix, vsplit, sin, cos, reshape, zeros, pi
 import rospy
 
-import tf.transformations as transformations
+import PyKDL
 import yaml, math
 
 # This represents the transform for a single joint in the URDF
@@ -114,10 +114,13 @@ def RPY_to_angle_axis(vec):
     return axis
     
 def rpy_to_quat(rpy):
-    return transformations.quaternion_from_euler(rpy[0], rpy[1], rpy[2], 'sxyz')
+    q = [0, 0, 0, 0]
+    PyKDL.RPY(rpy[0], rpy[1], rpy[2]).GetQuaternion(q[0], q[1], q[2], q[3])
+    return q
 
 def quat_to_rpy(q):
-    rpy = transformations.euler_from_quaternion(q, 'sxyz')
+    rpy = [0, 0, 0]
+    PyKDL.Quaternion(q[0], q[1], q[2], q[3]).GetRPY(rpy[0], rpy[1], rpy[2])
     return rpy
 
 #return 1 if value1 and value2 are within eps of each other, 0 otherwise
