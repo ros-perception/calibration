@@ -114,14 +114,10 @@ def RPY_to_angle_axis(vec):
     return axis
     
 def rpy_to_quat(rpy):
-    q = [0, 0, 0, 0]
-    PyKDL.RPY(rpy[0], rpy[1], rpy[2]).GetQuaternion(q[0], q[1], q[2], q[3])
-    return q
+    return PyKDL.Rotation.RPY(rpy[0], rpy[1], rpy[2]).GetQuaternion()
 
 def quat_to_rpy(q):
-    rpy = [0, 0, 0]
-    PyKDL.Quaternion(q[0], q[1], q[2], q[3]).GetRPY(rpy[0], rpy[1], rpy[2])
-    return rpy
+    return PyKDL.Rotation.Quaternion(q[0], q[1], q[2], q[3]).GetRPY()
 
 #return 1 if value1 and value2 are within eps of each other, 0 otherwise
 def epsEq(value1, value2, eps = 1e-10):

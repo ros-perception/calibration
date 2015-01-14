@@ -32,8 +32,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import roslib; roslib.load_manifest('calibration_estimation')
-
 import sys
 import unittest
 import os
@@ -41,7 +39,7 @@ import rospy
 import time
 import numpy
 
-from calibration_estimation.single_transform import SingleTransform
+from calibration_estimation.single_transform import SingleTransform, rpy_to_quat, quat_to_rpy
 from numpy import *
 
 class TestSingleTransform(unittest.TestCase):
@@ -152,6 +150,12 @@ class TestSingleTransform(unittest.TestCase):
             expected_result.shape = 4,4
 
             self.assertAlmostEqual(numpy.linalg.norm(st.transform-expected_result), 0.0, 4, "Failed on %s" % params_filename)
+
+    def test_math(self):
+        rpy_init = (1, 0.5, 0.7)
+        rpy = quat_to_rpy(rpy_to_quat(rpy_init))
+        for i in range(3):
+            self.assertAlmostEqual(rpy_init[i], rpy[i])
 
 if __name__ == '__main__':
     import rostest
