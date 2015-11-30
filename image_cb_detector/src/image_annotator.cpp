@@ -88,11 +88,7 @@ void ImageAnnotator::processPair(const sensor_msgs::ImageConstPtr& image, const 
     const int scaled_height = (int) (.5 + cv_image->image.rows * scaling_);
     cv::Mat cv_image_scaled;
     cv::resize(cv_image->image, cv_image_scaled, 
-#if OPENCV3
           cv::Size(scaled_width, scaled_height), 0, 0, cv::INTER_LINEAR);
-#else
-          cv::Size(scaled_width, scaled_height), 0, 0, CV_INTER_LINEAR);
-#endif
 
 
     if (features->success)
