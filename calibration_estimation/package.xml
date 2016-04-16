@@ -17,7 +17,6 @@
   <run_depend>python-matplotlib</run_depend>
   <run_depend>python_orocos_kdl</run_depend>
   <run_depend>python-scipy</run_depend>
-  <run_depend>python-tk</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>rostest</run_depend>
   <run_depend>sensor_msgs</run_depend>
