@@ -2,6 +2,9 @@
 Changelog for package joint_states_settler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+
 0.10.13 (2014-12-21)
 --------------------
 

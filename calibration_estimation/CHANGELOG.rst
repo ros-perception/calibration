@@ -1,3 +1,11 @@
+Forthcoming
+-----------
+* remove useless dependency
+* fix bad PyKDL usage
+  fixes `#39 <https://github.com/ros-perception/calibration/issues/39>`_
+* get rid of the tf dependency
+* Contributors: Vincent Rabaud
+
 0.10.13 (2014-12-21)
 --------------------
 * Fill previous_pose_guesses by zero if no initial_poses file exists
