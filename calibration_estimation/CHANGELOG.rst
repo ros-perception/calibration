@@ -1,5 +1,5 @@
-Forthcoming
------------
+0.10.14 (2016-04-16)
+--------------------
 * remove useless dependency
 * fix bad PyKDL usage
   fixes `#39 <https://github.com/ros-perception/calibration/issues/39>`_
