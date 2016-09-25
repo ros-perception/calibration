@@ -4,7 +4,7 @@ project(interval_intersection)
 find_package(Boost REQUIRED thread)
 find_package(catkin REQUIRED actionlib actionlib_msgs calibration_msgs geometry_msgs rosconsole roscpp roscpp_serialization rostime std_msgs)
 
-include_directories(SYSTEM ${catkin_INCLUDE_DIRS})
+include_directories(${catkin_INCLUDE_DIRS})
 include_directories(include)
  
 # generate the messages
@@ -35,7 +35,7 @@ add_executable(interval_intersection_node src/interval_intersection_node.cpp)
 target_link_libraries(interval_intersection_node ${PROJECT_NAME})
 add_dependencies(interval_intersection_node calibration_msgs_gencpp)
 
-include_directories(SYSTEM ${BOOST_INCLUDE_DIRS})
+include_directories(${BOOST_INCLUDE_DIRS})
 add_executable(interval_intersection_action src/interval_intersection_action.cpp)
 target_link_libraries(interval_intersection_action ${Boost_LIBRARIES}
                                                    ${catkin_LIBRARIES}
