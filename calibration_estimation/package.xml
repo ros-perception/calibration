@@ -19,11 +19,11 @@
 
   <exec_depend>python_orocos_kdl</exec_depend>
   <exec_depend>python-scipy</exec_depend>
-  <exce_depend>rospy</exce_depend>
-  <exce_depend>rostest</exce_depend>
-  <exce_depend>sensor_msgs</exce_depend>
-  <exce_depend>urdfdom_py</exce_depend>
-  <exce_depend>visualization_msgs</exce_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>rostest</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>urdfdom_py</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
   <export>
     <architecture_independent/>
