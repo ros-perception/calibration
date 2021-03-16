@@ -41,6 +41,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/types_c.h>
 
+#include <ros/console.h>
 
 using namespace laser_cb_detector;
 using namespace std;
@@ -73,11 +74,14 @@ calibration_msgs::DenseLaserSnapshot getSnapshot(const string& filename)
   calibration_msgs::DenseLaserSnapshot snapshot;
   snapshot.readings_per_scan = image.cols;
   snapshot.num_scans = image.rows;
-  snapshot.intensities.resize(image.rows * image.cols);
+  snapshot.intensities.resize(0);
+  //snapshot.intensities.resize(image.rows * image.cols);
 
+    //snapshot.intensities.assign(float_image.data, float_image.data + float_image.total());
   for (int i=0; i<float_image.rows; i++)
   {
-    snapshot.intensities.assign(float_image.data, float_image.data + float_image.total());
+    snapshot.intensities.insert(snapshot.intensities.end(), float_image.ptr<float>(i), float_image.ptr<float>(i)+float_image.cols);
+    //snapshot.intensities.assign(float_image.data, float_image.data + float_image.total());
     //memcpy(&snapshot.intensities[i*snapshot.readings_per_scan],
     //       (float_image.imageData + i*float_image.widthStep),
     //       sizeof(float)*snapshot.readings_per_scan);
@@ -177,6 +181,8 @@ TEST(LaserCbDetector, easy_cb_3x4)
   calibration_msgs::DenseLaserSnapshot snapshot;
 
   snapshot = getSnapshot( test_path +  "/data/cb_3x4.png");
+
+  ROS_INFO( "test_path: [%s]/[/data/cb_3x4.png]", test_path.c_str());
 
   ASSERT_EQ(snapshot.readings_per_scan, (unsigned int) 303);
   ASSERT_EQ(snapshot.num_scans, (unsigned int) 325);
