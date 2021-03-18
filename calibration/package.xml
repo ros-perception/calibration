@@ -9,7 +9,7 @@
   <license>BSD</license>
 
   <url>http://www.ros.org/wiki/ros_comm</url>
-  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
+  <maintainer email="david.feilseifer@gmail.com">David Feil-Seifer</maintainer>
 
   <buildtool_depend>catkin</buildtool_depend>
   
