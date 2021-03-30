@@ -8,7 +8,7 @@
   </description>
   <author>Vijay Pradeep</author>
   <author>Eitan Marder-Eppstein</author>
-  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
+  <maintainer email="david.feilseifer@gmail.com">David Feil-Seifer</maintainer>
   <license>BSD</license>
   <url>http://ros.org/wiki/image_cb_detector</url>
 

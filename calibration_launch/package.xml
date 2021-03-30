@@ -6,7 +6,7 @@
     the calibration stack to run on your robot.
   </description>
   <author>Michael Ferguson</author>
-  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
+<maintainer email="david.feilseifer@gmail.com">David Feil-Seifer</maintainer>
 
   <license>BSD</license>
   <url>http://ros.org/wiki/calibration_launch</url>

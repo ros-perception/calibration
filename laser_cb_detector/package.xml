@@ -6,7 +6,7 @@
      This package is experimental and unstable. Expect its APIs to change.
   </description>
   <author>Vijay Pradeep</author>
-  <maintainer email="vincent.rabaud@gmail.com">Vincent Rabaud</maintainer>
+  <maintainer email="david.feilseifer@gmail.com">David Feil-Seifer</maintainer>
   <license>BSD</license>
   <url>http://www.ros.org/wiki/laser_cb_detector</url>
 
