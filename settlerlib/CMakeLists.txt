@@ -19,7 +19,7 @@ add_library(${PROJECT_NAME} src/interval_calc.cpp
                             src/deflated.cpp
 )
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME} calibration_msgs_gencpp)
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
