@@ -64,8 +64,8 @@ class TestSingleTransform(unittest.TestCase):
                                   [ 0, 0, 1, 0],
                                   [ 0, 0, 0, 1]], float )
 
-        print ""
-        print st.transform
+        print ("")
+        print (st.transform)
 
         self.assertAlmostEqual(numpy.linalg.norm(st.transform-expected), 0.0, 6)
 
@@ -91,8 +91,8 @@ class TestSingleTransform(unittest.TestCase):
                                   [ 0, 0, 1, 3],
                                   [ 0, 0, 0, 1]], float )
 
-        print ""
-        print st.transform
+        print ("")
+        print (st.transform)
 
         self.assertAlmostEqual(numpy.linalg.norm(st.transform-expected), 0.0, 6)
 
@@ -102,8 +102,8 @@ class TestSingleTransform(unittest.TestCase):
                                   [ 1, 0, 0, 0],
                                   [ 0, 0, 1, 0],
                                   [ 0, 0, 0, 1]], float )
-        print ""
-        print st.transform
+        print ("")
+        print (st.transform)
 
         self.assertAlmostEqual(numpy.linalg.norm(st.transform-expected), 0.0, 6)
 
@@ -113,8 +113,8 @@ class TestSingleTransform(unittest.TestCase):
                                   [ 0, 1, 0, 0],
                                   [-1, 0, 0, 0],
                                   [ 0, 0, 0, 1]], float )
-        print ""
-        print st.transform
+        print ("")
+        print (st.transform)
 
         self.assertAlmostEqual(numpy.linalg.norm(st.transform-expected), 0.0, 6)
 
@@ -124,8 +124,8 @@ class TestSingleTransform(unittest.TestCase):
                                   [ 0, 0,-1, 0],
                                   [ 0, 1, 0, 0],
                                   [ 0, 0, 0, 1]], float )
-        print ""
-        print st.transform
+        print ("")
+        print (st.transform)
 
         self.assertAlmostEqual(numpy.linalg.norm(st.transform-expected), 0.0, 6)
 

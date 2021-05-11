@@ -173,13 +173,13 @@ class UrdfParams:
                     # we can handle limited rotations here
                     rot = urdf.joint_map[joint_name].origin.rotation
                     if rot != None and (sum([abs(x) for x in rot]) - rot[abs(this_config["axis"][-1])-4]) > 0.001:   
-                        print 'Joint origin is rotated, calibration will fail: ', joint_name
+                        print ('Joint origin is rotated, calibration will fail: ', joint_name)
                 elif urdf.joint_map[joint_name].joint_type == 'prismatic':
                     this_config["active_joints"].append(joint_name)
                     axis = urdf.joint_map[joint_name].axis
                     this_config["axis"].append( sum( [i[0]*int(i[1]) for i in zip([1,2,3], axis)] ) )
                 elif urdf.joint_map[joint_name].joint_type != 'fixed':
-                    print 'Unknown joint type:', urdf.joint_map[joint_name].joint_type
+                    print ('Unknown joint type:', urdf.joint_map[joint_name].joint_type)
             # put a checkerboard in it's hand
             self.urdf.add_link(Link(chain_name+"_cb_link"))
             self.urdf.add_joint(Joint(chain_name+"_cb",this_config['tip'],chain_name+"_cb_link","fixed",origin=Pose([0.0,0.0,0.0],[0.0,0.0,0.0])))
