@@ -88,9 +88,9 @@ class FullChainRobotParams:
         sparsity['transforms'] = {}
         sparsity['chains'] = {}
         if self.chain_id is not None:
-            for cur_transform in ( self.calc_block._before_chain_Ts + \
-                                   self.calc_block._chain._transforms.values() + \
-                                   self.calc_block._after_chain_Ts ):
+            for cur_transform in ( list(self.calc_block._before_chain_Ts) + \
+                                   list(self.calc_block._chain._transforms.values()) + \
+                                   list(self.calc_block._after_chain_Ts) ):
                 sparsity['transforms'][cur_transform._name] = [1, 1, 1, 1, 1, 1]
             sparsity['chains'][self.chain_id] = {}
             link_num = self.calc_block._link_num

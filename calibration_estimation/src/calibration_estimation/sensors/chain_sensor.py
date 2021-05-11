@@ -135,7 +135,8 @@ class ChainSensor:
         cov_angles = [x*x for x in self._full_chain.calc_block._chain._cov_dict['joint_angles']]
         cov = matrix(Jt).T * matrix(diag(cov_angles)) * matrix(Jt)
         
-        if ( self._full_chain.calc_block._chain._cov_dict.has_key('translation') ):
+        #if ( self._full_chain.calc_block._chain._cov_dict.has_key('translation') ):
+        if ( 'translation' in self._full_chain.calc_block._chain._cov_dict ):
             translation_var = self._full_chain.calc_block._chain._cov_dict['translation'];
             translation_cov = numpy.diag(translation_var*(self.get_residual_length()/3))
             cov = cov + translation_cov

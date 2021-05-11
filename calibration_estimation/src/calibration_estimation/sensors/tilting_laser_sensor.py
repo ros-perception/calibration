@@ -47,6 +47,7 @@ from numpy import reshape, array, zeros, matrix, diag, real
 import roslib; roslib.load_manifest('calibration_estimation')
 import rospy
 import numpy
+import math
 
 class TiltingLaserBundler:
     def __init__(self, valid_configs):
@@ -97,7 +98,7 @@ class TiltingLaserSensor:
         # ----- Populate Here -----
         cov = self.compute_cov(target_pts)
         gamma = matrix(zeros(cov.shape))
-        num_pts = self.get_residual_length()/3
+        num_pts = math.floor(self.get_residual_length()/3)
 
         for k in range(num_pts):
             first = 3*k

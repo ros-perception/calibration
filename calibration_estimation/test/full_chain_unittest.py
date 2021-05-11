@@ -50,7 +50,7 @@ import numpy
 
 def loadSystem1():
     urdf = '''
-<robot>
+<robot name="test">
   <link name="base_link"/>
   <joint name="j0" type="fixed">
     <origin xyz="10 0 0" rpy="0 0 0"/>
