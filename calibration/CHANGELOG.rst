@@ -2,6 +2,11 @@
 Changelog for package calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update maintainer for most packages; first try at setup for travis testing (`#46 <https://github.com/ros-perception/calibration/issues/46>`_)
+* Contributors: Dave Feil-Seifer
+
 0.10.14 (2016-04-16)
 --------------------
 

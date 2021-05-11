@@ -1,3 +1,17 @@
+Forthcoming
+-----------
+* Merge pull request `#47 <https://github.com/ros-perception/calibration/issues/47>`_ from PR2-prime/noetic-devel
+  Noetic devel
+* fixed test errors for python3 compatibility
+* fixed python3 compatibility issues
+* update maintainer for most packages; first try at setup for travis testing (`#46 <https://github.com/ros-perception/calibration/issues/46>`_)
+* more python3 package fixes
+* more python3 package fixes
+* only depend on python_orocos_kdl for python2
+* spell exec correctly
+* updated package.xml file for python3 dependencies
+* Contributors: Dave Feil-Seifer
+
 0.10.14 (2016-04-16)
 --------------------
 * remove useless dependency

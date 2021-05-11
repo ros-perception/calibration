@@ -2,6 +2,14 @@
 Changelog for package monocam_settler
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#47 <https://github.com/ros-perception/calibration/issues/47>`_ from PR2-prime/noetic-devel
+  Noetic devel
+* fixes for compiler warnings CMP0048 and CMP0046
+* update maintainer for most packages; first try at setup for travis testing (`#46 <https://github.com/ros-perception/calibration/issues/46>`_)
+* Contributors: Dave Feil-Seifer
+
 0.10.14 (2016-04-16)
 --------------------
 

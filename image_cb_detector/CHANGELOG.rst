@@ -2,6 +2,15 @@
 Changelog for package image_cb_detector
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#47 <https://github.com/ros-perception/calibration/issues/47>`_ from PR2-prime/noetic-devel
+  Noetic devel
+* fixes for compiler warnings CMP0048 and CMP0046
+* update maintainer for most packages; first try at setup for travis testing (`#46 <https://github.com/ros-perception/calibration/issues/46>`_)
+* fixed unit tests for compile/testing in focal/noetic/opencv4
+* Contributors: Dave Feil-Seifer
+
 0.10.14 (2016-04-16)
 --------------------
 * simplify OpenCV3 dependency

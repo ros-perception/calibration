@@ -2,6 +2,19 @@
 Changelog for package interval_intersection
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Merge pull request `#47 <https://github.com/ros-perception/calibration/issues/47>`_ from PR2-prime/noetic-devel
+  Noetic devel
+* fixes for compiler warnings CMP0048 and CMP0046
+* update maintainer for most packages; first try at setup for travis testing (`#46 <https://github.com/ros-perception/calibration/issues/46>`_)
+* Merge pull request `#41 <https://github.com/ros-perception/calibration/issues/41>`_ from Hodorgasm/hydro
+  Fix "stdlib.h: No such file or directory" errors in GCC-6
+* Fix "stdlib.h: No such file or directory" errors in GCC-6
+  Including '-isystem /usr/include' breaks building with GCC-6.
+  See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70129
+* Contributors: Dave Feil-Seifer, Hodorgasm, Vincent Rabaud
+
 0.10.14 (2016-04-16)
 --------------------
 
