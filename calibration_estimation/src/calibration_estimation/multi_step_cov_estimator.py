@@ -261,7 +261,7 @@ if __name__ == '__main__':
     if sensors_name not in config.keys():
         rospy.logerr("Could not find namespace [%s/%s]. Please populate this namespace with sensors.", (config_param_name, sensors_name))
         sys.exit(1)
-    #sensors_dump = [yaml.load(x) for x in config[sensors_name].values()]
+    #sensors_dump = [yaml.safe_load(x) for x in config[sensors_name].values()]
     all_sensors_dict = build_sensor_defs(config[sensors_name])
     all_sensor_types = list(set([x['sensor_type'] for x in all_sensors_dict.values()]))
 
@@ -275,7 +275,7 @@ if __name__ == '__main__':
     if 'initial_poses' in config.keys():
         if os.path.exists(config['initial_poses']):
             with open(config['initial_poses']) as f:
-                previous_pose_guesses = numpy.array(yaml.load(f))
+                previous_pose_guesses = numpy.array(yaml.safe_load(f))
         else:
             rospy.logwarn("cannot find %s" % (config['initial_poses']))
             previous_pose_guesses = numpy.zeros([msg_count,6])
@@ -348,7 +348,7 @@ if __name__ == '__main__':
             output_dict = robot_params.params_to_config(robot_params.deflate())
             output_poses = previous_pose_guesses
         else:
-            free_dict = yaml.load(cur_step["free_params"])
+            free_dict = yaml.safe_load(cur_step["free_params"])
             use_cov = cur_step['use_cov']
             if use_cov:
                 print "Executing step with covariance calculations"

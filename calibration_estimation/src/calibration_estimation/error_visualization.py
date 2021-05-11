@@ -77,7 +77,7 @@ if __name__ == '__main__':
         rospy.logerr("Bagfile does not exist. Exiting...")
         sys.exit(1)
 
-    loop_list = yaml.load(open(loop_list_filename))
+    loop_list = yaml.safe_load(open(loop_list_filename))
     robot_description = get_robot_description(bag_filename)
 
     config_param_name = "calibration_config"
@@ -100,10 +100,10 @@ if __name__ == '__main__':
     cur_step = step_list[-1]
 
     # Load the resulting system definition
-    system_def_dict = yaml.load(open(output_dir + "/" + cur_step["output_filename"] + ".yaml"))
+    system_def_dict = yaml.safe_load(open(output_dir + "/" + cur_step["output_filename"] + ".yaml"))
     system_def = UrdfParams(robot_description, system_def_dict)
-    cb_poses = yaml.load(open(output_dir + "/" + cur_step["output_filename"] + "_poses.yaml"))
-    free_dict = yaml.load(cur_step["free_params"])
+    cb_poses = yaml.safe_load(open(output_dir + "/" + cur_step["output_filename"] + "_poses.yaml"))
+    free_dict = yaml.safe_load(cur_step["free_params"])
 
     sample_skip_list = rospy.get_param('calibration_skip_list', [])
     scatter_list = []

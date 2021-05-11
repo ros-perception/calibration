@@ -42,7 +42,7 @@ target_link_libraries(monocam_settler_action ${Boost_LIBRARIES}
 install(TARGETS monocam_settler_action
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-add_dependencies(monocam_settler_action calibration_msgs_gencpp)
+add_dependencies(monocam_settler_action ${catkin_EXPORTED_TARGETS})
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test EXCLUDE_FROM_ALL)

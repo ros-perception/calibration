@@ -69,7 +69,7 @@ def loadConfigList():
     link_num:     1
     after_chain:  [transformB]
 '''
-    config_dict = yaml.load(config_yaml)
+    config_dict = yaml.safe_load(config_yaml)
 
     return config_dict
 
@@ -111,7 +111,7 @@ from calibration_estimation.robot_params import RobotParams
 
 class TestCameraChainSensor(unittest.TestCase):
     def load(self):
-        config = yaml.load('''
+        config = yaml.safe_load('''
             camera_id: camA
             chain:
               before_chain: [transformA]
@@ -121,7 +121,7 @@ class TestCameraChainSensor(unittest.TestCase):
             ''')
 
         robot_params = RobotParams()
-        robot_params.configure( yaml.load('''
+        robot_params.configure( yaml.safe_load('''
             chains:
               chainA:
                 transforms:
@@ -179,7 +179,7 @@ class TestCameraChainSensor(unittest.TestCase):
                          [1, 1]])
 
         cov = sensor.compute_cov(target)
-        print "\ncov:\n", cov
+        print ("\ncov:\n", cov)
 
         self.assertAlmostEqual(cov[0,0], 1.0, 6)
         self.assertAlmostEqual(cov[1,0], 0.0, 6)

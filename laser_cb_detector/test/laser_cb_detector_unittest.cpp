@@ -37,7 +37,11 @@
 
 #include <laser_cb_detector/ConfigGoal.h>
 #include <laser_cb_detector/laser_cb_detector.h>
-#include <opencv/highgui.h>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/types_c.h>
+
+#include <ros/console.h>
 
 using namespace laser_cb_detector;
 using namespace std;
@@ -55,25 +59,32 @@ static const string test_path = xstr(TEST_PATH);
 
 calibration_msgs::DenseLaserSnapshot getSnapshot(const string& filename)
 {
-  IplImage* image;
-  image = cvLoadImage(filename.c_str(), 0);         // 0 -> Force image to grayscale
-  EXPECT_TRUE(image) << "could not open image file [" << filename << "]" << endl;
+  //IplImage* image;
+  cv::Mat image;
+  image = cv::imread(filename.c_str(), 0);         // 0 -> Force image to grayscale
+  EXPECT_TRUE(!image.empty()) << "could not open image file [" << filename << "]" << endl;
 
 
-  IplImage* float_image;
-  float_image = cvCreateImage( cvSize(image->width, image->height), IPL_DEPTH_32F, 1);
-  cvConvert(image, float_image);
+  cv::Mat float_image;
+  //float_image = cv::createImage( cvSize(image->width, image->height), IPL_DEPTH_32F, 1);
+  //cv::convert(image, float_image);
+  image.convertTo(float_image, CV_32FC1, 1/255.0);
+
 
   calibration_msgs::DenseLaserSnapshot snapshot;
-  snapshot.readings_per_scan = image->width;
-  snapshot.num_scans = image->height;
-  snapshot.intensities.resize(image->height * image->width);
+  snapshot.readings_per_scan = image.cols;
+  snapshot.num_scans = image.rows;
+  snapshot.intensities.resize(0);
+  //snapshot.intensities.resize(image.rows * image.cols);
 
-  for (int i=0; i<float_image->height; i++)
+    //snapshot.intensities.assign(float_image.data, float_image.data + float_image.total());
+  for (int i=0; i<float_image.rows; i++)
   {
-    memcpy(&snapshot.intensities[i*snapshot.readings_per_scan],
-           (float_image->imageData + i*float_image->widthStep),
-           sizeof(float)*snapshot.readings_per_scan);
+    snapshot.intensities.insert(snapshot.intensities.end(), float_image.ptr<float>(i), float_image.ptr<float>(i)+float_image.cols);
+    //snapshot.intensities.assign(float_image.data, float_image.data + float_image.total());
+    //memcpy(&snapshot.intensities[i*snapshot.readings_per_scan],
+    //       (float_image.imageData + i*float_image.widthStep),
+    //       sizeof(float)*snapshot.readings_per_scan);
   }
 
   if (DEBUG)
@@ -91,8 +102,9 @@ calibration_msgs::DenseLaserSnapshot getSnapshot(const string& filename)
     }
   }
 
-  cvReleaseImage(&float_image);
-  cvReleaseImage(&image);
+  // since statically declared, does not need release, but this could cause a memory leak
+  //cv::releaseImage(&float_image);
+  //cv::releaseImage(&image);
 
   return snapshot;
 }
@@ -169,6 +181,8 @@ TEST(LaserCbDetector, easy_cb_3x4)
   calibration_msgs::DenseLaserSnapshot snapshot;
 
   snapshot = getSnapshot( test_path +  "/data/cb_3x4.png");
+
+  ROS_INFO( "test_path: [%s]/[/data/cb_3x4.png]", test_path.c_str());
 
   ASSERT_EQ(snapshot.readings_per_scan, (unsigned int) 303);
   ASSERT_EQ(snapshot.num_scans, (unsigned int) 325);

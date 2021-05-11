@@ -26,7 +26,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/joint_states_settler/
 add_library(${PROJECT_NAME} src/joint_states_deflater.cpp
                                      src/joint_states_settler.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS})
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
@@ -36,11 +36,11 @@ add_executable(joint_states_settler_action src/joint_states_settler_action.cpp)
 target_link_libraries(joint_states_settler_action ${Boost_LIBRARIES}
                                                   ${PROJECT_NAME}
 )
-add_dependencies(joint_states_settler_action calibration_msgs_gencpp)
+add_dependencies(joint_states_settler_action ${catkin_EXPORTED_TARGETS})
 
 add_executable(view_interval src/view_interval.cpp)
 target_link_libraries(view_interval ${catkin_LIBRARIES})
-add_dependencies(view_interval calibration_msgs_gencpp)
+add_dependencies(view_interval ${catkin_EXPORTED_TARGETS})
 
 install(TARGETS joint_states_settler_action view_interval
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

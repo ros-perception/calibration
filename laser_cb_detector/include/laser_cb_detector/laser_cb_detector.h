@@ -37,7 +37,7 @@
 #ifndef LASER_CB_DETECTOR_LASER_CB_DETECTOR_H_
 #define LASER_CB_DETECTOR_LASER_CB_DETECTOR_H_
 
-#include <opencv/cv.h>
+#include <opencv2/core.hpp>
 #include <calibration_msgs/DenseLaserSnapshot.h>
 #include <laser_cb_detector/ConfigAction.h>
 #include <laser_cb_detector/cv_laser_bridge.h>

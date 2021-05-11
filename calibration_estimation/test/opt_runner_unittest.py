@@ -53,7 +53,7 @@ from sensor_msgs.msg import JointState
 
 class TestParamJacobian(unittest.TestCase):
     def test_single_sensor(self):
-        config = yaml.load('''
+        config = yaml.safe_load('''
                 chain_id: chainA
                 before_chain: [transformA]
                 dh_link_num:  1
@@ -61,7 +61,7 @@ class TestParamJacobian(unittest.TestCase):
             ''')
 
         robot_params = RobotParams()
-        robot_params.configure( yaml.load('''
+        robot_params.configure( yaml.safe_load('''
             dh_chains:
               chainA:
               - [ 0, 0, 1, 0 ]
@@ -80,7 +80,7 @@ class TestParamJacobian(unittest.TestCase):
                 spacing_y: 1
             ''' ) )
 
-        free_dict = yaml.load('''
+        free_dict = yaml.safe_load('''
             dh_chains:
               chainA:
               - [ 1, 0, 1, 0 ]
@@ -120,14 +120,14 @@ class TestParamJacobian(unittest.TestCase):
 
 class TestPoseJacobian(unittest.TestCase):
     def test_multisensor_pose_jacobian(self):
-        configA = yaml.load('''
+        configA = yaml.safe_load('''
                 chain_id: chainA
                 before_chain: [transformA]
                 dh_link_num:  1
                 after_chain:  [transformB]
             ''')
 
-        configB = yaml.load('''
+        configB = yaml.safe_load('''
                 chain_id: chainB
                 before_chain: [transformA]
                 dh_link_num:  1
@@ -135,7 +135,7 @@ class TestPoseJacobian(unittest.TestCase):
             ''')
 
         robot_params = RobotParams()
-        robot_params.configure( yaml.load('''
+        robot_params.configure( yaml.safe_load('''
             dh_chains:
               chainA:
               - [ 0, 0, 1, 0 ]
@@ -154,7 +154,7 @@ class TestPoseJacobian(unittest.TestCase):
                 spacing_y: 1
             ''' ) )
 
-        free_dict = yaml.load('''
+        free_dict = yaml.safe_load('''
             dh_chains:
               chainA:
               - [ 1, 0, 0, 0 ]
@@ -193,14 +193,14 @@ class TestPoseJacobian(unittest.TestCase):
 
 class TestFullJacobian(unittest.TestCase):
     def test_full_jacobian(self):
-        configA = yaml.load('''
+        configA = yaml.safe_load('''
                 chain_id: chainA
                 before_chain: [transformA]
                 dh_link_num:  1
                 after_chain:  []
             ''')
 
-        configB = yaml.load('''
+        configB = yaml.safe_load('''
                 chain_id: chainB
                 before_chain: []
                 dh_link_num:  1
@@ -208,7 +208,7 @@ class TestFullJacobian(unittest.TestCase):
             ''')
 
         robot_params = RobotParams()
-        robot_params.configure( yaml.load('''
+        robot_params.configure( yaml.safe_load('''
             dh_chains:
               chainA:
               - [ 0, 0, 1, 0 ]
@@ -235,7 +235,7 @@ class TestFullJacobian(unittest.TestCase):
                 spacing_y: 1
             ''' ) )
 
-        free_dict = yaml.load('''
+        free_dict = yaml.safe_load('''
             dh_chains:
               chainA:
               - [ 1, 0, 0, 0 ]

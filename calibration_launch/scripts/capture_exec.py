@@ -53,10 +53,10 @@ from urdf_parser_py.urdf import URDF
 class CaptureExecutive:
     def __init__(self, config_dir, system, robot_desc, output_debug=False):
         # Load configs
-        self.cam_config        = yaml.load(open(config_dir + "/cam_config.yaml"))
-        self.chain_config      = yaml.load(open(config_dir + "/chain_config.yaml"))
-        self.laser_config      = yaml.load(open(config_dir + "/laser_config.yaml"))
-        self.controller_config = yaml.load(open(config_dir + "/controller_config.yaml"))
+        self.cam_config        = yaml.safe_load(open(config_dir + "/cam_config.yaml"))
+        self.chain_config      = yaml.safe_load(open(config_dir + "/chain_config.yaml"))
+        self.laser_config      = yaml.safe_load(open(config_dir + "/laser_config.yaml"))
+        self.controller_config = yaml.safe_load(open(config_dir + "/controller_config.yaml"))
         # Not all robots have lasers.... :(
         if self.laser_config == None:
             self.laser_config = dict()
@@ -73,7 +73,7 @@ class CaptureExecutive:
         links = URDF().parse(robot_desc).link_map.keys()
 
         # load system config
-        system = yaml.load(open(system))
+        system = yaml.safe_load(open(system))
         
         # remove cams that are not on urdf
         for cam in self.cam_config.keys():
@@ -329,7 +329,7 @@ if __name__=='__main__':
     sample_failure = dict()
     for directory in os.listdir(samples_dir):
         try:
-            sample_options[directory] = yaml.load(open(samples_dir + '/' + directory + '/config.yaml'))
+            sample_options[directory] = yaml.safe_load(open(samples_dir + '/' + directory + '/config.yaml'))
             sample_steps.append(directory)
         except IOError:
             continue
@@ -352,7 +352,7 @@ if __name__=='__main__':
                 rospy.logfatal(samples_dir + '/' + step + '/' + ' is not found' )
                 rospy.logfatal('please run make_samples.py' )
                 sys.exit(-1)
-            cur_config = yaml.load(open(full_paths[0]))
+            cur_config = yaml.safe_load(open(full_paths[0]))
             m_robot = executive.capture(cur_config, rospy.Duration(0.01))
             while not rospy.is_shutdown() and keep_collecting:
                 print
@@ -365,7 +365,7 @@ if __name__=='__main__':
                 else:
                     for cur_sample_path in full_paths:
                         print "On %s sample [%s]" % (sample_options[step]["group"], cur_sample_path)
-                        cur_config = yaml.load(open(cur_sample_path))
+                        cur_config = yaml.safe_load(open(cur_sample_path))
                         m_robot = executive.capture(cur_config, rospy.Duration(40))
                         if m_robot is None:
                             print "--------------- Failed To Capture a %s Sample -----------------" % sample_options[step]["group"]

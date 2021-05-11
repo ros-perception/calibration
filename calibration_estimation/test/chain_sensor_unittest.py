@@ -59,7 +59,7 @@ from numpy import *
 
 def loadSystem():
     urdf = '''
-<robot>
+<robot name="test">
   <link name="base_link"/>
   <joint name="j0" type="fixed">
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -89,7 +89,7 @@ def loadSystem():
   <link name="j3_link"/>
 </robot>
 '''
-    config = yaml.load('''
+    config = yaml.safe_load('''
 sensors:
   chains:
     chainA:
@@ -162,7 +162,7 @@ class TestChainSensor(unittest.TestCase):
                             "boardA")
         block.update_config(robot_params)
         cov = block.compute_cov(None)
-        print cov
+        print (cov)
 
         #self.assertAlmostEqual(cov[0,0], 0.0, 6)
         #self.assertAlmostEqual(cov[1,0], 0.0, 6)
@@ -188,8 +188,8 @@ class TestChainSensor(unittest.TestCase):
 
         self.assertAlmostEqual(numpy.linalg.norm(target-h), 0.0, 6)
 
-        print "z=\n",z
-        print "target=\n",target
+        print ("z=\n",z)
+        print ("target=\n",target)
 
         self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)
@@ -213,8 +213,8 @@ class TestChainSensor(unittest.TestCase):
 
         self.assertAlmostEqual(numpy.linalg.norm(target-h), 0.0, 6)
 
-        print "z=\n",z
-        print "target=\n",target
+        print ("z=\n",z)
+        print ("target=\n",target)
 
         self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)
@@ -238,8 +238,8 @@ class TestChainSensor(unittest.TestCase):
 
         self.assertAlmostEqual(numpy.linalg.norm(target-h), 0.0, 6)
 
-        print "z=\n",z
-        print "target=\n",target
+        print ("z=\n",z)
+        print ("target=\n",target)
 
         self.assertAlmostEqual(numpy.linalg.norm(target-z), 0.0, 6)
         self.assertAlmostEqual(numpy.linalg.norm(r - numpy.zeros([12])), 0.0, 6)

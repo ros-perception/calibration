@@ -48,7 +48,7 @@ from sensor_msgs.msg import JointState
 
 class LoadJointChain(unittest.TestCase):
     def setUp(self):
-        print ""
+        print ("")
         config = '''
 root: x
 tip: y
@@ -59,7 +59,7 @@ gearing: [1, 1, 1]
 cov:
   joint_angles: [1, 1, 1]
 '''
-        config_dict = yaml.load(config)
+        config_dict = yaml.safe_load(config)
         config_dict['transforms'] = { 'j1': SingleTransform([1, 0, 0, 0, 0, 0]),
                                       'j2': SingleTransform([1, 0, 0, 0, 0, 0]),
                                       'j3': SingleTransform([1, 0, 2, 0, 0, 0]) }
@@ -115,7 +115,7 @@ class TestJointChain(LoadJointChain):
         chain_state = JointState()
         chain_state.position = [numpy.pi/2, 0, 0]
         eef = self.chain.fk(chain_state, 0)
-        print eef
+        print (eef)
         eef_expected = numpy.matrix( [[ 0,-1, 0, 1],
                                       [ 1, 0, 0, 0],
                                       [ 0, 0, 1, 0],
@@ -126,7 +126,7 @@ class TestJointChain(LoadJointChain):
         chain_state = JointState()
         chain_state.position = [numpy.pi/2, numpy.pi/2, 0]
         eef = self.chain.fk(chain_state, 1)
-        print eef
+        print (eef)
         eef_expected = numpy.matrix( [[-1, 0, 0, 1],
                                       [ 0,-1, 0, 1],
                                       [ 0, 0, 1, 0],
@@ -137,7 +137,7 @@ class TestJointChain(LoadJointChain):
         chain_state = JointState()
         chain_state.position = [0, 0, 0]
         eef = self.chain.fk(chain_state, -1)
-        print eef
+        print (eef)
         eef_expected = numpy.matrix( [[ 1, 0, 0, 3],
                                       [ 0, 1, 0, 0],
                                       [ 0, 0, 1, 2],
