@@ -1,6 +1,6 @@
 <package format="3">
   <name>calibration_estimation</name>
-  <version>0.10.14</version>
+  <version>0.10.15</version>
   <description>
     Runs an optimization to estimate the a robot's kinematic parameters. This package is a
     generic rewrite of pr2_calibration_estimation.

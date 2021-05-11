@@ -2,8 +2,8 @@
 Changelog for package calibration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.10.15 (2021-05-11)
+--------------------
 * update maintainer for most packages; first try at setup for travis testing (`#46 <https://github.com/ros-perception/calibration/issues/46>`_)
 * Contributors: Dave Feil-Seifer
 
