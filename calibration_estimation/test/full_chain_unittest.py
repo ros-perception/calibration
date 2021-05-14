@@ -50,7 +50,7 @@ import numpy
 
 def loadSystem1():
     urdf = '''
-<robot>
+<robot name="test">
   <link name="base_link"/>
   <joint name="j0" type="fixed">
     <origin xyz="10 0 0" rpy="0 0 0"/>
@@ -80,7 +80,7 @@ def loadSystem1():
   <link name="j3_link"/>
 </robot>
 '''
-    config = yaml.load('''
+    config = yaml.safe_load('''
 sensors:
   chains:
     chain1:
@@ -100,7 +100,7 @@ checkerboards: {}
 class TestFullChainCalcBlock(unittest.TestCase):
 
     def test_fk_1(self):
-        print ""
+        print ("")
         params = loadSystem1()
         chain = FullChainRobotParams('chain1', 'j3_link')
         chain.update_config(params)
@@ -111,11 +111,11 @@ class TestFullChainCalcBlock(unittest.TestCase):
                                   [ 0, 1, 0, 0],
                                   [ 0, 0, 1,20],
                                   [ 0, 0, 0, 1]], float )
-        print result
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
     def test_fk_2(self):
-        print ""
+        print ("")
         params = loadSystem1()
         chain = FullChainRobotParams('chain1', 'j3_link')
         chain.update_config(params)
@@ -126,11 +126,11 @@ class TestFullChainCalcBlock(unittest.TestCase):
                                   [ 1, 0, 0, 0],
                                   [ 0, 0, 1,20],
                                   [ 0, 0, 0, 1]], float )
-        print result
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
     def test_fk_partial(self):
-        print ""
+        print ("")
         params = loadSystem1()
         chain = FullChainRobotParams('chain1', 'j1_link')
         chain.update_config(params)
@@ -141,7 +141,7 @@ class TestFullChainCalcBlock(unittest.TestCase):
                                   [ 0, 1, 0, 0],
                                   [ 0, 0, 1, 0],
                                   [ 0, 0, 0, 1]], float )
-        print result
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
 

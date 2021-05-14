@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(laser_cb_detector)
 
-find_package(Boost REQUIRED signals thread)
+find_package(Boost REQUIRED thread)
 find_package(catkin REQUIRED actionlib actionlib_msgs cv_bridge image_cb_detector message_filters roscpp settlerlib std_msgs)
 
 add_action_files(DIRECTORY action FILES Config.action)
@@ -31,7 +31,7 @@ add_library(${PROJECT_NAME} src/cv_laser_bridge.cpp
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES}
                                       ${OpenCV_LIBRARIES}
 )
-add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp)
+add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS})
 install(TARGETS ${PROJECT_NAME}
         DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
@@ -50,7 +50,7 @@ target_link_libraries(laser_interval_calc_node ${Boost_LIBRARIES}
                                                ${PROJECT_NAME}
                                                ${OpenCV_LIBRARIES}
 )
-add_dependencies(laser_interval_calc_node calibration_msgs_gencpp)
+add_dependencies(laser_interval_calc_node ${catkin_EXPORTED_TARGETS})
 
 install(TARGETS laser_cb_detector_node laser_interval_calc_node
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

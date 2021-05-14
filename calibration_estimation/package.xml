@@ -1,4 +1,4 @@
-<package>
+<package format="3">
   <name>calibration_estimation</name>
   <version>0.10.14</version>
   <description>
@@ -12,16 +12,21 @@
   <url>http://ros.org/wiki/calibration_estimation</url>
   
   <buildtool_depend version_gte="0.5.68">catkin</buildtool_depend>
+  <build_depend>calibration_msgs</build_depend>
 
-  <run_depend>calibration_msgs</run_depend>
-  <run_depend>python-matplotlib</run_depend>
-  <run_depend>python_orocos_kdl</run_depend>
-  <run_depend>python-scipy</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>rostest</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>urdfdom_py</run_depend>
-  <run_depend>visualization_msgs</run_depend>
+  <exec_depend>calibration_msgs</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">python-matplotlib</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 3">python3-matplotlib</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">python_orocos_kdl</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 3">python3-pykdl</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 2">python-scipy</exec_depend>
+  <exec_depend condition="$ROS_PYTHON_VERSION == 3">python3-scipy</exec_depend>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>rostest</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>urdfdom_py</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
   <export>
     <architecture_independent/>

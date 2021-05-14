@@ -70,8 +70,8 @@ class TestRectifiedCamera(unittest.TestCase):
 
         result = cam.project(P_list, pts)
 
-        print ""
-        print result
+        print ("")
+        print (result)
 
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
@@ -91,8 +91,8 @@ class TestRectifiedCamera(unittest.TestCase):
 
         result = cam.project(P_list, pts)
 
-        print ""
-        print result
+        print ("")
+        print (result)
 
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 
@@ -114,8 +114,8 @@ class TestRectifiedCamera(unittest.TestCase):
 
         result = cam.project(P_list, pts)
 
-        print ""
-        print result
+        print ("")
+        print (result)
 
         self.assertAlmostEqual(numpy.linalg.norm(result-expected), 0.0, 6)
 

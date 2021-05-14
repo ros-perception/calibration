@@ -70,8 +70,8 @@ class TestCheckerboard(unittest.TestCase):
         param_vec = matrix([10,20], float).T
         cb.inflate( param_vec )
         result = cb.deflate()
-        print ""
-        print result
+        print ("")
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result - param_vec), 0.0, 6)
 
     def test_generate_points(self):
@@ -84,8 +84,8 @@ class TestCheckerboard(unittest.TestCase):
                              [ 20, 20,  0,  0,-20,-20],
                              [ 0,  0,   0,  0,  0,  0],
                              [ 1,  1,   1,  1,  1,  1] ], float)
-        print ""
-        print result
+        print ("")
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result - expected), 0.0, 6)
 
     def test_get_length(self):

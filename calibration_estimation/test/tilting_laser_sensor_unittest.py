@@ -55,7 +55,7 @@ def loadConfigList():
 - laser_id:     laser1
   sensor_id:    laser1
 '''
-    config_dict = yaml.load(config_yaml)
+    config_dict = yaml.safe_load(config_yaml)
     return config_dict
 
 class TestTiltingLaserBundler(unittest.TestCase):
@@ -74,7 +74,7 @@ class TestTiltingLaserBundler(unittest.TestCase):
 
 def loadSystem():
     urdf = '''
-<robot>
+<robot name="test">
   <link name="base_link"/>
   <joint name="j0" type="fixed">
     <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -97,7 +97,7 @@ def loadSystem():
   <link name="j2_link"/>
 </robot>
 '''
-    config = yaml.load('''
+    config = yaml.safe_load('''
 sensors:
   chains: {}
   rectified_cams: {}
@@ -121,7 +121,7 @@ checkerboards: {}
 class TestTiltingLaser(unittest.TestCase):
 
     def test_cov(self):
-        print ""
+        print ("")
         config, robot_params = loadSystem()
 
         joint_points = [ JointState(position=[0,0,1]),
@@ -134,8 +134,8 @@ class TestTiltingLaser(unittest.TestCase):
 
         cov = sensor.compute_cov(None)
 
-        print "Cov:"
-        print cov
+        print ("Cov:")
+        print (cov)
 
         self.assertAlmostEqual(cov[0,0], 1.0, 6)
         self.assertAlmostEqual(cov[1,1], 1.0, 6)
@@ -145,7 +145,7 @@ class TestTiltingLaser(unittest.TestCase):
         self.assertAlmostEqual(cov[5,5], 1.0, 6)
 
     def test_gamma(self):
-        print ""
+        print ("")
         config, robot_params = loadSystem()
 
         joint_points = [ JointState(position=[0,0,1]),
@@ -157,8 +157,8 @@ class TestTiltingLaser(unittest.TestCase):
         sensor.update_config(robot_params)
         gamma = sensor.compute_marginal_gamma_sqrt(None)
 
-        print "Gamma:"
-        print gamma
+        print ("Gamma:")
+        print (gamma)
         self.assertAlmostEqual(gamma[0,0], 1.0, 6)
         self.assertAlmostEqual(gamma[1,1], 1.0, 6)
         self.assertAlmostEqual(gamma[2,2], 1.0, 6)
@@ -167,7 +167,7 @@ class TestTiltingLaser(unittest.TestCase):
         self.assertAlmostEqual(gamma[5,5], 1.0, 6)
 
     def test_tilting_laser_1(self):
-        print ""
+        print ("")
         config, robot_params = loadSystem()
 
         joint_points = [ JointState(position=[0,0,0]),

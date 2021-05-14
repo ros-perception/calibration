@@ -51,7 +51,7 @@ def loadSystem():
     outfile = open(raw_xml, 'w')
     outfile.write(robot_description)
     outfile.close()
-    config = yaml.load('''
+    config = yaml.safe_load('''
 sensors:
   chains: {}
   rectified_cams: {}
@@ -63,7 +63,7 @@ checkerboards: {}
 
 class TestUrdfWriter(unittest.TestCase):
     def test_write(self):
-        print ""
+        print ("")
         params = loadSystem()
         outfile = open(calibrated_xml, 'w')
         outfile.write( params.urdf.to_xml() )

@@ -47,7 +47,7 @@ from numpy import *
 
 def loadSystem1():
     urdf = '''
-<robot>
+<robot name="test">
   <link name="base_link"/>
   <joint name="j0" type="fixed">
     <origin xyz="0 0 10" rpy="0 0 0"/>
@@ -70,7 +70,7 @@ def loadSystem1():
   <link name="j2_link"/>
 </robot>
 '''
-    config = yaml.load('''
+    config = yaml.safe_load('''
 sensors:
   chains: {}
   rectified_cams: {}
@@ -97,8 +97,8 @@ class TestTiltingLaser(unittest.TestCase):
         tl.update_config(params)
         result = tl.project_point_to_3D([0, 0, 0])
         expected = numpy.matrix( [20, 0, 10, 1] ).T
-        print ""
-        print result
+        print ("")
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result - expected), 0.0, 6)
 
     def test_project_point_easy_2(self):
@@ -107,8 +107,8 @@ class TestTiltingLaser(unittest.TestCase):
         tl.update_config(params)
         result = tl.project_point_to_3D([0, pi/2, 1])
         expected = numpy.matrix( [20, 1, 10, 1] ).T
-        print ""
-        print result
+        print ("")
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result - expected), 0.0, 6)
 
     def test_project_point_easy_3(self):
@@ -117,8 +117,8 @@ class TestTiltingLaser(unittest.TestCase):
         tl.update_config(params)
         result = tl.project_point_to_3D([pi/2, 0, 0])
         expected = numpy.matrix( [0 , 0,-10, 1] ).T
-        print ""
-        print result
+        print ("")
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result - expected), 0.0, 6)
 
     def test_project_point_easy_4(self):
@@ -127,8 +127,8 @@ class TestTiltingLaser(unittest.TestCase):
         tl.update_config(params)
         result = tl.project_point_to_3D([pi/2, -pi/2, 15])
         expected = numpy.matrix( [0 ,-15, -10, 1] ).T
-        print ""
-        print result
+        print ("")
+        print (result)
         self.assertAlmostEqual(numpy.linalg.norm(result - expected), 0.0, 6)
 
     def test_project(self):
@@ -146,8 +146,8 @@ class TestTiltingLaser(unittest.TestCase):
                                    [ 10, 10, -10, -10 ],
                                    [  1,  1,   1,   1 ] ] )
 
-        print
-        print result
+        print () 
+        print (result)
 
         self.assertAlmostEqual(numpy.linalg.norm(result - expected), 0.0, 6)
 
