@@ -16,6 +16,7 @@
   <run_depend>calibration_estimation</run_depend>
   <run_depend>calibration_launch</run_depend>
   <run_depend>calibration_msgs</run_depend>
+  <run_depend>calibration_setup_helper</run_depend>
   <run_depend>image_cb_detector</run_depend>
   <run_depend>interval_intersection</run_depend>
   <run_depend>joint_states_settler</run_depend>
