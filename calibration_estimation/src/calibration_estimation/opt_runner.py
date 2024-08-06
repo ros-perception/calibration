@@ -138,7 +138,7 @@ class ErrorCalc:
 
         rms_error = numpy.sqrt( numpy.mean(r_vec**2) )
         
-        print "\t\t\t\t\tRMS error: %.3f    \r" % rms_error,
+        print("\t\t\t\t\tRMS error: %.3f    \r" % rms_error, end='')
         sys.stdout.flush()
 
         return array(r_vec)
@@ -400,12 +400,12 @@ def opt_runner(robot_params, pose_guess_arr, free_dict, multisensors, use_cov):
 
     errors_dict = compute_errors_breakdown(error_calc, multisensors, opt_pose_arr)
 
-    print ""
-    print "Errors Breakdown:"
+    print("")
+    print("Errors Breakdown:")
     for sensor_id, error_list in errors_dict.items():
         error_cat = numpy.concatenate(error_list)
         rms_error = numpy.sqrt( numpy.mean(error_cat**2) )
-        print "  %s: %.6f" % (sensor_id, rms_error)
+        print("  %s: %.6f" % (sensor_id, rms_error))
 
     return output_dict, opt_pose_arr, J
 

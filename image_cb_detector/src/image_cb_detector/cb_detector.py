@@ -130,7 +130,7 @@ class ImageCbDetectorNode:
     #we need to convert the ros image to an opencv image
     try:
       image = self.bridge.imgmsg_to_cv(ros_image, "mono8")
-    except CvBridgeError, e:
+    except CvBridgeError as e:
       rospy.logerror("Error importing image %s" % e)
       return
 

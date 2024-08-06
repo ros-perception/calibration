@@ -55,7 +55,7 @@ public:
     as_.registerPreemptCallback( boost::bind(&ImageCbDetectorAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
-    sub_ = it_.subscribe("image", 2, boost::bind(&ImageCbDetectorAction::imageCallback, this, _1));
+    sub_ = it_.subscribe("image", 2, boost::bind(&ImageCbDetectorAction::imageCallback, this, boost::placeholders::_1));
     as_.start();
   }
 

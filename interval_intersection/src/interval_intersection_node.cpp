@@ -68,7 +68,7 @@ int main(int argc, char **argv)
   // Publisher
   ros::Publisher publisher = nh.advertise<calibration_msgs::Interval>("interval",1);
   // Intersector
-  IntervalIntersector intersector(boost::bind(&myPublish, &publisher, _1));
+  IntervalIntersector intersector(boost::bind(&myPublish, &publisher, boost::placeholders::_1));
   // Subscribe
   vector<ros::Subscriber> subscribers;
   for (size_t i=0; i < names.size(); i++) {

@@ -134,7 +134,7 @@ int main(int argc, char** argv)
   message_filters::TimeSynchronizer<sensor_msgs::Image,
                                     calibration_msgs::CalibrationPattern> sync(image_sub, features_sub, 5);
 
-  sync.registerCallback(boost::bind(&ImageAnnotator::processPair, &annotator, _1, _2));
+  sync.registerCallback(boost::bind(&ImageAnnotator::processPair, &annotator, boost::placeholders::_1, boost::placeholders::_2));
 
   ros::spin();
   return 0;

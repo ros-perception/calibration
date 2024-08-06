@@ -75,7 +75,7 @@ boost::function<void (const calibration_msgs::IntervalConstPtr&)> IntervalInters
   for (size_t i=0; i<n; i++) {
     mutexes[i]->unlock();
   }
-  return boost::bind(&IntervalIntersector::inputCallback, this, _1, n);
+  return boost::bind(&IntervalIntersector::inputCallback, this, boost::placeholders::_1, n);
 }
 
 /*!

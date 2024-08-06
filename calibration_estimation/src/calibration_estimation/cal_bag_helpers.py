@@ -44,7 +44,7 @@ def get_cam_info(bag_filename, cam_name):
         if topic == "robot_measurement":
             for cam_measurement in msg.M_cam:
                 if cam_measurement.camera_id == cam_name:
-                    print "Found a sample with camera [%s] in it" % cam_measurement.camera_id
+                    print("Found a sample with camera [%s] in it" % cam_measurement.camera_id)
                     cam_info = cam_measurement.cam_info
                     break
             if cam_info != None:
@@ -74,7 +74,7 @@ def get_robot_measurement_count(bag_filename, sample_skip_list=[]):
     for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
         if topic == 'robot_measurement':
             if index in sample_skip_list:
-                print "Skipping sample:", index
+                print("Skipping sample:", index)
             else:
                 msg_count+=1
             index += 1
@@ -90,7 +90,7 @@ def get_multisensors(bag_filename, cur_sensors, sample_skip_list=[]):
     for topic, msg, t in bag.read_messages(topics=['robot_measurement']):
         if topic == "robot_measurement":
             if index in sample_skip_list:
-                print "Skipping sample:", index
+                print("Skipping sample:", index)
             else:
                 # Hack to rename laser id
                 for cur_laser in msg.M_laser:

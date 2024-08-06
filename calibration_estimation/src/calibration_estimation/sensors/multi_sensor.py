@@ -71,7 +71,7 @@ class MultiSensor:
             cur_sensors = cur_bundler.build_blocks(msg)
             sensors.extend(cur_sensors)
         else:
-            print "[%s] section doesn't exist. Skipping" % sensor_type
+            print("[%s] section doesn't exist. Skipping" % sensor_type)
 
         sensor_type = 'chains'
         if sensor_type in self._sensor_configs.keys():
@@ -79,7 +79,7 @@ class MultiSensor:
             cur_sensors = cur_bundler.build_blocks(msg)
             sensors.extend(cur_sensors)
         else:
-            print "[%s] section doesn't exist. Skipping" % sensor_type
+            print("[%s] section doesn't exist. Skipping" % sensor_type)
 
         sensor_type = 'rectified_cams'
         if sensor_type in self._sensor_configs.keys():
@@ -87,7 +87,7 @@ class MultiSensor:
             cur_sensors = cur_bundler.build_blocks(msg)
             sensors.extend(cur_sensors)
         else:
-            print "[%s] section doesn't exist. Skipping" % sensor_type
+            print("[%s] section doesn't exist. Skipping" % sensor_type)
 
         # Store the sensor list internally
         self.sensors = sensors

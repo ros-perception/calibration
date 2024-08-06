@@ -70,7 +70,7 @@ public:
     as_.registerPreemptCallback( boost::bind(&RgbdCbDetectorAction::preemptCallback, this) );
 
     pub_ = nh_.advertise<calibration_msgs::CalibrationPattern>("features",1);
-    sync_.registerCallback(boost::bind(&RgbdCbDetectorAction::cameraCallback, this, _1, _2, _3));
+    sync_.registerCallback(boost::bind(&RgbdCbDetectorAction::cameraCallback, this, boost::placeholders::_1, boost::placeholders::_2, boost::placeholders::_3));
 
     as_.start();
 

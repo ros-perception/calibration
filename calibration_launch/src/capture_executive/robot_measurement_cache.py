@@ -173,8 +173,7 @@ class RobotMeasurementCache:
                m= "Failed to capture a sample from %s"%(failed_sensors[0])
            return m
 
-        # TODO: eliminate print statement or convert to rospy.log*
-        print "Received everything!"
+        rospy.loginfo("Received everything!")
 
         # Push everything into a RobotMeasurement message
         m_robot = RobotMeasurement()

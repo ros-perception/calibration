@@ -55,15 +55,15 @@ import geometry_msgs.msg
 
 def usage():
     rospy.logerr("Not enough arguments")
-    print "Usage:"
-    print " ./error_visualization.py [bagfile] [output_dir] [loop_list.yaml]"
+    print("Usage:")
+    print(" ./error_visualization.py [bagfile] [output_dir] [loop_list.yaml]")
     sys.exit(0)
 
 if __name__ == '__main__':
     rospy.init_node("error_visualization")
     marker_pub = rospy.Publisher("calibration_error", Marker)
 
-    print "Starting The Error Visualization App\n"
+    print("Starting The Error Visualization App\n")
 
     if (len(rospy.myargv()) < 3):
         usage()
@@ -72,7 +72,7 @@ if __name__ == '__main__':
         output_dir = rospy.myargv()[2]
         loop_list_filename = rospy.myargv()[3]
 
-    print "Using Bagfile: %s\n" % bag_filename
+    print("Using Bagfile: %s\n" % bag_filename)
     if not os.path.isfile(bag_filename):
         rospy.logerr("Bagfile does not exist. Exiting...")
         sys.exit(1)
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         multisensors = get_multisensors(bag_filename, sensor_defs, sample_skip_list)
 
         if (len([ms for ms in multisensors if len(ms.sensors) == 2]) == 0):
-            print "********** No Data for [%s] + [%s] pair **********" % (cur_loop['cam'], cur_loop['3d'])
+            print("********** No Data for [%s] + [%s] pair **********" % (cur_loop['cam'], cur_loop['3d']))
             continue
         label_list.append(cur_loop)
 
@@ -125,8 +125,8 @@ if __name__ == '__main__':
         sample_ind = [k for k,ms in zip(range(len(multisensors)), multisensors) if len(ms.sensors) == 2]
         sample_ind = [i for i in sample_ind if i not in sample_skip_list]
 
-        print "Sample Indices:"
-        print ", ".join(["%u" % i for i in sample_ind])
+        print("Sample Indices:")
+        print(", ".join(["%u" % i for i in sample_ind]))
 
         for ms in multisensors:
             ms.update_config(system_def)
@@ -138,19 +138,19 @@ if __name__ == '__main__':
         # Display error breakdown
         errors_dict = opt_runner.compute_errors_breakdown(error_calc, multisensors_pruned, numpy.array(cb_poses_pruned))
 
-        print ""
-        print "Errors Breakdown:"
+        print("")
+        print("Errors Breakdown:")
         for sensor_id, error_list in errors_dict.items():
-            print "  %s:" % sensor_id
+            print("  %s:" % sensor_id)
             i = 0
             for error in error_list:
                 if i in sample_ind:        
                     rms_error = numpy.sqrt( numpy.mean(error**2) )
-                    print "    Sample %d: %.6f" % (i, rms_error)
+                    print("    Sample %d: %.6f" % (i, rms_error))
                 i += 1
             error_cat = numpy.concatenate(error_list)
             rms_error = numpy.sqrt( numpy.mean(error_cat**2) )
-            print "    Total: %.6f" % rms_error
+            print("    Total: %.6f" % rms_error)
 
         # Calculate loop errors
         chain_sensors = [[s for s in ms.sensors if s.sensor_id == cur_loop['3d']][0]  for ms in multisensors_pruned]

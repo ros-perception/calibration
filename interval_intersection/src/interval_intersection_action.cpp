@@ -83,7 +83,7 @@ public:
 
     // Reconfigure the node
     intersect_nh_.reset(new ros::NodeHandle);
-    intersect_.reset(new IntervalIntersector( boost::bind(&IntervalIntersectionAction::publishResult, this, _1)));
+    intersect_.reset(new IntervalIntersector( boost::bind(&IntervalIntersectionAction::publishResult, this, boost::placeholders::_1)));
     // Subscribe to all the requested topics
     subscribers_.resize(goal->topics.size());
     topics_.resize(goal->topics.size());

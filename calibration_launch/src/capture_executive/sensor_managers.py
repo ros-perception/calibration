@@ -55,7 +55,7 @@ class ChainManager:
 
     def callback(self, msg):
         self._lock.acquire()
-        if self._mode is "on":
+        if self._mode == "on":
             # Populate measurement message
             m_msg = ChainMeasurement()
             m_msg.header.stamp = msg.header.stamp
@@ -95,7 +95,7 @@ class CamManager:
 
     def verbose_callback(self, cam_info, features, image, image_rect):
         self._lock.acquire()
-        if self._mode is "verbose":
+        if self._mode == "verbose":
             # Populate measurement message
             msg = CameraMeasurement()
             msg.header.stamp = cam_info.header.stamp
@@ -111,7 +111,7 @@ class CamManager:
 
     def minimal_callback(self, cam_info, features):
         self._lock.acquire()
-        if self._mode is "minimal":
+        if self._mode == "minimal":
             # Populate measurement message
             msg = CameraMeasurement()
             msg.header.stamp = cam_info.header.stamp
@@ -164,7 +164,7 @@ class LaserManager:
 
     def verbose_callback(self, snapshot, laser_image, image_features, joint_features, laser_duration):
         self._lock.acquire()
-        if self._mode is "verbose":
+        if self._mode == "verbose":
             # Populate measurement message
             msg = LaserMeasurement()
             msg.laser_id = self._laser_id
@@ -179,7 +179,7 @@ class LaserManager:
 
     def minimal_callback(self, joint_features, laser_duration):
         self._lock.acquire()
-        if self._mode is "minimal":
+        if self._mode == "minimal":
             # Populate measurement message
             msg = LaserMeasurement()
             msg.laser_id = self._laser_id

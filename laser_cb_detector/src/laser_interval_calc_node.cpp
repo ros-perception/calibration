@@ -72,7 +72,7 @@ int main(int argc, char** argv)
   message_filters::Subscriber<calibration_msgs::CalibrationPattern> features_sub(nh, "features", 1);
   message_filters::TimeSynchronizer<calibration_msgs::DenseLaserSnapshot,
                                     calibration_msgs::CalibrationPattern> sync(snapshot_sub, features_sub, 2);
-  sync.registerCallback(boost::bind(&syncCallback, &pub, _1, _2));
+  sync.registerCallback(boost::bind(&syncCallback, &pub, boost::placeholders::_1, boost::placeholders::_2));
 
   ros::spin();
 
